@@ -1,19 +1,19 @@
-const { getBeatTime } = require('../util/beats');
-let currentBeats = 0;
+const BeatTime = require('../classes/BeatTime');
+let currentBeats; // string
 
 module.exports = (client) => {
   const setPresence = () => {
-    const newBeats = getBeatTime();
+    const newBeats = new BeatTime().string;
     if (newBeats !== currentBeats) {
       currentBeats = newBeats;
       client.user.setPresence({
         activity: {
-          name: `@${currentBeats}`,
+          name: currentBeats,
           type: 'PLAYING'
         }
       });
     };
   };
   setPresence();
-  return setInterval(setPresence, 5000);
+  return setInterval(setPresence, 500);
 };
