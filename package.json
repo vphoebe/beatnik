@@ -1,0 +1,22 @@
+{
+  "name": "beatnik",
+  "version": "1.0.0",
+  "description": "a discord bot that tells you the time",
+  "main": "beatnik.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vphoebe/beatnik.git"
+  },
+  "author": "vphoebe",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/vphoebe/beatnik/issues"
+  },
+  "homepage": "https://github.com/vphoebe/beatnik#readme",
+  "dependencies": {
+    "discord.js": "^12.2.0"
+  }
+}
