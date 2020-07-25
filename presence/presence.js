@@ -4,7 +4,7 @@ let currentBeats = 0;
 module.exports = (client) => {
   const setPresence = () => {
     const newBeats = getBeatTime();
-    if (newBeats != currentBeats) {
+    if (newBeats !== currentBeats) {
       currentBeats = newBeats;
       client.user.setPresence({
         activity: {
@@ -16,4 +16,4 @@ module.exports = (client) => {
   };
   setPresence();
   return setInterval(setPresence, 5000);
-}
+};

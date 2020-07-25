@@ -4,7 +4,7 @@ const getBeatTime = (date = new Date()) => {
     if (beats < 10) return `00${Math.floor(beats)}`;
     return `0${Math.floor(beats)}`;
   } else return `${Math.floor(beats)}`;
-}
+};
 
 module.exports = {
   getBeatTime: getBeatTime
