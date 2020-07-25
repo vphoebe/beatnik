@@ -7,5 +7,5 @@ const getBeatTime = (date = new Date()) => {
 }
 
 module.exports = {
-	getBeatTime: getBeatTime
+  getBeatTime: getBeatTime
 };
