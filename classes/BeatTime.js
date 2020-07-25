@@ -8,7 +8,7 @@ class BeatTime {
   leadingZeroes () {
     // returns string of value with leading zeroes
     const value = this.value;
-    return value < 100 ? (value < 10 ? `00${Math.floor(value)}` : `0${Math.floor(this.value)}`) : `${Math.floor(this.value)}`;
+    return value < 100 ? (value < 10 ? `00${Math.floor(value)}` : `0${Math.floor(value)}`) : `${Math.floor(value)}`;
   }
 
   get string () {
