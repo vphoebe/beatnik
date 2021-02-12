@@ -1,6 +1,7 @@
 const Discord = require("discord.js");
 const { prefix, token } = require("./config.json");
 const ytdl = require("ytdl-core");
+const presence = require("./presence");
 
 const client = new Discord.Client();
 
@@ -8,6 +9,7 @@ const queue = new Map();
 
 client.once("ready", () => {
   console.log("Ready!");
+  presence(client);
 });
 
 client.once("reconnecting", () => {
