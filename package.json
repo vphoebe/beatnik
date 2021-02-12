@@ -4,8 +4,8 @@
   "description": "a discord bot that tells you the time",
   "main": "beatnik.js",
   "scripts": {
-    "start": "node beatnik",
-    "debug": "node beatnik --inspect"
+    "start": "node index ",
+    "debug": "node index --inspect"
   },
   "repository": {
     "type": "git",
@@ -18,14 +18,13 @@
   },
   "homepage": "https://github.com/vphoebe/beatnik#readme",
   "dependencies": {
-    "discord.js": "^12.2.0"
-  },
-  "devDependencies": {
-    "eslint": "^7.5.0",
-    "eslint-config-standard": "^14.1.1",
-    "eslint-plugin-import": "^2.22.0",
-    "eslint-plugin-node": "^11.1.0",
-    "eslint-plugin-promise": "^4.2.1",
-    "eslint-plugin-standard": "^4.0.1"
+    "@discordjs/opus": "^0.4.0",
+    "discord.js": "^12.5.1",
+    "ffmpeg": "0.0.4",
+    "ffmpeg-static": "^4.2.7",
+    "fluent-ffmpeg": "^2.1.2",
+    "opusscript": "0.0.7",
+    "prettier": "^2.2.1",
+    "ytdl-core": "^4.4.5"
   }
 }
