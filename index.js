@@ -115,7 +115,7 @@ async function execute(message, serverQueue) {
 }
 
 function listQueue(message, serverQueue) {
-  if (serverQueue.songs && serverQueue.songs.length > 0) {
+  if (serverQueue?.songs?.length > 0) {
     const queueItemStrings = serverQueue.songs.map((item, i) => {
       return `**[${i + 1}]** ${item.title}\n \`${item.user}\``;
     });
