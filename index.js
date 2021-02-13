@@ -8,7 +8,7 @@ const presence = require("./presence");
 
 const client = new Discord.Client();
 
-const queue = new Map();
+const botQueue = new Map();
 
 client.once("ready", () => {
   console.log("Ready!");
@@ -27,7 +27,7 @@ client.on("message", async (message) => {
   if (message.author.bot) return;
   if (!message.content.startsWith(prefix)) return;
 
-  const serverQueue = queue.get(message.guild.id);
+  const serverQueue = botQueue.get(message.guild.id);
 
   if (message.content.startsWith(`${prefix}play`)) {
     execute(message, serverQueue);
@@ -104,7 +104,7 @@ async function execute(message, serverQueue) {
       playing: true,
     };
 
-    queue.set(message.guild.id, queueConstruct);
+    botQueue.set(message.guild.id, queueConstruct);
     queueConstruct.songs.push(...queuedSongs);
 
     try {
@@ -113,7 +113,7 @@ async function execute(message, serverQueue) {
       play(message.guild, queueConstruct.songs[0]);
     } catch (err) {
       console.log(err);
-      queue.delete(message.guild.id);
+      botQueue.delete(message.guild.id);
       return message.channel.send(err);
     }
   } else {
@@ -133,13 +133,14 @@ async function execute(message, serverQueue) {
 function listQueue(message, serverQueue) {
   if (serverQueue?.songs?.length > 0) {
     const queueItemStrings = serverQueue.songs.map((item, i) => {
-      return `**[${i + 1}]** ${item.title}\n \`${item.user}\``;
+      return `**[${i}]** ${item.title}\n Queued by \`${item.user}\``;
     });
 
     const queueEmbed = new Discord.MessageEmbed()
       .setColor("#ed872d")
-      .setTitle("Up next in the queue")
-      .setDescription(queueItemStrings.join("\n\n"))
+      .setTitle("Now playing on beatnik")
+      .setDescription(queueItemStrings[0].replace("**[0]** ", ""))
+      .addField("Up next", queueItemStrings.slice(1).join("\n\n"))
       .setTimestamp()
       .setFooter("sent by beatnik");
 
@@ -173,10 +174,10 @@ function stop(message, serverQueue) {
 }
 
 function play(guild, song) {
-  const serverQueue = queue.get(guild.id);
+  const serverQueue = botQueue.get(guild.id);
   if (!song) {
     serverQueue.voiceChannel.leave();
-    queue.delete(guild.id);
+    botQueue.delete(guild.id);
     return;
   }
 
@@ -188,7 +189,7 @@ function play(guild, song) {
     })
     .on("error", (error) => console.error(error));
   dispatcher.setVolumeLogarithmic(serverQueue.volume / 5);
-  serverQueue.textChannel.send(`Start playing: **${song.title}**`);
+  serverQueue.textChannel.send(`Now playing: **${song.title}**`);
 }
 
 client.login(token);
