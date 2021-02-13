@@ -1,7 +1,9 @@
 const Discord = require("discord.js");
-const { prefix, token } = require("./config.json");
+const { prefix, token, youtubeKey } = require("./config.json");
 const ytdl = require("ytdl-core");
 const ytpl = require("ytpl");
+const YouTube = require("discord-youtube-api");
+const youtube = new YouTube(youtubeKey);
 const presence = require("./presence");
 
 const client = new Discord.Client();
@@ -60,26 +62,40 @@ async function execute(message, serverQueue) {
 
   const url = args[1];
   const queuedSongs = [];
-  if (url.includes("playlist")) {
-    const playlistInfo = await ytpl(url);
-    const playlistSongs = playlistInfo.items.map((item) => ({
-      title: item.title,
-      url: item.shortUrl,
-      user: message.author.username,
-    }));
-    queuedSongs.push(...playlistSongs);
+  const ytRegex = /^((?:https?:)?\/\/)?((?:www|m)\.)?((?:youtube\.com|youtu.be))(\/(?:[\w-]+\?v=|embed\/|v\/)?)([\w-]+)(\S+)?$/;
+
+  if (ytRegex.test(url)) {
+    if (url.includes("playlist")) {
+      const playlistInfo = await ytpl(url);
+      const playlistSongs = playlistInfo.items.map((item) => ({
+        title: item.title,
+        url: item.shortUrl,
+        user: message.author.username,
+      }));
+      queuedSongs.push(...playlistSongs);
+    } else {
+      const songInfo = await ytdl.getInfo(url);
+      const song = {
+        title: songInfo.videoDetails.title,
+        url: songInfo.videoDetails.video_url,
+        user: message.author.username,
+      };
+      queuedSongs.push(song);
+    }
   } else {
-    const songInfo = await ytdl.getInfo(url);
+    // treat as search query
+    const query = args.slice(1).join(" ");
+    const searchResult = await youtube.searchVideos(query);
     const song = {
-      title: songInfo.videoDetails.title,
-      url: songInfo.videoDetails.video_url,
+      title: searchResult.title,
+      url: searchResult.url,
       user: message.author.username,
     };
     queuedSongs.push(song);
   }
 
   if (!serverQueue) {
-    const queueContruct = {
+    const queueConstruct = {
       textChannel: message.channel,
       voiceChannel: voiceChannel,
       connection: null,
@@ -88,13 +104,13 @@ async function execute(message, serverQueue) {
       playing: true,
     };
 
-    queue.set(message.guild.id, queueContruct);
-    queueContruct.songs.push(...queuedSongs);
+    queue.set(message.guild.id, queueConstruct);
+    queueConstruct.songs.push(...queuedSongs);
 
     try {
       var connection = await voiceChannel.join();
-      queueContruct.connection = connection;
-      play(message.guild, queueContruct.songs[0]);
+      queueConstruct.connection = connection;
+      play(message.guild, queueConstruct.songs[0]);
     } catch (err) {
       console.log(err);
       queue.delete(message.guild.id);

@@ -1,4 +1,5 @@
 {
   "prefix": "-",
-  "token": "discord bot token"
+  "token": "discord bot token",
+  "youtubeKey": "google api token",
 }
