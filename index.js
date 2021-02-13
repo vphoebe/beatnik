@@ -36,6 +36,8 @@ client.on("message", async (message) => {
   } else if (message.content.startsWith(`${prefix}stop`)) {
     stop(message, serverQueue);
     return;
+  } else if (message.content.startsWith(`${prefix}queue`)) {
+    listQueue(message, serverQueue);
   } else {
     message.channel.send("You need to enter a valid command!");
   }
@@ -58,12 +60,12 @@ async function execute(message, serverQueue) {
 
   const url = args[1];
   const queuedSongs = [];
-
   if (url.includes("playlist")) {
     const playlistInfo = await ytpl(url);
     const playlistSongs = playlistInfo.items.map((item) => ({
       title: item.title,
       url: item.shortUrl,
+      user: message.author.username,
     }));
     queuedSongs.push(...playlistSongs);
   } else {
@@ -71,6 +73,7 @@ async function execute(message, serverQueue) {
     const song = {
       title: songInfo.videoDetails.title,
       url: songInfo.videoDetails.video_url,
+      user: message.author.username,
     };
     queuedSongs.push(song);
   }
@@ -86,7 +89,6 @@ async function execute(message, serverQueue) {
     };
 
     queue.set(message.guild.id, queueContruct);
-
     queueContruct.songs.push(...queuedSongs);
 
     try {
@@ -99,9 +101,32 @@ async function execute(message, serverQueue) {
       return message.channel.send(err);
     }
   } else {
-    serverQueue.songs.push(song);
-    return message.channel.send(`${song.title} has been added to the queue!`);
+    serverQueue.songs.push(...queuedSongs);
+    if (queuedSongs.length === 1) {
+      return message.channel.send(
+        `${queuedSongs[0].title} has been added to the queue!`
+      );
+    } else {
+      return message.channel.send(
+        `${queuedSongs.length} tracks have been added to the queue!`
+      );
+    }
   }
+}
+
+function listQueue(message, serverQueue) {
+  const queueItemStrings = serverQueue.songs.map((item, i) => {
+    return `**[${i + 1}]** ${item.title}\n \`${item.user}\``;
+  });
+
+  const queueEmbed = new Discord.MessageEmbed()
+    .setColor("#ed872d")
+    .setTitle("Up next in the queue")
+    .setDescription(queueItemStrings.join("\n\n"))
+    .setTimestamp()
+    .setFooter("sent by beatnik");
+
+  message.channel.send(queueEmbed);
 }
 
 function skip(message, serverQueue) {
