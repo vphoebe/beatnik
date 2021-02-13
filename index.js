@@ -1,6 +1,7 @@
 const Discord = require("discord.js");
 const { prefix, token } = require("./config.json");
 const ytdl = require("ytdl-core");
+const ytpl = require("ytpl");
 const presence = require("./presence");
 
 const client = new Discord.Client();
@@ -55,11 +56,24 @@ async function execute(message, serverQueue) {
     );
   }
 
-  const songInfo = await ytdl.getInfo(args[1]);
-  const song = {
-    title: songInfo.videoDetails.title,
-    url: songInfo.videoDetails.video_url,
-  };
+  const url = args[1];
+  const queuedSongs = [];
+
+  if (url.includes("playlist")) {
+    const playlistInfo = await ytpl(url);
+    const playlistSongs = playlistInfo.items.map((item) => ({
+      title: item.title,
+      url: item.shortUrl,
+    }));
+    queuedSongs.push(...playlistSongs);
+  } else {
+    const songInfo = await ytdl.getInfo(url);
+    const song = {
+      title: songInfo.videoDetails.title,
+      url: songInfo.videoDetails.video_url,
+    };
+    queuedSongs.push(song);
+  }
 
   if (!serverQueue) {
     const queueContruct = {
@@ -73,7 +87,7 @@ async function execute(message, serverQueue) {
 
     queue.set(message.guild.id, queueContruct);
 
-    queueContruct.songs.push(song);
+    queueContruct.songs.push(...queuedSongs);
 
     try {
       var connection = await voiceChannel.join();
