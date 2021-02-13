@@ -115,18 +115,22 @@ async function execute(message, serverQueue) {
 }
 
 function listQueue(message, serverQueue) {
-  const queueItemStrings = serverQueue.songs.map((item, i) => {
-    return `**[${i + 1}]** ${item.title}\n \`${item.user}\``;
-  });
+  if (serverQueue.songs.length > 0) {
+    const queueItemStrings = serverQueue.songs.map((item, i) => {
+      return `**[${i + 1}]** ${item.title}\n \`${item.user}\``;
+    });
 
-  const queueEmbed = new Discord.MessageEmbed()
-    .setColor("#ed872d")
-    .setTitle("Up next in the queue")
-    .setDescription(queueItemStrings.join("\n\n"))
-    .setTimestamp()
-    .setFooter("sent by beatnik");
+    const queueEmbed = new Discord.MessageEmbed()
+      .setColor("#ed872d")
+      .setTitle("Up next in the queue")
+      .setDescription(queueItemStrings.join("\n\n"))
+      .setTimestamp()
+      .setFooter("sent by beatnik");
 
-  message.channel.send(queueEmbed);
+    message.channel.send(queueEmbed);
+  } else {
+    message.channel.send("No songs currently in queue.");
+  }
 }
 
 function skip(message, serverQueue) {
