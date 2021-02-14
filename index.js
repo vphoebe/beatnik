@@ -1,12 +1,23 @@
 const Discord = require("discord.js");
-const { prefix, token } = require("./config.json");
+const { prefix, token, youtubeKey } = require("./config.json");
 const ytdl = require("ytdl-core");
 const ytpl = require("ytpl");
+const YouTube = require("discord-youtube-api");
+const youtube = new YouTube(youtubeKey);
 const presence = require("./presence");
 
 const client = new Discord.Client();
 
-const queue = new Map();
+const botQueue = new Map();
+
+function shuffleArray(array) {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
+}
+
+const defaultVolume = 0.5; // 50%
 
 client.once("ready", () => {
   console.log("Ready!");
@@ -25,9 +36,9 @@ client.on("message", async (message) => {
   if (message.author.bot) return;
   if (!message.content.startsWith(prefix)) return;
 
-  const serverQueue = queue.get(message.guild.id);
+  const serverQueue = botQueue.get(message.guild.id);
 
-  if (message.content.startsWith(`${prefix}play`)) {
+  if (message.content.startsWith(`${prefix}p`)) {
     execute(message, serverQueue);
     return;
   } else if (message.content.startsWith(`${prefix}skip`)) {
@@ -36,12 +47,34 @@ client.on("message", async (message) => {
   } else if (message.content.startsWith(`${prefix}stop`)) {
     stop(message, serverQueue);
     return;
-  } else if (message.content.startsWith(`${prefix}queue`)) {
+  } else if (message.content.startsWith(`${prefix}q`)) {
     listQueue(message, serverQueue);
+  } else if (message.content.startsWith(`${prefix}volume`)) {
+    changeVolume(message, serverQueue);
+  } else if (message.content.startsWith(`${prefix}help`)) {
+    listCommands(message);
   } else {
     message.channel.send("You need to enter a valid command!");
+    listCommands(message);
   }
 });
+
+function listCommands(message) {
+  const commandEmbed = new Discord.MessageEmbed()
+    .setColor("#ed872d")
+    .setTitle("All commands")
+    .setDescription(
+      `\`${prefix}p\`: Play a URL of a video or playlist, or search a term and play the first result. Adds to the end of the queue if present.\n
+    \`${prefix}q\`: List the queue, including the currently playing item.\n
+    \`${prefix}skip\`: Skips to the next item in queue.\n
+    \`${prefix}stop\`: Stops and disconnects from the voice channel.\n
+    \`${prefix}volume\`: Change the volume of the playback, from 0 to 100%.\n
+    \`${prefix}help\`: Show this message.`
+    )
+    .setTimestamp()
+    .setFooter("sent by beatnik");
+  message.channel.send(commandEmbed);
+}
 
 async function execute(message, serverQueue) {
   const args = message.content.split(" ");
@@ -60,44 +93,59 @@ async function execute(message, serverQueue) {
 
   const url = args[1];
   const queuedSongs = [];
-  if (url.includes("playlist")) {
-    const playlistInfo = await ytpl(url);
-    const playlistSongs = playlistInfo.items.map((item) => ({
-      title: item.title,
-      url: item.shortUrl,
-      user: message.author.username,
-    }));
-    queuedSongs.push(...playlistSongs);
+  const ytRegex = /^((?:https?:)?\/\/)?((?:www|m)\.)?((?:youtube\.com|youtu.be))(\/(?:[\w-]+\?v=|embed\/|v\/)?)([\w-]+)(\S+)?$/;
+
+  if (ytRegex.test(url)) {
+    if (url.includes("playlist")) {
+      const playlistInfo = await ytpl(url);
+      const playlistSongs = playlistInfo.items.map((item) => ({
+        title: item.title,
+        url: item.shortUrl,
+        user: message.author.username,
+      }));
+      if (message.content.includes(":shuffle")) shuffleArray(playlistSongs);
+      queuedSongs.push(...playlistSongs);
+    } else {
+      const songInfo = await ytdl.getInfo(url);
+      const song = {
+        title: songInfo.videoDetails.title,
+        url: songInfo.videoDetails.video_url,
+        user: message.author.username,
+      };
+      queuedSongs.push(song);
+    }
   } else {
-    const songInfo = await ytdl.getInfo(url);
+    // treat as search query
+    const query = args.slice(1).join(" ");
+    const searchResult = await youtube.searchVideos(query);
     const song = {
-      title: songInfo.videoDetails.title,
-      url: songInfo.videoDetails.video_url,
+      title: searchResult.title,
+      url: searchResult.url,
       user: message.author.username,
     };
     queuedSongs.push(song);
   }
 
   if (!serverQueue) {
-    const queueContruct = {
+    const queueConstruct = {
       textChannel: message.channel,
       voiceChannel: voiceChannel,
       connection: null,
       songs: [],
-      volume: 3,
+      volume: defaultVolume,
       playing: true,
     };
 
-    queue.set(message.guild.id, queueContruct);
-    queueContruct.songs.push(...queuedSongs);
+    botQueue.set(message.guild.id, queueConstruct);
+    queueConstruct.songs.push(...queuedSongs);
 
     try {
       var connection = await voiceChannel.join();
-      queueContruct.connection = connection;
-      play(message.guild, queueContruct.songs[0]);
+      queueConstruct.connection = connection;
+      play(message.guild, queueConstruct.songs[0]);
     } catch (err) {
       console.log(err);
-      queue.delete(message.guild.id);
+      botQueue.delete(message.guild.id);
       return message.channel.send(err);
     }
   } else {
@@ -114,16 +162,49 @@ async function execute(message, serverQueue) {
   }
 }
 
+function changeVolume(message, serverQueue) {
+  const args = message.content.split(" ");
+  const inputValue = args[1];
+  if (inputValue && serverQueue) {
+    const parsedValue = parseInt(inputValue);
+    if (parsedValue && parsedValue <= 100 && parsedValue >= 0) {
+      const dispatcher = serverQueue.connection.dispatcher;
+      dispatcher.setVolume(parsedValue / 100);
+      message.channel.send(`Changing volume to ${parsedValue}%...`);
+    } else {
+      message.channel.send("Please input a number between 0 and 100.");
+    }
+  } else if (!serverQueue) {
+    message.channel.send("Start playing something to change the volume.");
+  } else {
+    message.channel.send(`The current volume is ${serverQueue.volume * 100}%`);
+  }
+}
+
 function listQueue(message, serverQueue) {
   if (serverQueue?.songs?.length > 0) {
     const queueItemStrings = serverQueue.songs.map((item, i) => {
-      return `**[${i + 1}]** ${item.title}\n \`${item.user}\``;
+      return `**[${i}]** ${item.title}\n Queued by \`${item.user}\``;
     });
+
+    const args = message.content.split(" ");
+    const pageNumber = args[1] - 1 || 0;
+
+    const pagedItems = queueItemStrings
+      .slice(1)
+      .slice(pageNumber * 10, pageNumber * 10 + 10);
 
     const queueEmbed = new Discord.MessageEmbed()
       .setColor("#ed872d")
-      .setTitle("Up next in the queue")
-      .setDescription(queueItemStrings.join("\n\n"))
+      .setTitle("Now playing on beatnik")
+      .setDescription(`**${queueItemStrings[0].replace("**[0]** ", "")}**`)
+      .addField(
+        `Up next (page ${pageNumber + 1} of ${Math.ceil(
+          queueItemStrings.length / 10
+        )})`,
+        pagedItems.join("\n\n")
+      )
+      .addField("Change pages...", `${prefix}q [pagenumber]`)
       .setTimestamp()
       .setFooter("sent by beatnik");
 
@@ -157,10 +238,10 @@ function stop(message, serverQueue) {
 }
 
 function play(guild, song) {
-  const serverQueue = queue.get(guild.id);
+  const serverQueue = botQueue.get(guild.id);
   if (!song) {
     serverQueue.voiceChannel.leave();
-    queue.delete(guild.id);
+    botQueue.delete(guild.id);
     return;
   }
 
@@ -171,8 +252,8 @@ function play(guild, song) {
       play(guild, serverQueue.songs[0]);
     })
     .on("error", (error) => console.error(error));
-  dispatcher.setVolumeLogarithmic(serverQueue.volume / 5);
-  serverQueue.textChannel.send(`Start playing: **${song.title}**`);
+  dispatcher.setVolume(serverQueue.volume);
+  serverQueue.textChannel.send(`Now playing: **${song.title}**`);
 }
 
 client.login(token);
