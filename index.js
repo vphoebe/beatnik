@@ -10,6 +10,15 @@ const client = new Discord.Client();
 
 const botQueue = new Map();
 
+function shuffleArray(array) {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
+}
+
+const defaultVolume = 0.5; // 50%
+
 client.once("ready", () => {
   console.log("Ready!");
   presence(client);
@@ -29,7 +38,7 @@ client.on("message", async (message) => {
 
   const serverQueue = botQueue.get(message.guild.id);
 
-  if (message.content.startsWith(`${prefix}play`)) {
+  if (message.content.startsWith(`${prefix}p`)) {
     execute(message, serverQueue);
     return;
   } else if (message.content.startsWith(`${prefix}skip`)) {
@@ -38,8 +47,12 @@ client.on("message", async (message) => {
   } else if (message.content.startsWith(`${prefix}stop`)) {
     stop(message, serverQueue);
     return;
-  } else if (message.content.startsWith(`${prefix}queue`)) {
+  } else if (message.content.startsWith(`${prefix}q`)) {
     listQueue(message, serverQueue);
+  } else if (message.content.startsWith(`${prefix}volume`)) {
+    changeVolume(message, serverQueue);
+  } else if (message.content.startsWith(`${prefix}help`)) {
+    listCommands(message);
   } else {
     message.channel.send("You need to enter a valid command!");
   }
@@ -72,6 +85,7 @@ async function execute(message, serverQueue) {
         url: item.shortUrl,
         user: message.author.username,
       }));
+      if (message.content.includes(":shuffle")) shuffleArray(playlistSongs);
       queuedSongs.push(...playlistSongs);
     } else {
       const songInfo = await ytdl.getInfo(url);
@@ -100,7 +114,7 @@ async function execute(message, serverQueue) {
       voiceChannel: voiceChannel,
       connection: null,
       songs: [],
-      volume: 3,
+      volume: defaultVolume,
       playing: true,
     };
 
@@ -127,6 +141,25 @@ async function execute(message, serverQueue) {
         `${queuedSongs.length} tracks have been added to the queue!`
       );
     }
+  }
+}
+
+function changeVolume(message, serverQueue) {
+  const args = message.content.split(" ");
+  const inputValue = args[1];
+  if (inputValue && serverQueue) {
+    const parsedValue = parseInt(inputValue);
+    if (parsedValue && parsedValue <= 100 && parsedValue >= 0) {
+      const dispatcher = serverQueue.connection.dispatcher;
+      dispatcher.setVolume(parsedValue / 100);
+      message.channel.send(`Changing volume to ${parsedValue}%...`);
+    } else {
+      message.channel.send("Please input a number between 0 and 100.");
+    }
+  } else if (!serverQueue) {
+    message.channel.send("Start playing something to change the volume.");
+  } else {
+    message.channel.send(`The current volume is ${serverQueue.volume * 100}%`);
   }
 }
 
@@ -188,7 +221,7 @@ function play(guild, song) {
       play(guild, serverQueue.songs[0]);
     })
     .on("error", (error) => console.error(error));
-  dispatcher.setVolumeLogarithmic(serverQueue.volume / 5);
+  dispatcher.setVolume(serverQueue.volume);
   serverQueue.textChannel.send(`Now playing: **${song.title}**`);
 }
 
