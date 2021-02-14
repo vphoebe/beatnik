@@ -55,8 +55,26 @@ client.on("message", async (message) => {
     listCommands(message);
   } else {
     message.channel.send("You need to enter a valid command!");
+    listCommands(message);
   }
 });
+
+function listCommands(message) {
+  const commandEmbed = new Discord.MessageEmbed()
+    .setColor("#ed872d")
+    .setTitle("All commands")
+    .setDescription(
+      `\`${prefix}p\`: Play a URL of a video or playlist, or search a term and play the first result. Adds to the end of the queue if present.\n
+    \`${prefix}q\`: List the queue, including the currently playing item.\n
+    \`${prefix}skip\`: Skips to the next item in queue.\n
+    \`${prefix}stop\`: Stops and disconnects from the voice channel.\n
+    \`${prefix}volume\`: Change the volume of the playback, from 0 to 100%.\n
+    \`${prefix}help\`: Show this message.`
+    )
+    .setTimestamp()
+    .setFooter("sent by beatnik");
+  message.channel.send(commandEmbed);
+}
 
 async function execute(message, serverQueue) {
   const args = message.content.split(" ");
