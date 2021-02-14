@@ -3,9 +3,7 @@ const { prefix, token } = require("./config.json");
 const ytdl = require("ytdl-core");
 const ytpl = require("ytpl");
 const presence = require("./presence");
-const sox = require("sox-stream");
 const ffmpeg = require("fluent-ffmpeg");
-const lame = require("@suldashi/lame");
 
 const client = new Discord.Client();
 
@@ -166,22 +164,23 @@ function play(guild, song) {
     queue.delete(guild.id);
     return;
   }
-  const pcmStream = ffmpeg(
-    ytdl(song.url, {
-      filter: (format) => format.container === "mp4",
-    })
-  )
-    .format("mp3")
-    .pipe(lame.Decoder())
-    .pipe(
-      sox({
-        output: { type: "pcm" },
-        effects: ["compand 0.3,1 6:−70,−60,−20 −5 −90 0.2"],
-      })
-    );
+
+  const ytdlReadStream = ytdl(song.url, {
+    quality: "highestaudio",
+  });
+
+  const compressedStream = ffmpeg(ytdlReadStream)
+    .complexFilter([
+      {
+        filter: "compand",
+        inputs: "[0:a]",
+        options: "attacks=0:points=-80/-900|-45/-15|-27/-9|0/-7|20/-7:gain=5",
+      },
+    ])
+    .outputFormat("ogg");
 
   const dispatcher = serverQueue.connection
-    .play(pcmStream, { type: "converted" })
+    .play(compressedStream.pipe())
     .on("finish", () => {
       serverQueue.songs.shift();
       play(guild, serverQueue.songs[0]);

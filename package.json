@@ -19,14 +19,12 @@
   "homepage": "https://github.com/vphoebe/beatnik#readme",
   "dependencies": {
     "@discordjs/opus": "^0.4.0",
-    "@suldashi/lame": "^1.2.5",
     "discord.js": "^12.5.1",
     "ffmpeg": "0.0.4",
     "ffmpeg-static": "^4.2.7",
     "fluent-ffmpeg": "^2.1.2",
     "opusscript": "0.0.7",
     "prettier": "^2.2.1",
-    "sox-stream": "^2.0.6",
     "ytdl-core": "^4.4.5",
     "ytpl": "^2.0.5"
   },
