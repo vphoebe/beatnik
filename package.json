@@ -1,8 +1,8 @@
 {
   "name": "beatnik",
-  "version": "1.0.0",
-  "description": "a discord bot that tells you the time",
-  "main": "beatnik.js",
+  "version": "0.1.0",
+  "description": "a discord bot that tells you the time, among other things.",
+  "main": "index.js",
   "scripts": {
     "start": "node index ",
     "debug": "node index --inspect"
@@ -11,7 +11,10 @@
     "type": "git",
     "url": "git+https://github.com/vphoebe/beatnik.git"
   },
-  "author": "vphoebe",
+  "authors": [
+    "vphoebe",
+    "bees"
+  ],
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/vphoebe/beatnik/issues"
