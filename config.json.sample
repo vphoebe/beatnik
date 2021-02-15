@@ -2,4 +2,11 @@
   "prefix": "-",
   "token": "discord bot token",
   "youtubeKey": "google api token",
+  "shortcuts": [
+    {
+      "shortcut": "command shortcut",
+      "command": "valid beatnik command (without prefix)",
+      "description": "Description for the help command."
+    }
+  ]
 }

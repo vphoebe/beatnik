@@ -1,5 +1,5 @@
 const Discord = require("discord.js");
-const { prefix, token, youtubeKey } = require("./config.json");
+const { prefix, token, youtubeKey, shortcuts } = require("./config.json");
 const ytdl = require("ytdl-core");
 const ytpl = require("ytpl");
 const YouTube = require("discord-youtube-api");
@@ -17,7 +17,7 @@ function shuffleArray(array) {
   }
 }
 
-const defaultVolume = 0.5; // 50%
+const defaultVolume = 0.3;
 
 client.once("ready", () => {
   console.log("Ready!");
@@ -38,6 +38,15 @@ client.on("message", async (message) => {
 
   const serverQueue = botQueue.get(message.guild.id);
 
+  const args = message.content.split(" ");
+  const command = args[0].substring(1);
+  const detectedShortcut = shortcuts.find(
+    (shortcut) => shortcut.shortcut === command
+  );
+
+  if (detectedShortcut)
+    message.content = `${prefix}${detectedShortcut.command}`;
+
   if (message.content.startsWith(`${prefix}p`)) {
     execute(message, serverQueue);
     return;
@@ -49,13 +58,18 @@ client.on("message", async (message) => {
     return;
   } else if (message.content.startsWith(`${prefix}q`)) {
     listQueue(message, serverQueue);
+    return;
   } else if (message.content.startsWith(`${prefix}volume`)) {
     changeVolume(message, serverQueue);
+    return;
   } else if (message.content.startsWith(`${prefix}help`)) {
     listCommands(message);
+    listShortcuts(message);
+    return;
   } else {
     message.channel.send("You need to enter a valid command!");
     listCommands(message);
+    return;
   }
 });
 
@@ -75,6 +89,22 @@ function listCommands(message) {
     .setTimestamp()
     .setFooter("sent by beatnik");
   message.channel.send(commandEmbed);
+}
+
+function listShortcuts(message) {
+  if (shortcuts.length > 0) {
+    const shortcutStrings = shortcuts.map(
+      (shortcut) =>
+        `\`${prefix}${shortcut.shortcut}\`: ${shortcut.description}\n`
+    );
+    const shortcutEmbed = new Discord.MessageEmbed()
+      .setColor("#ed872d")
+      .setTitle("Configured shortcuts")
+      .setDescription(shortcutStrings.join("\n"))
+      .setTimestamp()
+      .setFooter("sent by beatnik");
+    message.channel.send(shortcutEmbed);
+  }
 }
 
 async function execute(message, serverQueue) {
@@ -106,6 +136,7 @@ async function execute(message, serverQueue) {
       }));
       if (message.content.includes(":shuffle")) shuffleArray(playlistSongs);
       queuedSongs.push(...playlistSongs);
+      message.channel.send(`Added ${playlistSongs.length} items to the queue.`);
     } else {
       const songInfo = await ytdl.getInfo(url);
       const song = {
