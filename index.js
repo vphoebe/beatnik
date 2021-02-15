@@ -246,7 +246,12 @@ function play(guild, song) {
   }
 
   const dispatcher = serverQueue.connection
-    .play(ytdl(song.url))
+    .play(
+      ytdl(song.url, {
+        quality: "highestaudio",
+        filter: (format) => format.container === "mp4",
+      })
+    )
     .on("finish", () => {
       serverQueue.songs.shift();
       play(guild, serverQueue.songs[0]);
