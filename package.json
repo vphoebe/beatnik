@@ -26,11 +26,11 @@
     "discord.js": "^12.5.1",
     "ffmpeg-static": "^4.2.7",
     "opusscript": "0.0.7",
-    "prettier": "^2.2.1",
     "ytdl-core": "^4.4.5",
     "ytpl": "^2.0.5"
   },
   "devDependencies": {
-    "eslint": "^7.20.0"
+    "eslint": "^7.20.0",
+    "prettier": "^2.2.1"
   }
 }
