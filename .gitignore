@@ -105,3 +105,6 @@ dist
 
 # ignore config file
 config.json
+
+# ts build
+build

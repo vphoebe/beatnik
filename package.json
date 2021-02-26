@@ -2,10 +2,12 @@
   "name": "beatnik",
   "version": "0.1.0",
   "description": "a discord bot that tells you the time, among other things.",
-  "main": "index.js",
+  "main": "index.ts",
   "scripts": {
-    "start": "ts-node index ",
-    "debug": "ts-node-dev index --inspect"
+    "start": "ts-node index",
+    "debug": "ts-node-dev index --inspect",
+    "build": "npx tsc --build",
+    "deploy": "pm2 deploy production"
   },
   "repository": {
     "type": "git",
