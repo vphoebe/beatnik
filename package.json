@@ -7,6 +7,7 @@
     "start": "ts-node index",
     "debug": "ts-node-dev index --inspect",
     "build": "npx tsc --build",
+    "clean": "npx tsc --build --clean",
     "deploy": "pm2 deploy production"
   },
   "repository": {
