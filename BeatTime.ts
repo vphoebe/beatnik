@@ -1,4 +1,5 @@
 class BeatTime {
+  private value: number;
   constructor(date = new Date()) {
     this.value =
       ((((date.getUTCHours() + 1) % 24) +
@@ -23,4 +24,4 @@ class BeatTime {
   }
 }
 
-module.exports = BeatTime;
+export default BeatTime;

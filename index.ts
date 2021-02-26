@@ -1,16 +1,31 @@
-const Discord = require("discord.js");
-const { prefix, token, youtubeKey, shortcuts } = require("./config.json");
-const ytdl = require("ytdl-core");
-const ytpl = require("ytpl");
-const YouTube = require("discord-youtube-api");
+import Discord from "discord.js";
+import { prefix, token, youtubeKey, shortcuts } from "./config.json";
+import ytdl from "ytdl-core";
+import ytpl from "ytpl";
+import YouTube from "discord-youtube-api";
+import presence from "./presence";
 const youtube = new YouTube(youtubeKey);
-const presence = require("./presence");
+
+type PlaylistSong = {
+  title: string;
+  url: string;
+  user: string;
+};
+
+type Queue = {
+  textChannel: Discord.TextChannel;
+  voiceChannel: Discord.VoiceChannel;
+  connection: Discord.VoiceConnection | null;
+  songs: PlaylistSong[];
+  volume: number;
+  playing: boolean;
+};
 
 const client = new Discord.Client();
 
-const botQueue = new Map();
+const botQueue = new Map<String, Queue>();
 
-function shuffleArray(array) {
+function shuffleArray<T>(array: T[]) {
   for (let i = array.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
     [array[i], array[j]] = [array[j], array[i]];
@@ -35,8 +50,10 @@ client.once("disconnect", () => {
 client.on("message", async (message) => {
   if (message.author.bot) return;
   if (!message.content.startsWith(prefix)) return;
+  if (message.guild === null) return;
 
   const serverQueue = botQueue.get(message.guild.id);
+  if (!serverQueue) return;
 
   const args = message.content.split(" ");
   const command = args[0].substring(1);
@@ -73,7 +90,7 @@ client.on("message", async (message) => {
   }
 });
 
-function listCommands(message) {
+function listCommands(message: Discord.Message) {
   const commandEmbed = new Discord.MessageEmbed()
     .setColor("#ed872d")
     .setTitle("All commands")
@@ -91,7 +108,7 @@ function listCommands(message) {
   message.channel.send(commandEmbed);
 }
 
-function listShortcuts(message) {
+function listShortcuts(message: Discord.Message) {
   if (shortcuts.length > 0) {
     const shortcutStrings = shortcuts.map(
       (shortcut) =>
@@ -107,7 +124,10 @@ function listShortcuts(message) {
   }
 }
 
-async function execute(message, serverQueue) {
+async function execute(message: Discord.Message, serverQueue: Queue) {
+  if (message.member === null) return;
+  if (message.client.user === null) return;
+
   const args = message.content.split(" ");
 
   const voiceChannel = message.member.voice.channel;
@@ -116,6 +136,11 @@ async function execute(message, serverQueue) {
       "You need to be in a voice channel to play music!"
     );
   const permissions = voiceChannel.permissionsFor(message.client.user);
+  if (!permissions) {
+    return message.channel.send(
+      `Failed to read permissions for ${message.client.user.username}`
+    );
+  }
   if (!permissions.has("CONNECT") || !permissions.has("SPEAK")) {
     return message.channel.send(
       "I need the permissions to join and speak in your voice channel!"
@@ -159,8 +184,8 @@ async function execute(message, serverQueue) {
   }
 
   if (!serverQueue) {
-    const queueConstruct = {
-      textChannel: message.channel,
+    const queueConstruct: Queue = {
+      textChannel: message.channel as Discord.TextChannel,
       voiceChannel: voiceChannel,
       connection: null,
       songs: [],
@@ -168,16 +193,22 @@ async function execute(message, serverQueue) {
       playing: true,
     };
 
-    botQueue.set(message.guild.id, queueConstruct);
-    queueConstruct.songs.push(...queuedSongs);
+    if (message.guild) {
+      botQueue.set(message.guild.id, queueConstruct);
+      queueConstruct.songs.push(...queuedSongs);
+    }
 
     try {
       var connection = await voiceChannel.join();
       queueConstruct.connection = connection;
-      play(message.guild, queueConstruct.songs[0]);
+      if (message.guild) {
+        play(message.guild, queueConstruct.songs[0]);
+      }
     } catch (err) {
       console.log(err);
-      botQueue.delete(message.guild.id);
+      if (message.guild !== null) {
+        botQueue.delete(message.guild.id);
+      }
       return message.channel.send(err);
     }
   } else {
@@ -194,15 +225,17 @@ async function execute(message, serverQueue) {
   }
 }
 
-function changeVolume(message, serverQueue) {
+function changeVolume(message: Discord.Message, serverQueue: Queue) {
   const args = message.content.split(" ");
   const inputValue = args[1];
   if (inputValue && serverQueue) {
     const parsedValue = parseInt(inputValue);
     if (parsedValue && parsedValue <= 100 && parsedValue >= 0) {
-      const dispatcher = serverQueue.connection.dispatcher;
-      dispatcher.setVolume(parsedValue / 100);
-      message.channel.send(`Changing volume to ${parsedValue}%...`);
+      const dispatcher = serverQueue.connection?.dispatcher ?? null;
+      if (dispatcher) {
+        dispatcher.setVolume(parsedValue / 100);
+        message.channel.send(`Changing volume to ${parsedValue}%...`);
+      }
     } else {
       message.channel.send("Please input a number between 0 and 100.");
     }
@@ -213,14 +246,14 @@ function changeVolume(message, serverQueue) {
   }
 }
 
-function listQueue(message, serverQueue) {
+function listQueue(message: Discord.Message, serverQueue: Queue) {
   if (serverQueue?.songs?.length > 0) {
     const queueItemStrings = serverQueue.songs.map((item, i) => {
       return `**[${i}]** ${item.title}\n Queued by \`${item.user}\``;
     });
 
     const args = message.content.split(" ");
-    const pageNumber = args[1] - 1 || 0;
+    const pageNumber = Number(args[1]) - 1 || 0;
 
     const pagedItems = queueItemStrings
       .slice(1)
@@ -246,18 +279,18 @@ function listQueue(message, serverQueue) {
   }
 }
 
-function skip(message, serverQueue) {
-  if (!message.member.voice.channel)
+function skip(message: Discord.Message, serverQueue: Queue) {
+  if (!message.member?.voice.channel ?? false)
     return message.channel.send(
       "You have to be in a voice channel to stop the music!"
     );
   if (!serverQueue)
     return message.channel.send("There is no song that I could skip!");
-  serverQueue.connection.dispatcher.end();
+  serverQueue.connection?.dispatcher.end();
 }
 
-function stop(message, serverQueue) {
-  if (!message.member.voice.channel)
+function stop(message: Discord.Message, serverQueue: Queue) {
+  if (!message.member?.voice.channel ?? false)
     return message.channel.send(
       "You have to be in a voice channel to stop the music!"
     );
@@ -266,11 +299,14 @@ function stop(message, serverQueue) {
     return message.channel.send("There is no song that I could stop!");
 
   serverQueue.songs = [];
-  serverQueue.connection.dispatcher.end();
+  serverQueue.connection?.dispatcher.end();
 }
 
-function play(guild, song) {
+function play(guild: Discord.Guild, song: PlaylistSong) {
   const serverQueue = botQueue.get(guild.id);
+  if (!serverQueue) {
+    return;
+  }
   if (!song) {
     serverQueue.voiceChannel.leave();
     botQueue.delete(guild.id);
@@ -278,7 +314,7 @@ function play(guild, song) {
   }
 
   const dispatcher = serverQueue.connection
-    .play(
+    ?.play(
       ytdl(song.url, {
         quality: "highestaudio",
         filter: (format) => format.container === "mp4",
@@ -289,7 +325,7 @@ function play(guild, song) {
       play(guild, serverQueue.songs[0]);
     })
     .on("error", (error) => console.error(error));
-  dispatcher.setVolume(serverQueue.volume);
+  dispatcher?.setVolume(serverQueue.volume);
   serverQueue.textChannel.send(`Now playing: **${song.title}**`);
 }
 

@@ -4,8 +4,8 @@
   "description": "a discord bot that tells you the time, among other things.",
   "main": "index.js",
   "scripts": {
-    "start": "node index ",
-    "debug": "node index --inspect"
+    "start": "ts-node index ",
+    "debug": "ts-node-dev index --inspect"
   },
   "repository": {
     "type": "git",
@@ -26,11 +26,15 @@
     "discord.js": "^12.5.1",
     "ffmpeg-static": "^4.2.7",
     "opusscript": "0.0.7",
+    "typescript": "^4.2.2",
     "ytdl-core": "^4.4.5",
     "ytpl": "^2.0.5"
   },
   "devDependencies": {
+    "@types/node": "^14.14.31",
     "eslint": "^7.20.0",
-    "prettier": "^2.2.1"
+    "prettier": "^2.2.1",
+    "ts-node": "^9.1.1",
+    "ts-node-dev": "^1.1.6"
   }
 }
