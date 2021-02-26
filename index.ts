@@ -12,14 +12,16 @@ type PlaylistSong = {
   user: string;
 };
 
-type Queue = {
-  textChannel: Discord.TextChannel;
-  voiceChannel: Discord.VoiceChannel;
-  connection: Discord.VoiceConnection | null;
-  songs: PlaylistSong[];
-  volume: number;
-  playing: boolean;
-};
+type Queue =
+  | {
+      textChannel: Discord.TextChannel;
+      voiceChannel: Discord.VoiceChannel;
+      connection: Discord.VoiceConnection | null;
+      songs: PlaylistSong[];
+      volume: number;
+      playing: boolean;
+    }
+  | undefined; // queue is not instantiated immediately
 
 const client = new Discord.Client();
 
@@ -53,7 +55,6 @@ client.on("message", async (message) => {
   if (message.guild === null) return;
 
   const serverQueue = botQueue.get(message.guild.id);
-  if (!serverQueue) return;
 
   const args = message.content.split(" ");
   const command = args[0].substring(1);
@@ -247,7 +248,10 @@ function changeVolume(message: Discord.Message, serverQueue: Queue) {
 }
 
 function listQueue(message: Discord.Message, serverQueue: Queue) {
-  if (serverQueue?.songs?.length > 0) {
+  if (!serverQueue) {
+    return message.channel.send("No queue currently exists.");
+  }
+  if (serverQueue.songs.length > 0) {
     const queueItemStrings = serverQueue.songs.map((item, i) => {
       return `**[${i}]** ${item.title}\n Queued by \`${item.user}\``;
     });
