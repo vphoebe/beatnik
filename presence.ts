@@ -1,12 +1,13 @@
-const BeatTime = require("./BeatTime");
-let currentBeats;
+import { Client } from "discord.js";
+import BeatTime from "./BeatTime";
+let currentBeats: string;
 
-module.exports = (client) => {
+export default (client: Client) => {
   const setPresence = () => {
     const newBeats = new BeatTime().string;
     if (newBeats !== currentBeats) {
       currentBeats = newBeats;
-      client.user.setPresence({
+      client.user?.setPresence({
         activity: {
           name: currentBeats,
           type: "PLAYING",
