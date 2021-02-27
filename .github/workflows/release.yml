@@ -1,7 +1,7 @@
 name: CI release
-  on:
-    push:
-      branches: [ release ]
+on:
+  push:
+    branches: [release]
 
 jobs:
   deploy:
