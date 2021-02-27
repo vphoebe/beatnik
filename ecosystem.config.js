@@ -8,13 +8,14 @@ module.exports = {
 
   deploy: {
     production: {
-      user: "nick",
-      host: "tarta",
-      ref: "origin/main",
+      user: "ec2-user",
+      host: "beatnik.sjw.zone",
+      key: "deploy.key",
+      ref: "origin/release",
       repo: "git@github.com:vphoebe/beatnik.git",
-      path: "/sjw/beatnik",
+      path: "/srv/beatnik-prod",
       "post-deploy":
-        "npm install && npm run build && pm2 reload ecosystem.config.js --env production",
+        "npm install && npm run clean && npm run build && pm2 reload ecosystem.config.js --env production",
     },
   },
 };
