@@ -8,7 +8,7 @@
     "debug": "ts-node-dev index --inspect",
     "build": "npx tsc --build",
     "clean": "npx tsc --build --clean",
-    "deploy": "pm2 deploy production"
+    "deploy": "pm2 deploy production --force"
   },
   "repository": {
     "type": "git",
