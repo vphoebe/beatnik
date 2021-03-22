@@ -5,13 +5,22 @@ import { play } from "./transport";
 import ytdl from "ytdl-core";
 import ytpl from "ytpl";
 import YouTube from "discord-youtube-api";
+const getRandomValues = require("get-random-values");
 const youtube = new YouTube(youtubeKey);
 
-function shuffleArray<T>(array: T[]) {
-  for (let i = array.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [array[i], array[j]] = [array[j], array[i]];
+function shuffle<T>(a: T[]) {
+  var n = a.length, // The number of items left to shuffle (loop invariant)
+    r = new Uint8Array(n), // Some random values
+    k,
+    t;
+  getRandomValues(r);
+  while (n > 1) {
+    k = r[n - 1] % n; // 0 <= k < n
+    t = a[--n]; // swap elements n and k
+    a[n] = a[k];
+    a[k] = t;
   }
+  return a; // for a fluent API
 }
 
 export async function execute(
@@ -47,13 +56,13 @@ export async function execute(
 
   if (ytRegex.test(url)) {
     if (url.includes("playlist")) {
-      const playlistInfo = await ytpl(url);
+      const playlistInfo = await ytpl(url, { pages: Infinity });
       const playlistSongs = playlistInfo.items.map((item) => ({
         title: item.title,
         url: item.shortUrl,
         user: message.author.username,
       }));
-      if (message.content.includes(":shuffle")) shuffleArray(playlistSongs);
+      if (message.content.includes(":shuffle")) shuffle(playlistSongs);
       queuedSongs.push(...playlistSongs);
       message.channel.send(`Added ${playlistSongs.length} items to the queue.`);
     } else {
