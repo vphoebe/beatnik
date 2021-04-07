@@ -1,6 +1,7 @@
 import Discord from "discord.js";
 import { Queue, BotQueue, PlaylistSong } from "../types";
 import ytdl from "ytdl-core";
+import getDurationString from "../util/duration";
 
 export function skip(message: Discord.Message, serverQueue: Queue) {
   if (!message.member?.voice.channel ?? false)
@@ -67,5 +68,14 @@ export function play(
       play(guild, serverQueue.songs[0], botQueue);
     });
   dispatcher?.setVolume(serverQueue.volume);
-  serverQueue.textChannel.send(`Now playing: **${song.title}**`);
+  // serverQueue.textChannel.send(`Now playing: **${song.title}**`);
+  const nowPlayingEmbed = new Discord.MessageEmbed()
+    .setAuthor("Now playing...")
+    .setColor("#ed872d")
+    .setTitle(song.title)
+    .addField("Duration", getDurationString(song.length), true)
+    .addField("Queued by", song.user, true)
+    .setThumbnail(song.thumbnail ?? "")
+    .setURL(song.url);
+  serverQueue.textChannel.send(nowPlayingEmbed);
 }
