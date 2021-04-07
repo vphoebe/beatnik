@@ -1,5 +1,5 @@
 import Discord from "discord.js";
-import { Queue, BotQueue } from "../types";
+import { Queue, BotQueue, PlaylistSong } from "../types";
 import { youtubeKey, defaultVolume } from "../config.json";
 import { play } from "./transport";
 import ytdl from "ytdl-core";
@@ -51,7 +51,7 @@ export async function execute(
   }
 
   const url = args[1];
-  const queuedSongs = [];
+  const queuedSongs: PlaylistSong[] = [];
   const ytRegex = /^((?:https?:)?\/\/)?((?:www|m)\.)?((?:youtube\.com|youtu.be))(\/(?:[\w-]+\?v=|embed\/|v\/)?)([\w-]+)(\S+)?$/;
 
   if (ytRegex.test(url)) {
@@ -62,6 +62,8 @@ export async function execute(
           title: item.title,
           url: item.shortUrl,
           user: message.author.username,
+          thumbnail: item.bestThumbnail.url,
+          length: item.durationSec,
         }));
         if (message.content.includes(":shuffle")) shuffle(playlistSongs);
         queuedSongs.push(...playlistSongs);
@@ -74,6 +76,8 @@ export async function execute(
           title: songInfo.videoDetails.title,
           url: songInfo.videoDetails.video_url,
           user: message.author.username,
+          thumbnail: songInfo.thumbnail_url,
+          length: parseInt(songInfo.videoDetails.lengthSeconds),
         };
         queuedSongs.push(song);
       }
@@ -90,6 +94,8 @@ export async function execute(
     const song = {
       title: searchResult.title,
       url: searchResult.url,
+      length: searchResult.durationSeconds,
+      thumbnail: searchResult.thumbnail,
       user: message.author.username,
     };
     queuedSongs.push(song);

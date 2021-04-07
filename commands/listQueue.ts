@@ -1,6 +1,7 @@
 import Discord from "discord.js";
 import { Queue } from "../types";
 import { prefix } from "../config.json";
+import getDurationString from "../util/duration";
 
 export function listQueue(message: Discord.Message, serverQueue: Queue) {
   if (!serverQueue) {
@@ -8,7 +9,9 @@ export function listQueue(message: Discord.Message, serverQueue: Queue) {
   }
   if (serverQueue.songs.length > 0) {
     const queueItemStrings = serverQueue.songs.map((item, i) => {
-      return `**[${i}]** ${item.title}\n Queued by \`${item.user}\``;
+      return `**[${i}]** ${item.title} (${getDurationString(
+        item.length
+      )})\n Queued by \`${item.user}\``;
     });
 
     const args = message.content.split(" ");

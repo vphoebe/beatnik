@@ -4,6 +4,8 @@ export type PlaylistSong = {
   title: string;
   url: string;
   user: string;
+  thumbnail: string | null;
+  length: number | null;
 };
 
 export type Queue =
