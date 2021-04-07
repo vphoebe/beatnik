@@ -55,24 +55,33 @@ export async function execute(
   const ytRegex = /^((?:https?:)?\/\/)?((?:www|m)\.)?((?:youtube\.com|youtu.be))(\/(?:[\w-]+\?v=|embed\/|v\/)?)([\w-]+)(\S+)?$/;
 
   if (ytRegex.test(url)) {
-    if (url.includes("playlist")) {
-      const playlistInfo = await ytpl(url, { pages: Infinity });
-      const playlistSongs = playlistInfo.items.map((item) => ({
-        title: item.title,
-        url: item.shortUrl,
-        user: message.author.username,
-      }));
-      if (message.content.includes(":shuffle")) shuffle(playlistSongs);
-      queuedSongs.push(...playlistSongs);
-      message.channel.send(`Added ${playlistSongs.length} items to the queue.`);
-    } else {
-      const songInfo = await ytdl.getInfo(url);
-      const song = {
-        title: songInfo.videoDetails.title,
-        url: songInfo.videoDetails.video_url,
-        user: message.author.username,
-      };
-      queuedSongs.push(song);
+    try {
+      if (url.includes("playlist")) {
+        const playlistInfo = await ytpl(url, { pages: Infinity });
+        const playlistSongs = playlistInfo.items.map((item) => ({
+          title: item.title,
+          url: item.shortUrl,
+          user: message.author.username,
+        }));
+        if (message.content.includes(":shuffle")) shuffle(playlistSongs);
+        queuedSongs.push(...playlistSongs);
+        message.channel.send(
+          `Added ${playlistSongs.length} items to the queue.`
+        );
+      } else {
+        const songInfo = await ytdl.getInfo(url);
+        const song = {
+          title: songInfo.videoDetails.title,
+          url: songInfo.videoDetails.video_url,
+          user: message.author.username,
+        };
+        queuedSongs.push(song);
+      }
+    } catch (err) {
+      console.error(err);
+      message.channel.send(
+        "I couldn't play that track... try another link or search."
+      );
     }
   } else {
     // treat as search query
@@ -98,6 +107,9 @@ export async function execute(
 
     if (message.guild) {
       botQueue.set(message.guild.id, queueConstruct);
+      console.log(
+        `[${queueConstruct.voiceChannel.id}] [${message.author.username}] Added songs to the queue`
+      );
       queueConstruct.songs.push(...queuedSongs);
     }
 
@@ -115,6 +127,9 @@ export async function execute(
       return message.channel.send(err);
     }
   } else {
+    console.log(
+      `[${serverQueue.voiceChannel.id}] [${message.author.username}] Added songs to the queue`
+    );
     serverQueue.songs.push(...queuedSongs);
     if (queuedSongs.length === 1) {
       return message.channel.send(

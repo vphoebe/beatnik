@@ -9,6 +9,7 @@ export function skip(message: Discord.Message, serverQueue: Queue) {
     );
   if (!serverQueue)
     return message.channel.send("There is no song that I could skip!");
+  console.log(`[${serverQueue.voiceChannel.id}] Skipping current track`);
   serverQueue.connection?.dispatcher.end();
 }
 
@@ -21,6 +22,7 @@ export function stop(message: Discord.Message, serverQueue: Queue) {
   if (!serverQueue)
     return message.channel.send("There is no song that I could stop!");
 
+  console.log(`[${serverQueue.voiceChannel.id}] Stopping`);
   serverQueue.songs = [];
   serverQueue.connection?.dispatcher.end();
 }
@@ -47,11 +49,23 @@ export function play(
         filter: (format) => format.container === "mp4",
       })
     )
+    .on("start", () =>
+      console.log(`[${serverQueue.voiceChannel.id}] Now playing ${song.url}`)
+    )
     .on("finish", () => {
       serverQueue.songs.shift();
       play(guild, serverQueue.songs[0], botQueue);
     })
-    .on("error", (error) => console.error(error));
+    .on("error", (error) => {
+      console.error(error);
+      if (error.message.includes("Music Premium")) {
+        serverQueue.textChannel.send(
+          `**${song.title}** can't be played, as it's only available for Music Premium members. Skipping.`
+        );
+      }
+      serverQueue.songs.shift();
+      play(guild, serverQueue.songs[0], botQueue);
+    });
   dispatcher?.setVolume(serverQueue.volume);
   serverQueue.textChannel.send(`Now playing: **${song.title}**`);
 }
