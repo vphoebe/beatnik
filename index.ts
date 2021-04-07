@@ -22,4 +22,17 @@ client.once("disconnect", () => {
 
 client.on("message", (message) => handleMessage(message, botQueue));
 
+client.on("voiceStateUpdate", (oldState, newState) => {
+  // leave channel if it's just the bot
+  if (
+    oldState.channelID !== oldState.guild.me?.voice.channelID ||
+    newState.channel
+  )
+    return;
+  const totalMembers = oldState.channel?.members.size;
+  if (totalMembers && totalMembers - 1 === 0)
+    // - 1 for bot user
+    return oldState.channel?.leave();
+});
+
 client.login(token);

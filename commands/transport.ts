@@ -68,7 +68,6 @@ export function play(
       play(guild, serverQueue.songs[0], botQueue);
     });
   dispatcher?.setVolume(serverQueue.volume);
-  // serverQueue.textChannel.send(`Now playing: **${song.title}**`);
   const nowPlayingEmbed = new Discord.MessageEmbed()
     .setAuthor("Now playing...")
     .setColor("#ed872d")
