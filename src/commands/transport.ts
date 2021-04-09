@@ -68,7 +68,7 @@ export function play(
         );
       } else {
         guildQueue.textChannel.send(
-          `**${song.title} can't be played, skipping...`
+          `**${song.title}** can't be played, skipping...`
         );
       }
       guildQueue.songs.shift();
