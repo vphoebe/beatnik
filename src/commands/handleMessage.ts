@@ -1,5 +1,5 @@
 import Discord from "discord.js";
-import { prefix, shortcuts } from "../../config.json";
+import { prefix, shortcuts } from "../config.json";
 import {
   execute,
   skip,

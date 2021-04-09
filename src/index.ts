@@ -1,5 +1,5 @@
 import Discord from "discord.js";
-import { token } from "../config.json";
+import { token } from "./config.json";
 import presence from "./presence/presence";
 import { Queue, BotQueue } from "./types";
 import { handleMessage } from "./commands/handleMessage";

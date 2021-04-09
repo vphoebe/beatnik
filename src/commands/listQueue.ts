@@ -1,6 +1,6 @@
 import Discord from "discord.js";
 import { Queue } from "../types";
-import { prefix } from "../../config.json";
+import { prefix } from "../config.json";
 import getDurationString from "../util/duration";
 
 export function listQueue(message: Discord.Message, serverQueue: Queue) {
