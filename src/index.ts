@@ -22,9 +22,12 @@ client.on("voiceStateUpdate", (oldState, newState) => {
   )
     return;
   const totalMembers = oldState.channel?.members.size;
-  if (totalMembers && totalMembers - 1 === 0)
+  if (totalMembers && totalMembers - 1 === 0) {
     // - 1 for bot user
+    // destroy queue
+    globalQueues.delete(oldState.guild.id);
     return oldState.channel?.leave();
+  }
 });
 
 client.login(token);
