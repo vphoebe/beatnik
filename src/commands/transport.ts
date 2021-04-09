@@ -20,8 +20,7 @@ export function stop(message: Discord.Message, guildQueue: Queue) {
       "You have to be in a voice channel to control the music."
     );
 
-  if (!guildQueue)
-    return message.channel.send("There is no song that I could stop!");
+  if (!guildQueue) return message.channel.send("Nothing is playing right now.");
 
   if (!guildQueue.connection) return;
   if (!guildQueue.connection.dispatcher) return;
@@ -61,6 +60,7 @@ export function play(
       play(guild, guildQueue.songs[0], GlobalQueues);
     })
     .on("error", (error) => {
+      console.error(`An error occurred for ${song.url}`);
       console.error(error);
       if (error.message.includes("Music Premium")) {
         guildQueue.textChannel.send(
