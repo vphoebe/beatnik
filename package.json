@@ -1,8 +1,8 @@
 {
   "name": "beatnik",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "a discord bot that tells you the time, among other things.",
-  "main": "index.ts",
+  "main": "src/index.ts",
   "scripts": {
     "start": "nodemon --watch './**/*.ts' --exec 'ts-node' src/index.ts",
     "build": "npx tsc --build",
@@ -29,7 +29,6 @@
     "ffmpeg-static": "^4.2.7",
     "get-random-values": "^1.2.2",
     "opusscript": "0.0.7",
-    "typescript": "^4.2.2",
     "ytdl-core": "^4.5.0",
     "ytpl": "^2.0.5"
   },
@@ -39,6 +38,7 @@
     "nodemon": "^2.0.7",
     "prettier": "^2.2.1",
     "ts-node": "^9.1.1",
-    "ts-node-dev": "^1.1.6"
+    "ts-node-dev": "^1.1.6",
+    "typescript": "^4.2.2"
   }
 }
