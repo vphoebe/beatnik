@@ -12,14 +12,6 @@ client.once("ready", () => {
   presence(client);
 });
 
-client.once("reconnecting", () => {
-  console.log("Reconnecting!");
-});
-
-client.once("disconnect", () => {
-  console.log("Disconnect!");
-});
-
 client.on("message", (message) => handleMessage(message, botQueue));
 
 client.on("voiceStateUpdate", (oldState, newState) => {
