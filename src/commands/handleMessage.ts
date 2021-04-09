@@ -1,7 +1,7 @@
 import Discord from "discord.js";
 import { prefix, shortcuts } from "../config.json";
 import {
-  execute,
+  queue,
   skip,
   stop,
   listQueue,
@@ -9,17 +9,17 @@ import {
   listCommands,
   listShortcuts,
 } from "../commands";
-import { BotQueue } from "../types";
+import { GlobalQueues } from "../types";
 
 export async function handleMessage(
   message: Discord.Message,
-  botQueue: BotQueue
+  globalQueues: GlobalQueues
 ) {
   if (message.author.bot) return;
   if (!message.content.startsWith(prefix)) return;
   if (message.guild === null) return;
 
-  const serverQueue = botQueue.get(message.guild.id);
+  const guildQueue = globalQueues.get(message.guild.id);
 
   const args = message.content.split(" ");
   const command = args[0].substring(1);
@@ -31,22 +31,26 @@ export async function handleMessage(
     message.content = `${prefix}${detectedShortcut.command}`;
   }
 
-  if (message.content.startsWith(`${prefix}p`)) {
-    execute(message, serverQueue, botQueue);
+  const isCommand = (query: string): boolean => {
+    return message.content.startsWith(`${prefix}${query}`);
+  };
+
+  if (isCommand("p")) {
+    queue(message, guildQueue, globalQueues);
     return;
-  } else if (message.content.startsWith(`${prefix}skip`)) {
-    skip(message, serverQueue);
+  } else if (isCommand("skip")) {
+    skip(message, guildQueue);
     return;
-  } else if (message.content.startsWith(`${prefix}stop`)) {
-    stop(message, serverQueue);
+  } else if (isCommand("stop")) {
+    stop(message, guildQueue);
     return;
-  } else if (message.content.startsWith(`${prefix}q`)) {
-    listQueue(message, serverQueue);
+  } else if (isCommand("q")) {
+    listQueue(message, guildQueue);
     return;
-  } else if (message.content.startsWith(`${prefix}volume`)) {
-    changeVolume(message, serverQueue);
+  } else if (isCommand("volume")) {
+    changeVolume(message, guildQueue);
     return;
-  } else if (message.content.startsWith(`${prefix}help`)) {
+  } else if (isCommand("h")) {
     listCommands(message);
     listShortcuts(message);
     return;

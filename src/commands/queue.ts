@@ -1,5 +1,5 @@
 import Discord from "discord.js";
-import { Queue, BotQueue, PlaylistSong } from "../types";
+import { Queue, GlobalQueues, PlaylistSong } from "../types";
 import { youtubeKey, defaultVolume } from "../config.json";
 import { play } from "./transport";
 import ytdl from "ytdl-core";
@@ -23,20 +23,21 @@ function shuffle<T>(a: T[]) {
   return a; // for a fluent API
 }
 
-export async function execute(
+export async function queue(
   message: Discord.Message,
-  serverQueue: Queue,
-  botQueue: BotQueue
+  guildQueue: Queue,
+  globalQueues: GlobalQueues
 ) {
   if (message.member === null) return;
   if (message.client.user === null) return;
+  if (message.guild === null) return;
 
   const args = message.content.split(" ");
 
   const voiceChannel = message.member.voice.channel;
   if (!voiceChannel)
     return message.channel.send(
-      "You need to be in a voice channel to play music!"
+      `${message.member.user.username}, you need to join a voice channel before controlling the music.`
     );
   const permissions = voiceChannel.permissionsFor(message.client.user);
   if (!permissions) {
@@ -46,7 +47,7 @@ export async function execute(
   }
   if (!permissions.has("CONNECT") || !permissions.has("SPEAK")) {
     return message.channel.send(
-      "I need the permissions to join and speak in your voice channel!"
+      "I don't have permission to join and speak in your voice channel."
     );
   }
 
@@ -55,6 +56,7 @@ export async function execute(
   const ytRegex = /^((?:https?:)?\/\/)?((?:www|m)\.)?((?:youtube\.com|youtu.be))(\/(?:[\w-]+\?v=|embed\/|v\/)?)([\w-]+)(\S+)?$/;
 
   if (ytRegex.test(url)) {
+    // play a youtube url
     try {
       if (url.includes("playlist")) {
         const playlistInfo = await ytpl(url, { pages: Infinity });
@@ -90,19 +92,26 @@ export async function execute(
   } else {
     // treat as search query
     const query = args.slice(1).join(" ");
-    const searchResult = await youtube.searchVideos(query);
-    const song = {
-      title: searchResult.title,
-      url: searchResult.url,
-      length: searchResult.durationSeconds,
-      thumbnail: searchResult.thumbnail,
-      user: message.author.username,
-    };
-    queuedSongs.push(song);
+    if (query.length > 0) {
+      const searchResult = await youtube.searchVideos(query);
+      const song = {
+        title: searchResult.title,
+        url: searchResult.url,
+        length: searchResult.durationSeconds,
+        thumbnail: searchResult.thumbnail,
+        user: message.author.username,
+      };
+      queuedSongs.push(song);
+    } else {
+      return message.channel.send(
+        "Enter a YouTube URL or search term to play a track."
+      );
+    }
   }
 
-  if (!serverQueue) {
-    const queueConstruct: Queue = {
+  if (!guildQueue) {
+    // create queue for this guild
+    const newGuildQueue: Queue = {
       textChannel: message.channel as Discord.TextChannel,
       voiceChannel: voiceChannel,
       connection: null,
@@ -112,31 +121,34 @@ export async function execute(
     };
 
     if (message.guild) {
-      botQueue.set(message.guild.id, queueConstruct);
+      globalQueues.set(message.guild.id, newGuildQueue);
       console.log(
-        `[${queueConstruct.voiceChannel.id}] [${message.author.username}] Added songs to the queue`
+        `New guild queue created for ${newGuildQueue.voiceChannel.id}`
       );
-      queueConstruct.songs.push(...queuedSongs);
+      console.log(
+        `[${newGuildQueue.voiceChannel.id}] [${message.author.username}] Added songs to the queue`
+      );
+      newGuildQueue.songs.push(...queuedSongs);
     }
 
     try {
       var connection = await voiceChannel.join();
-      queueConstruct.connection = connection;
+      newGuildQueue.connection = connection;
       if (message.guild) {
-        play(message.guild, queueConstruct.songs[0], botQueue);
+        play(message.guild, newGuildQueue.songs[0], globalQueues);
       }
     } catch (err) {
       console.log(err);
       if (message.guild !== null) {
-        botQueue.delete(message.guild.id);
+        globalQueues.delete(message.guild.id);
       }
       return message.channel.send(err);
     }
   } else {
     console.log(
-      `[${serverQueue.voiceChannel.id}] [${message.author.username}] Added songs to the queue`
+      `[${guildQueue.voiceChannel.id}] [${message.author.username}] Added ${queuedSongs.length} songs to the queue`
     );
-    serverQueue.songs.push(...queuedSongs);
+    guildQueue.songs.push(...queuedSongs);
     if (queuedSongs.length === 1) {
       return message.channel.send(
         `${queuedSongs[0].title} has been added to the queue!`

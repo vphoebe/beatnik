@@ -1,49 +1,52 @@
 import Discord from "discord.js";
-import { Queue, BotQueue, PlaylistSong } from "../types";
+import { Queue, GlobalQueues, PlaylistSong } from "../types";
 import ytdl from "ytdl-core";
 import getDurationString from "../util/duration";
 
-export function skip(message: Discord.Message, serverQueue: Queue) {
+export function skip(message: Discord.Message, guildQueue: Queue) {
   if (!message.member?.voice.channel ?? false)
     return message.channel.send(
-      "You have to be in a voice channel to stop the music!"
+      "You have to be in a voice channel to control the music."
     );
-  if (!serverQueue)
+  if (!guildQueue)
     return message.channel.send("There is no song that I could skip!");
-  console.log(`[${serverQueue.voiceChannel.id}] Skipping current track`);
-  serverQueue.connection?.dispatcher.end();
+  console.log(`[${guildQueue.voiceChannel.id}] Skipping current track`);
+  guildQueue.connection?.dispatcher.end();
 }
 
-export function stop(message: Discord.Message, serverQueue: Queue) {
+export function stop(message: Discord.Message, guildQueue: Queue) {
   if (!message.member?.voice.channel ?? false)
     return message.channel.send(
-      "You have to be in a voice channel to stop the music!"
+      "You have to be in a voice channel to control the music."
     );
 
-  if (!serverQueue)
+  if (!guildQueue)
     return message.channel.send("There is no song that I could stop!");
 
-  console.log(`[${serverQueue.voiceChannel.id}] Stopping`);
-  serverQueue.songs = [];
-  serverQueue.connection?.dispatcher.end();
+  if (!guildQueue.connection) return;
+  if (!guildQueue.connection.dispatcher) return;
+
+  console.log(`[${guildQueue.voiceChannel.id}] Stopping`);
+  guildQueue.songs = [];
+  guildQueue.connection.dispatcher.end();
 }
 
 export function play(
   guild: Discord.Guild,
   song: PlaylistSong,
-  botQueue: BotQueue
+  GlobalQueues: GlobalQueues
 ) {
-  const serverQueue = botQueue.get(guild.id);
-  if (!serverQueue) {
+  const guildQueue = GlobalQueues.get(guild.id);
+  if (!guildQueue) {
     return;
   }
   if (!song) {
-    serverQueue.voiceChannel.leave();
-    botQueue.delete(guild.id);
+    guildQueue.voiceChannel.leave();
+    GlobalQueues.delete(guild.id);
     return;
   }
 
-  const dispatcher = serverQueue.connection
+  const dispatcher = guildQueue.connection
     ?.play(
       ytdl(song.url, {
         quality: "highestaudio",
@@ -51,23 +54,27 @@ export function play(
       })
     )
     .on("start", () =>
-      console.log(`[${serverQueue.voiceChannel.id}] Now playing ${song.url}`)
+      console.log(`[${guildQueue.voiceChannel.id}] Now playing ${song.url}`)
     )
     .on("finish", () => {
-      serverQueue.songs.shift();
-      play(guild, serverQueue.songs[0], botQueue);
+      guildQueue.songs.shift();
+      play(guild, guildQueue.songs[0], GlobalQueues);
     })
     .on("error", (error) => {
       console.error(error);
       if (error.message.includes("Music Premium")) {
-        serverQueue.textChannel.send(
-          `**${song.title}** can't be played, as it's only available for Music Premium members. Skipping.`
+        guildQueue.textChannel.send(
+          `**${song.title}** can't be played, as it's only available for Music Premium members. Skipping...`
+        );
+      } else {
+        guildQueue.textChannel.send(
+          `**${song.title} can't be played, skipping...`
         );
       }
-      serverQueue.songs.shift();
-      play(guild, serverQueue.songs[0], botQueue);
+      guildQueue.songs.shift();
+      play(guild, guildQueue.songs[0], GlobalQueues);
     });
-  dispatcher?.setVolume(serverQueue.volume);
+  dispatcher?.setVolume(guildQueue.volume);
   const nowPlayingEmbed = new Discord.MessageEmbed()
     .setAuthor("Now playing...")
     .setColor("#ed872d")
@@ -76,5 +83,5 @@ export function play(
     .addField("Queued by", song.user, true)
     .setThumbnail(song.thumbnail ?? "")
     .setURL(song.url);
-  serverQueue.textChannel.send(nowPlayingEmbed);
+  guildQueue.textChannel.send(nowPlayingEmbed);
 }
