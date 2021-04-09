@@ -5,12 +5,14 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "debug npm",
-      "request": "launch",
-      "runtimeArgs": ["run-script", "debug"],
-      "runtimeExecutable": "npm",
+      "type": "node",
+      "request": "attach",
+      "name": "Attach to nodemon",
       "skipFiles": ["<node_internals>/**"],
-      "type": "pwa-node"
+      "processId": "${command:PickProcess}",
+      "restart": true,
+      "outFiles": ["${workspaceFolder}/src/*.ts"],
+      "protocol": "inspector"
     }
   ]
 }

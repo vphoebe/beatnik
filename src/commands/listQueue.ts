@@ -3,12 +3,12 @@ import { Queue } from "../types";
 import { prefix } from "../config.json";
 import getDurationString from "../util/duration";
 
-export function listQueue(message: Discord.Message, serverQueue: Queue) {
-  if (!serverQueue) {
+export function listQueue(message: Discord.Message, guildQueue: Queue) {
+  if (!guildQueue) {
     return message.channel.send("No queue currently exists.");
   }
-  if (serverQueue.songs.length > 0) {
-    const queueItemStrings = serverQueue.songs.map((item, i) => {
+  if (guildQueue.songs.length > 0) {
+    const queueItemStrings = guildQueue.songs.map((item, i) => {
       return `**[${i}]** ${item.title} (${getDurationString(
         item.length
       )})\n Queued by \`${item.user}\``;

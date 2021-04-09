@@ -19,4 +19,4 @@ export type Queue =
     }
   | undefined; // queue is not instantiated until playback
 
-export type BotQueue = Map<String, Queue>;
+export type GlobalQueues = Map<String, Queue>;
