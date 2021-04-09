@@ -1,6 +1,6 @@
 import Discord from "discord.js";
 import { Queue, BotQueue, PlaylistSong } from "../types";
-import { youtubeKey, defaultVolume } from "../config.json";
+import { youtubeKey, defaultVolume } from "../../config.json";
 import { play } from "./transport";
 import ytdl from "ytdl-core";
 import ytpl from "ytpl";
