@@ -5,7 +5,7 @@ import { play } from "./transport";
 import ytdl from "ytdl-core";
 import ytpl from "ytpl";
 import YouTube from "discord-youtube-api";
-import scdl from "soundcloud-downloader";
+const scdl = require("soundcloud-downloader").default;
 const getRandomValues = require("get-random-values");
 const youtube = new YouTube(youtubeKey);
 

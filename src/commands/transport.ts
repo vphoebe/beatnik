@@ -2,7 +2,7 @@ import Discord from "discord.js";
 import { Queue, GlobalQueues, PlaylistSong } from "../types";
 import ytdl from "ytdl-core";
 import getDurationString from "../util/duration";
-import scdl from "soundcloud-downloader";
+const scdl = require("soundcloud-downloader").default;
 
 export function skip(message: Discord.Message, guildQueue: Queue) {
   if (!message.member?.voice.channel ?? false)

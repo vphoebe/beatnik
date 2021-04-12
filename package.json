@@ -5,8 +5,7 @@
   "main": "src/index.ts",
   "scripts": {
     "start": "nodemon --watch './**/*.ts' --exec 'ts-node' src/index.ts",
-    "build": "npx tsc --build",
-    "clean": "npx tsc --build --clean",
+    "build": "npx tsc --build --clean && npx tsc --build",
     "deploy": "pm2 deploy production --force"
   },
   "repository": {
