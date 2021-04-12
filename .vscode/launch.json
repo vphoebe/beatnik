@@ -11,7 +11,7 @@
       "skipFiles": ["<node_internals>/**"],
       "processId": "${command:PickProcess}",
       "restart": true,
-      "outFiles": ["${workspaceFolder}/src/*.ts"],
+      "outFiles": ["${workspaceFolder}/src/**/*.ts"],
       "protocol": "inspector"
     }
   ]

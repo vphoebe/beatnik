@@ -2,6 +2,7 @@ import Discord from "discord.js";
 import { Queue, GlobalQueues, PlaylistSong } from "../types";
 import ytdl from "ytdl-core";
 import getDurationString from "../util/duration";
+import scdl from "soundcloud-downloader";
 
 export function skip(message: Discord.Message, guildQueue: Queue) {
   if (!message.member?.voice.channel ?? false)
@@ -30,7 +31,7 @@ export function stop(message: Discord.Message, guildQueue: Queue) {
   guildQueue.connection.dispatcher.end();
 }
 
-export function play(
+export async function play(
   guild: Discord.Guild,
   song: PlaylistSong,
   GlobalQueues: GlobalQueues
@@ -45,13 +46,18 @@ export function play(
     return;
   }
 
+  let streamSource;
+
+  if (song.service === "yt")
+    streamSource = ytdl(song.url, {
+      quality: "highestaudio",
+      filter: (format) => format.container === "mp4",
+    });
+
+  if (song.service === "sc") streamSource = await scdl.download(song.url);
+
   const dispatcher = guildQueue.connection
-    ?.play(
-      ytdl(song.url, {
-        quality: "highestaudio",
-        filter: (format) => format.container === "mp4",
-      })
-    )
+    ?.play(streamSource)
     .on("start", () =>
       console.log(`[${guildQueue.voiceChannel.id}] Now playing ${song.url}`)
     )
@@ -81,6 +87,7 @@ export function play(
     .setTitle(song.title)
     .addField("Duration", getDurationString(song.length), true)
     .addField("Queued by", song.user, true)
+    .addField("Service", song.service === "yt" ? "YouTube" : "SoundCloud")
     .setThumbnail(song.thumbnail ?? "")
     .setURL(song.url);
   guildQueue.textChannel.send(nowPlayingEmbed);

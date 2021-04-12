@@ -5,6 +5,7 @@ import { play } from "./transport";
 import ytdl from "ytdl-core";
 import ytpl from "ytpl";
 import YouTube from "discord-youtube-api";
+import scdl from "soundcloud-downloader";
 const getRandomValues = require("get-random-values");
 const youtube = new YouTube(youtubeKey);
 
@@ -53,7 +54,9 @@ export async function queue(
 
   const url = args[1];
   const queuedSongs: PlaylistSong[] = [];
+  const globalUrlRegex = /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/;
   const ytRegex = /^((?:https?:)?\/\/)?((?:www|m)\.)?((?:youtube\.com|youtu.be))(\/(?:[\w-]+\?v=|embed\/|v\/)?)([\w-]+)(\S+)?$/;
+  const scRegex = /^https?:\/\/(soundcloud\.com|snd\.sc)\/(.*)$/;
 
   if (ytRegex.test(url)) {
     // play a youtube url
@@ -61,6 +64,7 @@ export async function queue(
       if (url.includes("playlist")) {
         const playlistInfo = await ytpl(url, { pages: Infinity });
         const playlistSongs = playlistInfo.items.map((item) => ({
+          service: "yt",
           title: item.title,
           url: item.shortUrl,
           user: message.author.username,
@@ -75,6 +79,7 @@ export async function queue(
       } else {
         const songInfo = await ytdl.getInfo(url);
         const song = {
+          service: "yt",
           title: songInfo.videoDetails.title,
           url: songInfo.videoDetails.video_url,
           user: message.author.username,
@@ -89,12 +94,28 @@ export async function queue(
         "I couldn't play that track... try another link or search."
       );
     }
+  } else if (scRegex.test(url)) {
+    const songInfo = await scdl.getInfo(url);
+    const song = {
+      service: "sc",
+      title: songInfo.title ?? "Unknown title",
+      url: songInfo.permalink_url ?? "https://soundcloud.com",
+      user: message.author.username,
+      thumbnail: songInfo.artwork_url ?? "",
+      length: (songInfo.full_duration ?? 0) / 1000, // this api returns ms
+    };
+    queuedSongs.push(song);
+  } else if (globalUrlRegex.test(url)) {
+    message.channel.send(
+      "I don't recognize this URL. Supported services are YouTube and SoundCloud!"
+    );
   } else {
-    // treat as search query
+    // treat as yt search query
     const query = args.slice(1).join(" ");
     if (query.length > 0) {
       const searchResult = await youtube.searchVideos(query);
       const song = {
+        service: "yt",
         title: searchResult.title,
         url: searchResult.url,
         length: searchResult.durationSeconds,

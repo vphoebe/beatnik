@@ -1,6 +1,7 @@
 import Discord from "discord.js";
 
 export type PlaylistSong = {
+  service: string;
   title: string;
   url: string;
   user: string;

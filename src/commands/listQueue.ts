@@ -7,7 +7,7 @@ export function listQueue(message: Discord.Message, guildQueue: Queue) {
   if (!guildQueue) {
     return message.channel.send("No queue currently exists.");
   }
-  if (guildQueue.songs.length > 0) {
+  if (guildQueue.songs.length > 1) {
     const queueItemStrings = guildQueue.songs.map((item, i) => {
       return `**[${i}]** ${item.title} (${getDurationString(
         item.length
@@ -36,6 +36,8 @@ export function listQueue(message: Discord.Message, guildQueue: Queue) {
       .setFooter("sent by beatnik");
 
     message.channel.send(queueEmbed);
+  } else if (guildQueue.songs.length === 1) {
+    message.channel.send("The current song is the last in the queue.");
   } else {
     message.channel.send("No songs currently in queue.");
   }
