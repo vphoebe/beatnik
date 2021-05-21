@@ -24,6 +24,7 @@
   "dependencies": {
     "@discordjs/opus": "^0.5.0",
     "discord-youtube-api": "^0.1.0",
+    "discord-ytdl-core": "^5.0.3",
     "discord.js": "^12.5.3",
     "ffmpeg-static": "^4.3.0",
     "get-random-values": "^1.2.2",

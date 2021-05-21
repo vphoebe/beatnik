@@ -1,6 +1,6 @@
 import Discord from "discord.js";
 import { Queue, GlobalQueues, PlaylistSong } from "../types";
-import ytdl from "ytdl-core";
+import ytdl from "discord-ytdl-core";
 import getDurationString from "../util/duration";
 const scdl = require("soundcloud-downloader").default;
 
@@ -48,16 +48,25 @@ export async function play(
 
   let streamSource;
 
-  if (song.service === "yt")
-    streamSource = ytdl(song.url, {
-      quality: "highestaudio",
-      filter: (format) => format.container === "mp4",
-    });
+  const ffmpegArgs = ["-af", "dynaudnorm=g=101:m=5"];
 
-  if (song.service === "sc") streamSource = await scdl.download(song.url);
+  if (song.service === "yt") {
+    streamSource = ytdl(song.url, {
+      filter: "audioonly",
+      opusEncoded: true,
+      encoderArgs: ffmpegArgs,
+    });
+  } else if (song.service === "sc") {
+    streamSource = ytdl.arbitraryStream(scdl.download(song.url), {
+      opusEncoded: true,
+      encoderArgs: ffmpegArgs,
+    });
+  } else {
+    streamSource = "";
+  }
 
   const dispatcher = guildQueue.connection
-    ?.play(streamSource)
+    ?.play(streamSource, { type: "opus" })
     .on("start", () =>
       console.log(`[${guildQueue.voiceChannel.id}] Now playing ${song.url}`)
     )

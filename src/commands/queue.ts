@@ -2,12 +2,12 @@ import Discord from "discord.js";
 import { Queue, GlobalQueues, PlaylistSong } from "../types";
 import { youtubeKey, defaultVolume } from "../config.json";
 import { play } from "./transport";
-import ytdl from "ytdl-core";
+import ytdl from "discord-ytdl-core";
 import ytpl from "ytpl";
 import YouTube from "discord-youtube-api";
 const scdl = require("soundcloud-downloader").default;
 const getRandomValues = require("get-random-values");
-const youtube = new YouTube(youtubeKey);
+const ytsearch = new YouTube(youtubeKey);
 
 function shuffle<T>(a: T[]) {
   var n = a.length, // The number of items left to shuffle (loop invariant)
@@ -54,14 +54,17 @@ export async function queue(
 
   const url = args[1];
   const queuedSongs: PlaylistSong[] = [];
-  const globalUrlRegex = /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/;
-  const ytRegex = /^((?:https?:)?\/\/)?((?:www|m)\.)?((?:youtube\.com|youtu.be))(\/(?:[\w-]+\?v=|embed\/|v\/)?)([\w-]+)(\S+)?$/;
+  const globalUrlRegex =
+    /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/;
+  const ytRegex =
+    /^((?:https?:)?\/\/)?((?:www|m)\.)?((?:youtube\.com|youtu.be))(\/(?:[\w-]+\?v=|embed\/|v\/)?)([\w-]+)(\S+)?$/;
   const scRegex = /^https?:\/\/(soundcloud\.com|snd\.sc)\/(.*)$/;
 
   if (ytRegex.test(url)) {
     // play a youtube url
     try {
       if (url.includes("playlist")) {
+        message.channel.send("Processing playlist request...");
         const playlistInfo = await ytpl(url, { pages: Infinity });
         const playlistSongs = playlistInfo.items.map((item) => ({
           service: "yt",
@@ -113,7 +116,7 @@ export async function queue(
     // treat as yt search query
     const query = args.slice(1).join(" ");
     if (query.length > 0) {
-      const searchResult = await youtube.searchVideos(query);
+      const searchResult = await ytsearch.searchVideos(query);
       const song = {
         service: "yt",
         title: searchResult.title,
