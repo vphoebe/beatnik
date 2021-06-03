@@ -21,3 +21,20 @@ export type Queue =
   | undefined; // queue is not instantiated until playback
 
 export type GlobalQueues = Map<String, Queue>;
+
+export type Shortcut = {
+  shortcut: string;
+  command: string;
+  description: string;
+};
+
+declare global {
+  namespace NodeJS {
+    interface ProcessEnv {
+      PREFIX: string;
+      DISCORD_TOKEN: string;
+      YOUTUBE_TOKEN: string;
+      DEFAULT_VOLUME: string;
+    }
+  }
+}

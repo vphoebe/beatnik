@@ -1,5 +1,6 @@
+require("dotenv").config();
+
 import Discord from "discord.js";
-import { token } from "./config.json";
 import presence from "./presence/presence";
 import { Queue, GlobalQueues } from "./types";
 import { handleMessage } from "./commands/handleMessage";
@@ -29,4 +30,4 @@ client.on("voiceStateUpdate", (oldState, newState) => {
   }
 });
 
-client.login(token);
+client.login(process.env.DISCORD_TOKEN);

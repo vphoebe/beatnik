@@ -1,8 +1,9 @@
 import Discord from "discord.js";
-import { prefix, shortcuts } from "../config.json";
+import shortcuts from "../util/shortcuts";
+const prefix = process.env.PREFIX;
 
 export function listShortcuts(message: Discord.Message) {
-  if (shortcuts.length > 0) {
+  if (shortcuts) {
     const shortcutStrings = shortcuts.map(
       (shortcut) =>
         `\`${prefix}${shortcut.shortcut}\`: ${shortcut.description}\n`
