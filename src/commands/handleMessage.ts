@@ -1,5 +1,4 @@
 import Discord from "discord.js";
-import { prefix, shortcuts } from "../config.json";
 import {
   queue,
   skip,
@@ -10,6 +9,10 @@ import {
   listShortcuts,
 } from "../commands";
 import { GlobalQueues } from "../types";
+import config from "../util/readConfig";
+
+const shortcuts = config.shortcuts;
+const prefix = config.prefix;
 
 export async function handleMessage(
   message: Discord.Message,
@@ -23,9 +26,9 @@ export async function handleMessage(
 
   const args = message.content.split(" ");
   const command = args[0].substring(1);
-  const detectedShortcut = shortcuts.find(
-    (shortcut) => shortcut.shortcut === command
-  );
+  const detectedShortcut = shortcuts
+    ? shortcuts.find((shortcut) => shortcut.shortcut === command)
+    : null;
 
   if (detectedShortcut) {
     message.content = `${prefix}${detectedShortcut.command}`;

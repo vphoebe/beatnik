@@ -1,10 +1,13 @@
 import Discord from "discord.js";
 import { Queue, GlobalQueues, PlaylistSong } from "../types";
-import { youtubeKey, defaultVolume } from "../config.json";
 import { play } from "./transport";
-import ytdl from "discord-ytdl-core";
+import ytdl from "ytdl-core-discord";
 import ytpl from "ytpl";
 import YouTube from "discord-youtube-api";
+import config from "../util/readConfig";
+
+const youtubeKey = config.youtube_token;
+const defaultVolume = config.default_volume;
 const scdl = require("soundcloud-downloader").default;
 const getRandomValues = require("get-random-values");
 const ytsearch = new YouTube(youtubeKey);

@@ -1,7 +1,9 @@
 import Discord from "discord.js";
 import { Queue } from "../types";
-import { prefix } from "../config.json";
 import getDurationString from "../util/duration";
+import config from "../util/readConfig";
+
+const prefix = config.prefix;
 
 export function listQueue(message: Discord.Message, guildQueue: Queue) {
   if (!guildQueue) {

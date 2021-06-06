@@ -1,5 +1,7 @@
 import Discord from "discord.js";
-import { prefix } from "../config.json";
+import config from "../util/readConfig";
+
+const prefix = config.prefix;
 
 export function listCommands(message: Discord.Message) {
   const commandEmbed = new Discord.MessageEmbed()

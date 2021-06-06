@@ -5,17 +5,4 @@ module.exports = {
       name: "beatnik",
     },
   ],
-
-  deploy: {
-    production: {
-      user: "ec2-user",
-      host: "beatnik.sjw.zone",
-      key: "~/.ssh/deploy.key",
-      ref: "origin/release",
-      repo: "https://github.com/vphoebe/beatnik.git",
-      path: "/srv/beatnik-prod",
-      "post-deploy":
-        "npm install && npm run build && pm2 reload ecosystem.config.js --env production",
-    },
-  },
 };

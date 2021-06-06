@@ -1,0 +1,13 @@
+{
+  "prefix": "-",
+  "discord_token": "",
+  "youtube_token": "",
+  "default_volume": "0.3",
+  "shortcuts": [
+    {
+      "shortcut": "New command to run this shortcut",
+      "command": "existing command that will be run (don't include prefix)",
+      "description": "Description that will show up in the help command."
+    }
+  ]
+}
