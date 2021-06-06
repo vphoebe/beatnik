@@ -1,7 +1,7 @@
 import Discord from "discord.js";
 import { Queue, GlobalQueues, PlaylistSong } from "../types";
 import { play } from "./transport";
-import ytdl from "discord-ytdl-core";
+import ytdl from "ytdl-core-discord";
 import ytpl from "ytpl";
 import YouTube from "discord-youtube-api";
 import config from "../util/readConfig";
