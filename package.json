@@ -4,7 +4,8 @@
   "description": "a discord bot that tells you the time, among other things.",
   "main": "src/index.ts",
   "scripts": {
-    "start": "nodemon --watch './**/*.ts' --exec 'ts-node' src/index.ts",
+    "start": "npm run build && pm2 start ecosystem.config.js",
+    "dev": "nodemon --watch './**/*.ts' --exec 'ts-node' src/index.ts",
     "build": "npx tsc --build --clean && npx tsc --build"
   },
   "repository": {
@@ -25,7 +26,6 @@
     "discord-youtube-api": "^0.1.0",
     "discord-ytdl-core": "^5.0.3",
     "discord.js": "^12.5.3",
-    "dotenv": "^10.0.0",
     "get-random-values": "^1.2.2",
     "soundcloud-downloader": "^1.0.0",
     "ytdl-core": "^4.8.0",

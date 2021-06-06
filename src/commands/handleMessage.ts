@@ -9,9 +9,10 @@ import {
   listShortcuts,
 } from "../commands";
 import { GlobalQueues } from "../types";
-import shortcuts from "../util/shortcuts";
+import config from "../util/readConfig";
 
-const prefix = process.env.PREFIX;
+const shortcuts = config.shortcuts;
+const prefix = config.prefix;
 
 export async function handleMessage(
   message: Discord.Message,

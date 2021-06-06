@@ -1,7 +1,0 @@
-[
-  {
-    "shortcut": "command name",
-    "command": "beatnik command without the prefix",
-    "description": "description for the help command"
-  }
-]

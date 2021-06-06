@@ -4,9 +4,10 @@ import { play } from "./transport";
 import ytdl from "discord-ytdl-core";
 import ytpl from "ytpl";
 import YouTube from "discord-youtube-api";
+import config from "../util/readConfig";
 
-const youtubeKey = process.env.YOUTUBE_TOKEN;
-const defaultVolume = Number.parseFloat(process.env.DEFAULT_VOLUME);
+const youtubeKey = config.youtube_token;
+const defaultVolume = config.default_volume;
 const scdl = require("soundcloud-downloader").default;
 const getRandomValues = require("get-random-values");
 const ytsearch = new YouTube(youtubeKey);

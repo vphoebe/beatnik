@@ -7,9 +7,9 @@ npm-debug.log*
 node_modules/
 
 # ignore custom configs
-*/config/shortcuts.json
+config.json
 
-# ts build
+# ts build dir
 build
 
 # environment files

@@ -1,12 +1,16 @@
-require("dotenv").config();
-
 import Discord from "discord.js";
 import presence from "./presence/presence";
 import { Queue, GlobalQueues } from "./types";
 import { handleMessage } from "./commands/handleMessage";
+import config from "./util/readConfig";
 
 const client = new Discord.Client();
 const globalQueues: GlobalQueues = new Map<String, Queue>();
+
+if (config.error) {
+  console.error(config.error);
+  process.exit();
+}
 
 client.once("ready", () => {
   console.log("== beatnik is ready ==");
@@ -30,4 +34,4 @@ client.on("voiceStateUpdate", (oldState, newState) => {
   }
 });
 
-client.login(process.env.DISCORD_TOKEN);
+client.login(config.discord_token);

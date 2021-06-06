@@ -1,6 +1,7 @@
 import Discord from "discord.js";
-import shortcuts from "../util/shortcuts";
-const prefix = process.env.PREFIX;
+import config from "../util/readConfig";
+const prefix = config.prefix;
+const shortcuts = config.shortcuts;
 
 export function listShortcuts(message: Discord.Message) {
   if (shortcuts) {
