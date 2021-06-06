@@ -11,7 +11,7 @@ ENV PM2_PUBLIC_KEY="" \
   NODE_ENV="production"
 WORKDIR /usr/app
 COPY package*.json ./
-RUN npm ci --production && npm clean cache --force
+RUN npm ci
 COPY --from=build /usr/app/build ./build
 COPY --from=build /usr/app/ecosystem.config.js ./
 RUN apk add --no-cache ffmpeg
