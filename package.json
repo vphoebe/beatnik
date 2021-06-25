@@ -1,6 +1,6 @@
 {
   "name": "beatnik",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "a discord bot that tells you the time, among other things.",
   "main": "src/index.ts",
   "scripts": {
