@@ -11,8 +11,6 @@ ENV PM2_PUBLIC_KEY="" \
   NODE_ENV="production"
 WORKDIR /usr/app
 COPY package*.json ./
-COPY --from=build /usr/app/patches ./patches
-RUN npm config set unsafe-perm true 
 RUN npm ci
 COPY --from=build /usr/app/build ./build
 COPY --from=build /usr/app/ecosystem.config.js ./
