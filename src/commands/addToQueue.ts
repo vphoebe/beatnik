@@ -159,29 +159,37 @@ const addToQueue = async (message: Discord.Message, queueConnections: QueueConne
     queueConnection.totalQueueLength += preparedTracks.length;
   }
   // add queue to database with relatively adjusted indicies
-  const databaseTracks: Track[] = preparedTracks.map((track, idx) => {
-    return {
-      ...track,
-      queueIndex: idx + idxOffset + 1,
-    };
-  });
-
-  try {
-    for (const dbTrack of databaseTracks) {
-      await prisma.track.create({
-        data: dbTrack,
+  switch (location) {
+    case "next":
+      const databaseTracks: Track[] = preparedTracks.map((track, idx) => {
+        return {
+          ...track,
+          queueIndex: idx + idxOffset + 1,
+        };
       });
-    }
 
-    const testQuery = await prisma.track.findMany({
-      where: {
-        guildId: guildId,
-      },
-    });
+      try {
+        for (const dbTrack of databaseTracks) {
+          await prisma.track.create({
+            data: dbTrack,
+          });
+        }
 
-    console.log(testQuery);
-  } catch (err) {
-    console.log(err);
+        const testQuery = await prisma.track.findMany({
+          where: {
+            guildId: guildId,
+          },
+        });
+
+        console.log(testQuery);
+      } catch (err) {
+        console.log(err);
+      }
+      break;
+
+    case "end":
+      // shift all db indicies for this request
+      break;
   }
 };
 
