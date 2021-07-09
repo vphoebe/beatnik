@@ -12,7 +12,7 @@ generator client {
 
 model Track {
   guildId      String
-  index        Int
+  queueIndex   Int
   service      String
   title        String
   url          String
@@ -20,5 +20,5 @@ model Track {
   thumbnailUrl String
   lengthInSec  Int
 
-  @@unique(fields: [guildId, index], name: "queue_id")
+  @@unique(fields: [guildId, queueIndex], name: "queue_id")
 }
