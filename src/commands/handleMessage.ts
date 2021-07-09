@@ -1,23 +1,12 @@
 import Discord from "discord.js";
-import {
-  queue,
-  skip,
-  stop,
-  listQueue,
-  changeVolume,
-  listCommands,
-  listShortcuts,
-} from "../commands";
+import { queue, skip, stop, listQueue, changeVolume, listCommands, listShortcuts } from "../commands";
 import { GlobalQueues } from "../types";
 import config from "../util/readConfig";
 
 const shortcuts = config.shortcuts;
 const prefix = config.prefix;
 
-export async function handleMessage(
-  message: Discord.Message,
-  globalQueues: GlobalQueues
-) {
+export async function handleMessage(message: Discord.Message, globalQueues: GlobalQueues) {
   if (message.author.bot) return;
   if (!message.content.startsWith(prefix)) return;
   if (message.guild === null) return;
@@ -26,9 +15,7 @@ export async function handleMessage(
 
   const args = message.content.split(" ");
   const command = args[0].substring(1);
-  const detectedShortcut = shortcuts
-    ? shortcuts.find((shortcut) => shortcut.shortcut === command)
-    : null;
+  const detectedShortcut = shortcuts ? shortcuts.find((shortcut) => shortcut.shortcut === command) : null;
 
   if (detectedShortcut) {
     message.content = `${prefix}${detectedShortcut.command}`;

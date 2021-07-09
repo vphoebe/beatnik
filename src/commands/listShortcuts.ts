@@ -5,10 +5,7 @@ const shortcuts = config.shortcuts;
 
 export function listShortcuts(message: Discord.Message) {
   if (shortcuts) {
-    const shortcutStrings = shortcuts.map(
-      (shortcut) =>
-        `\`${prefix}${shortcut.shortcut}\`: ${shortcut.description}\n`
-    );
+    const shortcutStrings = shortcuts.map((shortcut) => `\`${prefix}${shortcut.shortcut}\`: ${shortcut.description}\n`);
     const shortcutEmbed = new Discord.MessageEmbed()
       .setColor("#ed872d")
       .setTitle("Configured shortcuts")

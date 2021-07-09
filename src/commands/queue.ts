@@ -27,11 +27,7 @@ function shuffle<T>(a: T[]) {
   return a; // for a fluent API
 }
 
-export async function queue(
-  message: Discord.Message,
-  guildQueue: Queue,
-  globalQueues: GlobalQueues
-) {
+export async function queue(message: Discord.Message, guildQueue: Queue, globalQueues: GlobalQueues) {
   if (message.member === null) return;
   if (message.client.user === null) return;
   if (message.guild === null) return;
@@ -39,28 +35,19 @@ export async function queue(
   const args = message.content.split(" ");
 
   const voiceChannel = message.member.voice.channel;
-  if (!voiceChannel)
-    return message.channel.send(
-      `${message.member.user.username}, you need to join a voice channel before controlling the music.`
-    );
+  if (!voiceChannel) return message.channel.send(`${message.member.user.username}, you need to join a voice channel before controlling the music.`);
   const permissions = voiceChannel.permissionsFor(message.client.user);
   if (!permissions) {
-    return message.channel.send(
-      `Failed to read permissions for ${message.client.user.username}`
-    );
+    return message.channel.send(`Failed to read permissions for ${message.client.user.username}`);
   }
   if (!permissions.has("CONNECT") || !permissions.has("SPEAK")) {
-    return message.channel.send(
-      "I don't have permission to join and speak in your voice channel."
-    );
+    return message.channel.send("I don't have permission to join and speak in your voice channel.");
   }
 
   const url = args[1];
   const queuedSongs: PlaylistSong[] = [];
-  const globalUrlRegex =
-    /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/;
-  const ytRegex =
-    /^((?:https?:)?\/\/)?((?:www|m)\.)?((?:youtube\.com|youtu.be))(\/(?:[\w-]+\?v=|embed\/|v\/)?)([\w-]+)(\S+)?$/;
+  const globalUrlRegex = /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/;
+  const ytRegex = /^((?:https?:)?\/\/)?((?:www|m)\.)?((?:youtube\.com|youtu.be))(\/(?:[\w-]+\?v=|embed\/|v\/)?)([\w-]+)(\S+)?$/;
   const scRegex = /^https?:\/\/(soundcloud\.com|snd\.sc)\/(.*)$/;
 
   if (ytRegex.test(url)) {
@@ -79,9 +66,7 @@ export async function queue(
         }));
         if (message.content.includes(":shuffle")) shuffle(playlistSongs);
         queuedSongs.push(...playlistSongs);
-        message.channel.send(
-          `Added ${playlistSongs.length} items to the queue.`
-        );
+        message.channel.send(`Added ${playlistSongs.length} items to the queue.`);
       } else {
         const songInfo = await ytdl.getInfo(url);
         const song = {
@@ -96,9 +81,7 @@ export async function queue(
       }
     } catch (err) {
       console.error(err);
-      message.channel.send(
-        "I couldn't play that track... try another link or search."
-      );
+      message.channel.send("I couldn't play that track... try another link or search.");
     }
   } else if (scRegex.test(url)) {
     const songInfo = await scdl.getInfo(url);
@@ -112,9 +95,7 @@ export async function queue(
     };
     queuedSongs.push(song);
   } else if (globalUrlRegex.test(url)) {
-    message.channel.send(
-      "I don't recognize this URL. Supported services are YouTube and SoundCloud!"
-    );
+    message.channel.send("I don't recognize this URL. Supported services are YouTube and SoundCloud!");
   } else {
     // treat as yt search query
     const query = args.slice(1).join(" ");
@@ -130,9 +111,7 @@ export async function queue(
       };
       queuedSongs.push(song);
     } else {
-      return message.channel.send(
-        "Enter a YouTube URL or search term to play a track."
-      );
+      return message.channel.send("Enter a YouTube URL or search term to play a track.");
     }
   }
 
@@ -149,12 +128,8 @@ export async function queue(
 
     if (message.guild) {
       globalQueues.set(message.guild.id, newGuildQueue);
-      console.log(
-        `New guild queue created for ${newGuildQueue.voiceChannel.id}`
-      );
-      console.log(
-        `[${newGuildQueue.voiceChannel.id}] [${message.author.username}] Added songs to the queue`
-      );
+      console.log(`New guild queue created for ${newGuildQueue.voiceChannel.id}`);
+      console.log(`[${newGuildQueue.voiceChannel.id}] [${message.author.username}] Added songs to the queue`);
       newGuildQueue.songs.push(...queuedSongs);
     }
 
@@ -172,18 +147,12 @@ export async function queue(
       return message.channel.send(err);
     }
   } else {
-    console.log(
-      `[${guildQueue.voiceChannel.id}] [${message.author.username}] Added ${queuedSongs.length} songs to the queue`
-    );
+    console.log(`[${guildQueue.voiceChannel.id}] [${message.author.username}] Added ${queuedSongs.length} songs to the queue`);
     guildQueue.songs.push(...queuedSongs);
     if (queuedSongs.length === 1) {
-      return message.channel.send(
-        `${queuedSongs[0].title} has been added to the queue!`
-      );
+      return message.channel.send(`${queuedSongs[0].title} has been added to the queue!`);
     } else {
-      return message.channel.send(
-        `${queuedSongs.length} tracks have been added to the queue!`
-      );
+      return message.channel.send(`${queuedSongs.length} tracks have been added to the queue!`);
     }
   }
 }

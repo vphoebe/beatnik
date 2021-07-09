@@ -21,11 +21,7 @@ client.on("message", (message) => handleMessage(message, globalQueues));
 
 client.on("voiceStateUpdate", (oldState, newState) => {
   // leave channel if it's just the bot
-  if (
-    oldState.channelID !== oldState.guild.me?.voice.channelID ||
-    newState.channel
-  )
-    return;
+  if (oldState.channelID !== oldState.guild.me?.voice.channelID || newState.channel) return;
   const totalMembers = oldState.channel?.members.size;
   if (totalMembers && totalMembers - 1 === 0) {
     console.log(`Leaving voice channel ${oldState.channelID}`);

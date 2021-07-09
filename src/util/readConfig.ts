@@ -2,10 +2,7 @@ import fs from "fs";
 import path from "path";
 import { Shortcut } from "../types";
 
-const configFile = fs.readFileSync(
-  path.resolve(__dirname, "../../config.json"),
-  "utf-8"
-);
+const configFile = fs.readFileSync(path.resolve(__dirname, "../../config.json"), "utf-8");
 
 export type Config = {
   prefix: string;
@@ -26,8 +23,7 @@ const emptyConfig: Config = {
 const readConfig = (): Config => {
   if (!configFile) return { error: "Config file not found.", ...emptyConfig };
   const configObject = JSON.parse(configFile);
-  if (!configObject.prefix)
-    return { error: "Prefix not found in configuration.", ...emptyConfig };
+  if (!configObject.prefix) return { error: "Prefix not found in configuration.", ...emptyConfig };
   if (!configObject.discord_token)
     return {
       error: "Discord token not found in configuration.",

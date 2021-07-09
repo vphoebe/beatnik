@@ -5,21 +5,14 @@ import getDurationString from "../util/duration";
 const scdl = require("soundcloud-downloader").default;
 
 export function skip(message: Discord.Message, guildQueue: Queue) {
-  if (!message.member?.voice.channel ?? false)
-    return message.channel.send(
-      "You have to be in a voice channel to control the music."
-    );
-  if (!guildQueue)
-    return message.channel.send("There is no song that I could skip!");
+  if (!message.member?.voice.channel ?? false) return message.channel.send("You have to be in a voice channel to control the music.");
+  if (!guildQueue) return message.channel.send("There is no song that I could skip!");
   console.log(`[${guildQueue.voiceChannel.id}] Skipping current track`);
   guildQueue.connection?.dispatcher.end();
 }
 
 export function stop(message: Discord.Message, guildQueue: Queue) {
-  if (!message.member?.voice.channel ?? false)
-    return message.channel.send(
-      "You have to be in a voice channel to control the music."
-    );
+  if (!message.member?.voice.channel ?? false) return message.channel.send("You have to be in a voice channel to control the music.");
 
   if (!guildQueue) return message.channel.send("Nothing is playing right now.");
 
@@ -31,11 +24,7 @@ export function stop(message: Discord.Message, guildQueue: Queue) {
   guildQueue.connection.dispatcher.end();
 }
 
-export async function play(
-  guild: Discord.Guild,
-  song: PlaylistSong,
-  GlobalQueues: GlobalQueues
-) {
+export async function play(guild: Discord.Guild, song: PlaylistSong, GlobalQueues: GlobalQueues) {
   const guildQueue = GlobalQueues.get(guild.id);
   if (!guildQueue) {
     return;
@@ -60,9 +49,7 @@ export async function play(
 
   const dispatcher = guildQueue.connection
     ?.play(streamSource, { type: streamType })
-    .on("start", () =>
-      console.log(`[${guildQueue.voiceChannel.id}] Now playing ${song.url}`)
-    )
+    .on("start", () => console.log(`[${guildQueue.voiceChannel.id}] Now playing ${song.url}`))
     .on("finish", () => {
       guildQueue.songs.shift();
       play(guild, guildQueue.songs[0], GlobalQueues);
@@ -71,13 +58,9 @@ export async function play(
       console.error(`An error occurred for ${song.url}`);
       console.error(error);
       if (error.message.includes("Music Premium")) {
-        guildQueue.textChannel.send(
-          `**${song.title}** can't be played, as it's only available for Music Premium members. Skipping...`
-        );
+        guildQueue.textChannel.send(`**${song.title}** can't be played, as it's only available for Music Premium members. Skipping...`);
       } else {
-        guildQueue.textChannel.send(
-          `**${song.title}** can't be played, skipping...`
-        );
+        guildQueue.textChannel.send(`**${song.title}** can't be played, skipping...`);
       }
       guildQueue.songs.shift();
       play(guild, guildQueue.songs[0], GlobalQueues);
