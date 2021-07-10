@@ -3,7 +3,7 @@ import ytdl from "ytdl-core-discord";
 import ytpl from "ytpl";
 import YouTube from "discord-youtube-api";
 import config from "../util/readConfig";
-import { QueueConnection, QueueConnections } from "..";
+import { MemoryQueue, MemoryQueues } from "..";
 import { PrismaClient, Track } from "@prisma/client";
 import shuffleArray from "../util/shuffleArray";
 import playNextTrack from "../transport/playNextTrack";
@@ -16,7 +16,7 @@ type QueueableTrack = Omit<Track, "queueIndex">;
 
 const prisma = new PrismaClient();
 
-const addToQueue = async (message: Discord.Message, queueConnections: QueueConnections, location: "next" | "end") => {
+const addToQueue = async (message: Discord.Message, memoryQueues: MemoryQueues, location: "next" | "end") => {
   // ensure correct conditions
   if (message.member === null) return;
   if (message.client.user === null) return;
@@ -217,11 +217,11 @@ const addToQueue = async (message: Discord.Message, queueConnections: QueueConne
       break;
   }
 
-  const queueConnection = queueConnections.get(guildId);
-  if (!queueConnection) {
+  const memoryQueue = memoryQueues.get(guildId);
+  if (!memoryQueue) {
     // create a queue connection and start playback
     try {
-      // const newQueueConnection: QueueConnection = {
+      // const newQueueConnection: MemoryQueue = {
       //   textChannel: message.channel as Discord.TextChannel,
       //   voiceChannel,
       //   voiceConnection: null, // will be created on playback
@@ -229,8 +229,8 @@ const addToQueue = async (message: Discord.Message, queueConnections: QueueConne
       //   playing: false, // will set to true on playback
       //   currentIndex: 0, // start on first song
       // };
-      // queueConnections.set(guildId, newQueueConnection);
-      playNextTrack(guildId, queueConnections, message.channel as Discord.TextChannel, voiceChannel);
+      // memoryQueues.set(guildId, newQueueConnection);
+      playNextTrack(guildId, memoryQueues, message.channel as Discord.TextChannel, voiceChannel);
     } catch (err) {
       console.log(`Error creating queue connection for ${guildId}`);
       console.log(err);

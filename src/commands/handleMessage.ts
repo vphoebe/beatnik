@@ -1,5 +1,5 @@
 import Discord from "discord.js";
-import { QueueConnections } from "..";
+import { MemoryQueues } from "..";
 import playNextTrack from "../transport/playNextTrack";
 import stopPlayback from "../transport/stopPlayback";
 import config from "../util/readConfig";
@@ -10,7 +10,7 @@ import listQueue from "./listQueue";
 const shortcuts = config.shortcuts;
 const prefix = config.prefix;
 
-const handleMessage = (message: Discord.Message, queueConnections: QueueConnections) => {
+const handleMessage = (message: Discord.Message, memoryQueues: MemoryQueues) => {
   // ignore unintended messages
   if (message.author.bot) return;
   if (!message.content.startsWith(prefix)) return;
@@ -41,15 +41,15 @@ const handleMessage = (message: Discord.Message, queueConnections: QueueConnecti
       const url = args[1];
       if (!url) {
         // resume playback
-        playNextTrack(guildId, queueConnections, message.channel as Discord.TextChannel, voiceChannel);
+        playNextTrack(guildId, memoryQueues, message.channel as Discord.TextChannel, voiceChannel);
       } else {
-        addToQueue(message, queueConnections, "end");
+        addToQueue(message, memoryQueues, "end");
       }
 
       break;
     case "next":
       // add to next spot in queue
-      addToQueue(message, queueConnections, "next");
+      addToQueue(message, memoryQueues, "next");
       break;
     case "r":
     case "resume":
@@ -59,25 +59,25 @@ const handleMessage = (message: Discord.Message, queueConnections: QueueConnecti
       // remove an index from queue
       break;
     case "skip":
-      // increment currentIndex in QueueConnection
+      // increment currentIndex in MemoryQueue
       // skip current song
       break;
     case "back":
-      // decrement currentIndex in QueueConnection
+      // decrement currentIndex in MemoryQueue
       // skip current song
       break;
     case "stop":
       // leave voice channel but keep position in queue
-      stopPlayback(message.channel as Discord.TextChannel, guildId, queueConnections);
+      stopPlayback(message.channel as Discord.TextChannel, guildId, memoryQueues);
       break;
     case "clear":
       // clear queue for this guild
-      clearQueue(message.channel as Discord.TextChannel, guildId, queueConnections);
+      clearQueue(message.channel as Discord.TextChannel, guildId, memoryQueues);
       break;
     case "q":
     case "queue":
       // list queue
-      listQueue(message, queueConnections);
+      listQueue(message, memoryQueues);
       break;
     case "vol":
     case "volume":

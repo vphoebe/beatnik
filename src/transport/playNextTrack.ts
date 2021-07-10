@@ -1,7 +1,7 @@
 import { PrismaClient } from "@prisma/client";
 import Discord from "discord.js";
 import ytdl from "ytdl-core-discord";
-import { QueueConnection, QueueConnections } from "..";
+import { MemoryQueue, MemoryQueues } from "..";
 import clearQueue from "../commands/clearQueue";
 import getDurationString from "../util/duration";
 import config from "../util/readConfig";
@@ -10,11 +10,11 @@ const scdl = require("soundcloud-downloader").default;
 const prisma = new PrismaClient();
 const defaultVolume = config.default_volume;
 
-const playNextTrack = async (guildId: string, queueConnections: QueueConnections, textChannel: Discord.TextChannel, voiceChannel: Discord.VoiceChannel) => {
-  let queueConnection = queueConnections.get(guildId);
+const playNextTrack = async (guildId: string, memoryQueues: MemoryQueues, textChannel: Discord.TextChannel, voiceChannel: Discord.VoiceChannel) => {
+  let memoryQueue = memoryQueues.get(guildId);
 
-  if (!queueConnection) {
-    const newQueueConnection: QueueConnection = {
+  if (!memoryQueue) {
+    const newQueueConnection: MemoryQueue = {
       textChannel,
       voiceChannel,
       voiceConnection: null, // will be created on playback
@@ -22,19 +22,19 @@ const playNextTrack = async (guildId: string, queueConnections: QueueConnections
       playing: false, // will set to true on playback
       currentIndex: 0, // start on first song
     };
-    queueConnections.set(guildId, newQueueConnection);
-    queueConnection = queueConnections.get(guildId) as QueueConnection; // we know this will exist now
+    memoryQueues.set(guildId, newQueueConnection);
+    memoryQueue = memoryQueues.get(guildId) as MemoryQueue; // we know this will exist now
   }
 
-  if (!queueConnection.voiceConnection) {
-    const newConnection = await queueConnection.voiceChannel.join();
-    queueConnection.voiceConnection = newConnection;
+  if (!memoryQueue.voiceConnection) {
+    const newConnection = await memoryQueue.voiceChannel.join();
+    memoryQueue.voiceConnection = newConnection;
   }
 
-  const voiceConnection = queueConnection.voiceConnection;
+  const voiceConnection = memoryQueue.voiceConnection;
 
   // find currently playing track
-  const currentIdx = queueConnection.currentIndex;
+  const currentIdx = memoryQueue.currentIndex;
   const track = await prisma.track.findUnique({
     where: {
       queue_id: {
@@ -47,7 +47,7 @@ const playNextTrack = async (guildId: string, queueConnections: QueueConnections
   // if next track isn't found, clear the queue and close the connection
   if (!track) {
     textChannel.send("Nothing is left in the queue.");
-    return clearQueue(queueConnection.textChannel, guildId, queueConnections);
+    return clearQueue(memoryQueue.textChannel, guildId, memoryQueues);
   }
 
   // get stream
@@ -69,11 +69,11 @@ const playNextTrack = async (guildId: string, queueConnections: QueueConnections
   // play stream
   const dispatcher = voiceConnection.play(streamSource, { type: streamType });
 
-  dispatcher.setVolume(queueConnection.volume);
+  dispatcher.setVolume(memoryQueue.volume);
 
   dispatcher.on("start", () => {
-    if (!queueConnection) return;
-    queueConnection.playing = true;
+    if (!memoryQueue) return;
+    memoryQueue.playing = true;
     // send message in chat
     const nowPlayingEmbed = new Discord.MessageEmbed()
       .setAuthor("Now playing...")
@@ -88,16 +88,16 @@ const playNextTrack = async (guildId: string, queueConnections: QueueConnections
   });
 
   dispatcher.on("finish", () => {
-    if (!queueConnection) return;
+    if (!memoryQueue) return;
     // on finish, increment the index and recurse
-    queueConnection.playing = false;
-    queueConnection.currentIndex += 1;
-    playNextTrack(guildId, queueConnections, textChannel, voiceChannel);
+    memoryQueue.playing = false;
+    memoryQueue.currentIndex += 1;
+    playNextTrack(guildId, memoryQueues, textChannel, voiceChannel);
   });
 
   dispatcher.on("error", (error) => {
-    if (!queueConnection) return;
-    queueConnection.playing = false;
+    if (!memoryQueue) return;
+    memoryQueue.playing = false;
     console.error(`An error occurred for ${track.url}`);
     console.error(error);
     if (error.message.includes("Music Premium")) {
@@ -105,8 +105,8 @@ const playNextTrack = async (guildId: string, queueConnections: QueueConnections
     } else {
       textChannel.send(`**${track.title}** can't be played, skipping...`);
     }
-    queueConnection.currentIndex += 1;
-    playNextTrack(guildId, queueConnections, textChannel, voiceChannel);
+    memoryQueue.currentIndex += 1;
+    playNextTrack(guildId, memoryQueues, textChannel, voiceChannel);
   });
 };
 

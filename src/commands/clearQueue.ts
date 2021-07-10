@@ -1,15 +1,15 @@
 import Discord from "discord.js";
-import { QueueConnections } from "..";
+import { MemoryQueues } from "..";
 import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
-const clearQueue = async (channel: Discord.TextChannel, guildId: string, queueConnections: QueueConnections) => {
-  const queueConnection = queueConnections.get(guildId);
+const clearQueue = async (channel: Discord.TextChannel, guildId: string, memoryQueues: MemoryQueues) => {
+  const memoryQueue = memoryQueues.get(guildId);
   // leave voice channel if playing
-  if (queueConnection?.voiceChannel) queueConnection.voiceChannel.leave();
+  if (memoryQueue?.voiceChannel) memoryQueue.voiceChannel.leave();
   // delete memory queue
-  queueConnections.delete(guildId);
+  memoryQueues.delete(guildId);
   try {
     const operation = await prisma.track.deleteMany({
       where: {

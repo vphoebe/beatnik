@@ -1,10 +1,12 @@
 import Discord from "discord.js";
-import { QueueConnections } from "..";
+import { MemoryQueues } from "..";
 
-const stopPlayback = async (channel: Discord.TextChannel, guildId: string, queueConnections: QueueConnections) => {
-  const queueConnection = queueConnections.get(guildId);
-  if (!queueConnection) return channel.send("Nothing is playing!");
-  queueConnection.voiceConnection?.disconnect();
+const stopPlayback = async (channel: Discord.TextChannel, guildId: string, memoryQueues: MemoryQueues) => {
+  const memoryQueue = memoryQueues.get(guildId);
+  if (!memoryQueue) return channel.send("Nothing is playing!");
+  memoryQueue.voiceConnection?.disconnect();
+  memoryQueue.voiceConnection = null;
+  memoryQueue.playing = false;
   return channel.send("Stopping playback.");
 };
 

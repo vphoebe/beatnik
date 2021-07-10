@@ -3,7 +3,7 @@ import presence from "./presence/presence";
 import handleMessage from "./commands/handleMessage";
 import config from "./util/readConfig";
 
-export type QueueConnection = {
+export type MemoryQueue = {
   textChannel: Discord.TextChannel;
   voiceChannel: Discord.VoiceChannel;
   voiceConnection: Discord.VoiceConnection | null; // may be stopped
@@ -12,10 +12,10 @@ export type QueueConnection = {
   playing: boolean;
 };
 
-export type QueueConnections = Map<String, QueueConnection>;
+export type MemoryQueues = Map<String, MemoryQueue>;
 
 const client = new Discord.Client();
-const queueConnections: QueueConnections = new Map<Guild["id"], QueueConnection>();
+const memoryQueues: MemoryQueues = new Map<Guild["id"], MemoryQueue>();
 
 if (config.error) {
   console.error(config.error);
@@ -28,7 +28,7 @@ client.once("ready", () => {
 });
 
 client.on("message", (message) => {
-  handleMessage(message, queueConnections);
+  handleMessage(message, memoryQueues);
 });
 
 // client.on("voiceStateUpdate", (oldState, newState) => {

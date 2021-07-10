@@ -1,5 +1,5 @@
 import Discord from "discord.js";
-import { QueueConnections } from "..";
+import { MemoryQueues } from "..";
 import { PrismaClient, Track } from "@prisma/client";
 import getDurationString from "../util/duration";
 import config from "../util/readConfig";
@@ -7,9 +7,9 @@ import config from "../util/readConfig";
 const prefix = config.prefix;
 const prisma = new PrismaClient();
 
-const listQueue = async (message: Discord.Message, queueConnections: QueueConnections) => {
+const listQueue = async (message: Discord.Message, memoryQueues: MemoryQueues) => {
   if (message.guild === null) return;
-  const currentQueue = queueConnections.get(message.guild.id);
+  const currentQueue = memoryQueues.get(message.guild.id);
 
   try {
     const guildQueueItems = await prisma.track.findMany({
