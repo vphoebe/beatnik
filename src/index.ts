@@ -6,9 +6,8 @@ import config from "./util/readConfig";
 export type QueueConnection = {
   textChannel: Discord.TextChannel;
   voiceChannel: Discord.VoiceChannel;
-  voiceConnection: Discord.VoiceConnection;
+  voiceConnection: Discord.VoiceConnection | null; // may be stopped
   currentIndex: number;
-  totalQueueLength: number;
   volume: number;
   playing: boolean;
 };

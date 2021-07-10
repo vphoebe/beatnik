@@ -6,9 +6,9 @@ import config from "../util/readConfig";
 import { QueueConnection, QueueConnections } from "..";
 import { PrismaClient, Track } from "@prisma/client";
 import shuffleArray from "../util/shuffleArray";
+import playNextTrack from "../transport/playNextTrack";
 
 const youtubeKey = config.youtube_token;
-const defaultVolume = config.default_volume;
 const scdl = require("soundcloud-downloader").default;
 const ytsearch = new YouTube(youtubeKey);
 
@@ -131,65 +131,111 @@ const addToQueue = async (message: Discord.Message, queueConnections: QueueConne
   }
 
   // set preparedTracks into database
-  const queueConnection = queueConnections.get(guildId);
-  let idxOffset = -1;
-  if (!queueConnection) {
-    // create a queue connection
-    try {
-      const voiceConnection = await voiceChannel.join();
-      const newQueueConnection: QueueConnection = {
-        textChannel: message.channel as Discord.TextChannel,
-        voiceChannel,
-        voiceConnection,
-        volume: defaultVolume,
-        playing: true,
-        currentIndex: 0,
-        totalQueueLength: preparedTracks.length,
-      };
-      queueConnections.set(guildId, newQueueConnection);
-    } catch (err) {
-      console.log(`Error creating queue connection for ${guildId}`);
-      console.log(err);
-      return message.channel.send("Error creating queue.");
-    }
-  } else {
-    // set idxOffset to current length
-    idxOffset = queueConnection.totalQueueLength - 1;
-    // add length to queueConnection
-    queueConnection.totalQueueLength += preparedTracks.length;
-  }
-  // add queue to database with relatively adjusted indicies
-  switch (location) {
-    case "next":
-      const databaseTracks: Track[] = preparedTracks.map((track, idx) => {
-        return {
-          ...track,
-          queueIndex: idx + idxOffset + 1,
-        };
-      });
 
+  switch (location) {
+    case "end":
       try {
-        for (const dbTrack of databaseTracks) {
+        const guildQueueItems = await prisma.track.findMany({
+          where: {
+            guildId,
+          },
+        });
+
+        const queueLength = guildQueueItems.length; // current length of queue in db
+
+        const databaseTracksEnd: Track[] = preparedTracks.map((track, idx) => {
+          return {
+            ...track,
+            queueIndex: idx + queueLength,
+          };
+        });
+
+        for (const dbTrack of databaseTracksEnd) {
           await prisma.track.create({
             data: dbTrack,
           });
         }
 
-        const testQuery = await prisma.track.findMany({
-          where: {
-            guildId: guildId,
-          },
-        });
-
-        console.log(testQuery);
+        message.channel.send(`${databaseTracksEnd.length} track(s) added the queue.`);
       } catch (err) {
         console.log(err);
+      } finally {
+        await prisma.$disconnect();
       }
       break;
 
-    case "end":
-      // shift all db indicies for this request
+    case "next":
+      try {
+        const databaseTracksNext: Track[] = preparedTracks.map((track, idx) => {
+          return {
+            ...track,
+            queueIndex: idx, // these are going to the front of the queue
+            // so we don't care about the db queue length
+          };
+        });
+
+        // but, we need to shift the indxs in the db
+        // since the queueIndex has to be unique,
+        // we have to start at the highest and increment from there
+
+        const guildQueueItems = await prisma.track.findMany({
+          orderBy: [{ queueIndex: "desc" }],
+          where: {
+            guildId,
+          },
+        });
+
+        for (const gQItem of guildQueueItems) {
+          await prisma.track.update({
+            where: {
+              queue_id: {
+                guildId: gQItem.guildId,
+                queueIndex: gQItem.queueIndex,
+              },
+            },
+            data: {
+              queueIndex: {
+                increment: preparedTracks.length,
+              },
+            },
+          });
+        }
+
+        // now we add the new tracks
+        for (const dbTrack of databaseTracksNext) {
+          await prisma.track.create({
+            data: dbTrack,
+          });
+        }
+
+        message.channel.send(`${databaseTracksNext.length} track(s) added the queue.`);
+      } catch (err) {
+        console.log(err);
+      } finally {
+        await prisma.$disconnect();
+      }
       break;
+  }
+
+  const queueConnection = queueConnections.get(guildId);
+  if (!queueConnection) {
+    // create a queue connection and start playback
+    try {
+      // const newQueueConnection: QueueConnection = {
+      //   textChannel: message.channel as Discord.TextChannel,
+      //   voiceChannel,
+      //   voiceConnection: null, // will be created on playback
+      //   volume: defaultVolume,
+      //   playing: false, // will set to true on playback
+      //   currentIndex: 0, // start on first song
+      // };
+      // queueConnections.set(guildId, newQueueConnection);
+      playNextTrack(guildId, queueConnections, message.channel as Discord.TextChannel, voiceChannel);
+    } catch (err) {
+      console.log(`Error creating queue connection for ${guildId}`);
+      console.log(err);
+      return message.channel.send("Error creating queue.");
+    }
   }
 };
 

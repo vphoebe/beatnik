@@ -1,7 +1,11 @@
 import Discord from "discord.js";
 import { QueueConnections } from "..";
+import playNextTrack from "../transport/playNextTrack";
+import stopPlayback from "../transport/stopPlayback";
 import config from "../util/readConfig";
 import addToQueue from "./addToQueue";
+import clearQueue from "./clearQueue";
+import listQueue from "./listQueue";
 
 const shortcuts = config.shortcuts;
 const prefix = config.prefix;
@@ -10,7 +14,15 @@ const handleMessage = (message: Discord.Message, queueConnections: QueueConnecti
   // ignore unintended messages
   if (message.author.bot) return;
   if (!message.content.startsWith(prefix)) return;
+  if (!message.guild) return;
+  if (!message.member) return;
+  const voiceChannel = message.member.voice.channel;
 
+  if (!voiceChannel) {
+    return message.channel.send(`${message.member.user.username}, you need to join a voice channel before controlling the music.`);
+  }
+
+  const guildId = message.guild.id;
   const args = message.content.split(" ");
   const command = args[0].substring(1);
   console.log(command);
@@ -24,11 +36,24 @@ const handleMessage = (message: Discord.Message, queueConnections: QueueConnecti
   switch (command) {
     case "p":
     case "play":
-      // add to end of the queue
-      addToQueue(message, queueConnections, "end");
+      // add to end of the queue or resume
+      const args = message.content.split(" ");
+      const url = args[1];
+      if (!url) {
+        // resume playback
+        playNextTrack(guildId, queueConnections, message.channel as Discord.TextChannel, voiceChannel);
+      } else {
+        addToQueue(message, queueConnections, "end");
+      }
+
       break;
     case "next":
       // add to next spot in queue
+      addToQueue(message, queueConnections, "next");
+      break;
+    case "r":
+    case "resume":
+      // resume queue (after stopped)
       break;
     case "delete":
       // remove an index from queue
@@ -42,11 +67,17 @@ const handleMessage = (message: Discord.Message, queueConnections: QueueConnecti
       // skip current song
       break;
     case "stop":
-      // !playing in QueueConnection
+      // leave voice channel but keep position in queue
+      stopPlayback(message.channel as Discord.TextChannel, guildId, queueConnections);
+      break;
+    case "clear":
+      // clear queue for this guild
+      clearQueue(message.channel as Discord.TextChannel, guildId, queueConnections);
       break;
     case "q":
     case "queue":
       // list queue
+      listQueue(message, queueConnections);
       break;
     case "vol":
     case "volume":
@@ -63,48 +94,3 @@ const handleMessage = (message: Discord.Message, queueConnections: QueueConnecti
 };
 
 export default handleMessage;
-
-// export async function handleMessage(message: Discord.Message, globalQueues: GlobalQueues) {
-//   if (message.author.bot) return;
-//   if (!message.content.startsWith(prefix)) return;
-//   if (message.guild === null) return;
-
-//   const guildQueue = globalQueues.get(message.guild.id);
-
-//   const args = message.content.split(" ");
-//   const command = args[0].substring(1);
-//   const detectedShortcut = shortcuts ? shortcuts.find((shortcut) => shortcut.shortcut === command) : null;
-
-//   if (detectedShortcut) {
-//     message.content = `${prefix}${detectedShortcut.command}`;
-//   }
-
-//   const isCommand = (query: string): boolean => {
-//     return message.content.startsWith(`${prefix}${query}`);
-//   };
-
-//   if (isCommand("p")) {
-//     queue(message, guildQueue, globalQueues);
-//     return;
-//   } else if (isCommand("skip")) {
-//     skip(message, guildQueue);
-//     return;
-//   } else if (isCommand("stop")) {
-//     stop(message, guildQueue);
-//     return;
-//   } else if (isCommand("q")) {
-//     listQueue(message, guildQueue);
-//     return;
-//   } else if (isCommand("volume")) {
-//     changeVolume(message, guildQueue);
-//     return;
-//   } else if (isCommand("h")) {
-//     listCommands(message);
-//     listShortcuts(message);
-//     return;
-//   } else {
-//     message.channel.send("You need to enter a valid command!");
-//     listCommands(message);
-//     return;
-//   }
-// }
