@@ -27,18 +27,20 @@ const handleMessage = (message: Discord.Message, memoryQueues: MemoryQueues) => 
 
   const guildId = message.guild.id;
   const args = message.content.split(" ");
-  const command = args[0].substring(1);
+  let command = args[0].substring(1);
   console.log(command);
   const detectedShortcut = shortcuts ? shortcuts.find((shortcut) => shortcut.shortcut === command) : null;
 
   if (detectedShortcut) {
     // replace content with full command
+    command = detectedShortcut.command.split(" ")[0];
     message.content = `${prefix}${detectedShortcut.command}`;
   }
 
   switch (command) {
     case "p":
     case "play":
+    case "p:shuffle":
       // add to end of the queue or resume
       const args = message.content.split(" ");
       const url = args[1];

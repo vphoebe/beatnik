@@ -3,7 +3,7 @@ import ytdl from "ytdl-core-discord";
 import ytpl from "ytpl";
 import YouTube from "discord-youtube-api";
 import config from "../util/readConfig";
-import { MemoryQueue, MemoryQueues } from "..";
+import { MemoryQueues } from "..";
 import { PrismaClient, Track } from "@prisma/client";
 import shuffleArray from "../util/shuffleArray";
 import playNextTrack from "../transport/playNextTrack";
