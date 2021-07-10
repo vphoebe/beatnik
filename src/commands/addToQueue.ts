@@ -217,6 +217,7 @@ const addToQueue = async (message: Discord.Message, memoryQueues: MemoryQueues, 
         }
 
         message.channel.send(`${databaseTracksNext.length} track(s) added the queue.`);
+        message.channel.send(`${databaseTracksNext[0].title} will play next.`);
       } catch (err) {
         console.log(err);
       } finally {

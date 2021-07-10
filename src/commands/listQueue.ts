@@ -36,7 +36,6 @@ const listQueue = async (message: Discord.Message, memoryQueues: MemoryQueues) =
       if (pageNumber > totalPages - 1) return message.channel.send("Invalid queue page.");
       if (currentlyPlaying) {
         // if something is currently playing, send this first
-        // then remove it from the next embed
         const nowPlayingEmbed = new Discord.MessageEmbed()
           .setColor("#ed872d")
           .setTitle("Now playing on beatnik")
@@ -46,7 +45,6 @@ const listQueue = async (message: Discord.Message, memoryQueues: MemoryQueues) =
           .setTimestamp()
           .setFooter("sent by beatnik");
         message.channel.send(nowPlayingEmbed);
-        pagedItems.shift();
       }
 
       // send a list of the database queue
