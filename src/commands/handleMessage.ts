@@ -1,11 +1,14 @@
 import Discord from "discord.js";
 import { MemoryQueues } from "..";
+import changeTrack from "../transport/changeTrack";
 import playNextTrack from "../transport/playNextTrack";
 import stopPlayback from "../transport/stopPlayback";
 import config from "../util/readConfig";
 import addToQueue from "./addToQueue";
 import clearQueue from "./clearQueue";
+import listCommands from "./listCommands";
 import listQueue from "./listQueue";
+import removeFromQueue from "./removeFromQueue";
 
 const shortcuts = config.shortcuts;
 const prefix = config.prefix;
@@ -45,26 +48,22 @@ const handleMessage = (message: Discord.Message, memoryQueues: MemoryQueues) => 
       } else {
         addToQueue(message, memoryQueues, "end");
       }
-
       break;
     case "next":
       // add to next spot in queue
       addToQueue(message, memoryQueues, "next");
       break;
-    case "r":
-    case "resume":
-      // resume queue (after stopped)
-      break;
     case "delete":
       // remove an index from queue
+      removeFromQueue(message, guildId, memoryQueues);
       break;
     case "skip":
       // increment currentIndex in MemoryQueue
-      // skip current song
+      changeTrack(message.channel as Discord.TextChannel, guildId, memoryQueues, 1);
       break;
     case "back":
       // decrement currentIndex in MemoryQueue
-      // skip current song
+      changeTrack(message.channel as Discord.TextChannel, guildId, memoryQueues, -1);
       break;
     case "stop":
       // leave voice channel but keep position in queue
@@ -79,13 +78,10 @@ const handleMessage = (message: Discord.Message, memoryQueues: MemoryQueues) => 
       // list queue
       listQueue(message, memoryQueues);
       break;
-    case "vol":
-    case "volume":
-      // change volume
-      break;
     case "h":
     case "help":
       // send help embed
+      listCommands(message);
       break;
     default:
       message.channel.send("Please enter a valid command.");

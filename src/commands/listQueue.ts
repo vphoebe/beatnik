@@ -9,42 +9,44 @@ const prisma = new PrismaClient();
 
 const listQueue = async (message: Discord.Message, memoryQueues: MemoryQueues) => {
   if (message.guild === null) return;
-  const currentQueue = memoryQueues.get(message.guild.id);
+  const memoryQueue = memoryQueues.get(message.guild.id);
 
   try {
-    const guildQueueItems = await prisma.track.findMany({
+    const dbQueue = await prisma.track.findMany({
       where: {
         guildId: message.guild.id,
       },
     });
 
-    if (guildQueueItems.length <= 0) {
+    if (dbQueue.length <= 0) {
       return message.channel.send("No queue currently exists.");
     }
 
-    if (guildQueueItems.length > 0) {
-      const queueItemStrings = guildQueueItems.map((track) => {
+    if (dbQueue.length > 0) {
+      const queueItemStrings = dbQueue.map((track) => {
         return `**[#${track.queueIndex + 1}]** ${track.title} (${getDurationString(track.lengthInSec)})\n Queued by \`${track.user}\``;
       });
       const args = message.content.split(" ");
       const pageNumber = Number(args[1]) - 1 || 0;
       const pagedItems = queueItemStrings.slice(pageNumber * 10, pageNumber * 10 + 10);
       const totalPages = Math.ceil(queueItemStrings.length / 10);
-      const nowPlayingIdx = currentQueue ? (currentQueue.playing ? currentQueue.currentIndex : null) : null;
+      const nowPlayingIdx = memoryQueue?.currentIndex ?? 0;
+      const currentlyPlaying = memoryQueue?.playing ?? false;
 
       if (pageNumber > totalPages - 1) return message.channel.send("Invalid queue page.");
-
-      if (nowPlayingIdx) {
+      if (currentlyPlaying) {
         // if something is currently playing, send this first
+        // then remove it from the next embed
         const nowPlayingEmbed = new Discord.MessageEmbed()
           .setColor("#ed872d")
           .setTitle("Now playing on beatnik")
           .setDescription(queueItemStrings[nowPlayingIdx])
-          .setThumbnail(guildQueueItems[nowPlayingIdx].thumbnailUrl)
+          .setThumbnail(dbQueue[nowPlayingIdx].thumbnailUrl)
           .addField("Change pages...", `${prefix}q [pagenumber]`)
           .setTimestamp()
           .setFooter("sent by beatnik");
         message.channel.send(nowPlayingEmbed);
+        pagedItems.shift();
       }
 
       // send a list of the database queue
