@@ -132,6 +132,8 @@ const addToQueue = async (message: Discord.Message, memoryQueues: MemoryQueues, 
 
   // set preparedTracks into database
 
+  const memoryQueue = memoryQueues.get(guildId);
+
   switch (location) {
     case "end":
       try {
@@ -166,11 +168,13 @@ const addToQueue = async (message: Discord.Message, memoryQueues: MemoryQueues, 
 
     case "next":
       try {
+        const currentIndex = memoryQueue?.currentIndex ?? -1;
         const databaseTracksNext: Track[] = preparedTracks.map((track, idx) => {
+          // these are going to the front of the queue. add to current idx
+          console.log("cidx", currentIndex);
           return {
             ...track,
-            queueIndex: idx, // these are going to the front of the queue
-            // so we don't care about the db queue length
+            queueIndex: idx + currentIndex + 1,
           };
         });
 
@@ -178,24 +182,28 @@ const addToQueue = async (message: Discord.Message, memoryQueues: MemoryQueues, 
         // since the queueIndex has to be unique,
         // we have to start at the highest and increment from there
 
-        const guildQueueItems = await prisma.track.findMany({
+        const dbQueueItems = await prisma.track.findMany({
           orderBy: [{ queueIndex: "desc" }],
           where: {
             guildId,
           },
         });
 
-        for (const gQItem of guildQueueItems) {
+        // if something is playing now, we need to leave its index alone
+        // along with everything behind it in the queue
+        const filteredDbQueueItems = dbQueueItems.filter((item) => item.queueIndex > currentIndex);
+
+        for (const dbQItem of filteredDbQueueItems) {
           await prisma.track.update({
             where: {
               queue_id: {
-                guildId: gQItem.guildId,
-                queueIndex: gQItem.queueIndex,
+                guildId: dbQItem.guildId,
+                queueIndex: dbQItem.queueIndex,
               },
             },
             data: {
               queueIndex: {
-                increment: preparedTracks.length,
+                increment: databaseTracksNext.length,
               },
             },
           });
@@ -217,26 +225,15 @@ const addToQueue = async (message: Discord.Message, memoryQueues: MemoryQueues, 
       break;
   }
 
-  const memoryQueue = memoryQueues.get(guildId);
   if (!memoryQueue) {
-    // create a queue connection and start playback
     try {
-      // const newQueueConnection: MemoryQueue = {
-      //   textChannel: message.channel as Discord.TextChannel,
-      //   voiceChannel,
-      //   voiceConnection: null, // will be created on playback
-      //   volume: defaultVolume,
-      //   playing: false, // will set to true on playback
-      //   currentIndex: 0, // start on first song
-      // };
-      // memoryQueues.set(guildId, newQueueConnection);
       playNextTrack(guildId, memoryQueues, message.channel as Discord.TextChannel, voiceChannel);
     } catch (err) {
       console.log(`Error creating queue connection for ${guildId}`);
       console.log(err);
       return message.channel.send("Error creating queue.");
     }
-  }
+  } // else the tracks just get added and the playback will take care of it
 };
 
 export default addToQueue;
