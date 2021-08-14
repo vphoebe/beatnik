@@ -28,7 +28,6 @@ const handleMessage = (message: Discord.Message, memoryQueues: MemoryQueues) => 
   const guildId = message.guild.id;
   const args = message.content.split(" ");
   let command = args[0].substring(1);
-  console.log(command);
   const detectedShortcut = shortcuts ? shortcuts.find((shortcut) => shortcut.shortcut === command) : null;
 
   if (detectedShortcut) {

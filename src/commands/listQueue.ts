@@ -41,7 +41,6 @@ const listQueue = async (message: Discord.Message, memoryQueues: MemoryQueues) =
           .setTitle("Now playing on beatnik")
           .setDescription(queueItemStrings[nowPlayingIdx])
           .setThumbnail(dbQueue[nowPlayingIdx].thumbnailUrl)
-          .addField("Change pages...", `${prefix}q [pagenumber]`)
           .setTimestamp()
           .setFooter("sent by beatnik");
         message.channel.send(nowPlayingEmbed);

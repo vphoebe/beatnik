@@ -7,10 +7,12 @@ import { MemoryQueues } from "..";
 import { PrismaClient, Track } from "@prisma/client";
 import shuffleArray from "../util/shuffleArray";
 import playNextTrack from "../transport/playNextTrack";
+import getDurationString from "../util/duration";
 
 const youtubeKey = config.youtube_token;
 const scdl = require("soundcloud-downloader").default;
 const ytsearch = new YouTube(youtubeKey);
+const prefix = config.prefix;
 
 type QueueableTrack = Omit<Track, "queueIndex">;
 
@@ -134,6 +136,16 @@ const addToQueue = async (message: Discord.Message, memoryQueues: MemoryQueues, 
 
   const memoryQueue = memoryQueues.get(guildId);
 
+  const nowPlayingEmbed = new Discord.MessageEmbed()
+    .setAuthor("Added to queue...")
+    .setColor("#ed872d")
+    .setTitle(preparedTracks[0].title)
+    .addField("Duration", getDurationString(preparedTracks[0].lengthInSec), true)
+    .addField("Queued by", preparedTracks[0].user, true)
+    .addField("Service", preparedTracks[0].service === "yt" ? "YouTube" : "SoundCloud")
+    .setThumbnail(preparedTracks[0].thumbnailUrl ?? "")
+    .setURL(preparedTracks[0].url);
+
   switch (location) {
     case "end":
       try {
@@ -158,7 +170,8 @@ const addToQueue = async (message: Discord.Message, memoryQueues: MemoryQueues, 
           });
         }
 
-        message.channel.send(`${databaseTracksEnd.length} track(s) added the queue.`);
+        message.channel.send(`${databaseTracksEnd.length} track(s) added to the end of the queue.`);
+        message.channel.send(nowPlayingEmbed);
       } catch (err) {
         console.log(err);
       } finally {
@@ -171,7 +184,6 @@ const addToQueue = async (message: Discord.Message, memoryQueues: MemoryQueues, 
         const currentIndex = memoryQueue?.currentIndex ?? -1;
         const databaseTracksNext: Track[] = preparedTracks.map((track, idx) => {
           // these are going to the front of the queue. add to current idx
-          console.log("cidx", currentIndex);
           return {
             ...track,
             queueIndex: idx + currentIndex + 1,
@@ -218,6 +230,7 @@ const addToQueue = async (message: Discord.Message, memoryQueues: MemoryQueues, 
 
         message.channel.send(`${databaseTracksNext.length} track(s) added the queue.`);
         message.channel.send(`${databaseTracksNext[0].title} will play next.`);
+        message.channel.send(nowPlayingEmbed);
       } catch (err) {
         console.log(err);
       } finally {
