@@ -16,7 +16,7 @@ const removeFromQueue = async (message: Discord.Message, guildId: string, memory
   if (memoryQueue) {
     if (queueIndex === memoryQueue.currentIndex && memoryQueue.playing) {
       // if the deleted track is playing, skip it
-      changeTrack(memoryQueue.textChannel, guildId, memoryQueues, 1);
+      changeTrack(memoryQueue.textChannel, guildId, memoryQueues, "relative", 1);
     }
   }
 
