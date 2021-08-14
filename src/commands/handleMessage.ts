@@ -58,13 +58,18 @@ const handleMessage = (message: Discord.Message, memoryQueues: MemoryQueues) => 
       // remove an index from queue
       removeFromQueue(message, guildId, memoryQueues);
       break;
+    case "jump":
+      // jump to specific queue index
+      const jumpArgs = message.content.split(" ");
+      changeTrack(message.channel as Discord.TextChannel, guildId, memoryQueues, "absolute", parseInt(jumpArgs[1]));
+      break;
     case "skip":
       // increment currentIndex in MemoryQueue
-      changeTrack(message.channel as Discord.TextChannel, guildId, memoryQueues, 1);
+      changeTrack(message.channel as Discord.TextChannel, guildId, memoryQueues, "relative", 1);
       break;
     case "back":
       // decrement currentIndex in MemoryQueue
-      changeTrack(message.channel as Discord.TextChannel, guildId, memoryQueues, -1);
+      changeTrack(message.channel as Discord.TextChannel, guildId, memoryQueues, "relative", -1);
       break;
     case "stop":
       // leave voice channel but keep position in queue
