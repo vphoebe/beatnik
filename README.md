@@ -26,16 +26,24 @@ Then start the Docker container. You can view the logs to make sure the configur
 
 The default prefix is `-` but can be configured.
 
-`-p [URL]`: Play a URL (YouTube and SoundCloud supported). If something is already playing, it will be added to the queue.
+`-p`: Play a URL of a video or playlist, or search a term and play the first result. Adds to the end of the queue if present. Use it by itself after to resume a queue if nothing is playing.
 
-`-p:shuffle [URL]`: Shuffle a YouTube playlist URL into the queue.
+`-p:shuffle`: Shuffle a YouTube playlist url while adding to the queue.
 
-`-skip`: Skip to the next track in queue.
+`-next`: Add to the next spot in the queue, instead of the end.
 
-`-stop`: Stops playback, deletes the queue, and leaves the channel.
+`-q`: Displays the current queue. Use this to see a number for each queued track to use it for other commands.
 
-`-volume`: Sets a default volume for playback from 0 to 100%.
+`-jump`: Jump to a specific track using its queue number.
 
-`-q`: View the current queue.
+`-delete`: Delete a specific track using its queue number.
 
-`-h`: Shows all commands, and configured shortcuts if you've added any.
+`-skip`: Skips to the next track in the queue.
+
+`-back`: Play the previous track in the queue..
+
+`-stop`: Stops playback, but maintains the queue for resume later. beatnik leaves the voice channel.
+
+`-clear`: Stops playback and clears the current queue. beatnik leaves the voice channel.
+
+`-h`: Shows this list of commands.
