@@ -5,7 +5,8 @@
   "main": "src/index.ts",
   "scripts": {
     "dev": "DATABASE_URL='file:./dev.db' nodemon --watch './**/*.ts' --exec 'ts-node' src/index.ts",
-    "build": "npx tsc --build --clean && npx tsc --build"
+    "build": "npx tsc --build --clean && npx tsc --build",
+    "db": "prisma migrate deploy"
   },
   "repository": {
     "type": "git",
