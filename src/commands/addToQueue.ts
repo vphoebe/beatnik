@@ -64,7 +64,9 @@ const addToQueue = async (message: Discord.Message, memoryQueues: MemoryQueues, 
     case "yt-pl":
       // youtube playlist
       message.channel.send("Processing playlist request...");
+      console.log(`Calling YouTube API for playlist ${url}`);
       const playlistInfo = await ytpl(url, { pages: Infinity });
+      console.log(`Playlist discovered with ${playlistInfo.items.length} tracks.`);
       const playlistTracks: QueueableTrack[] = playlistInfo.items.map((item) => ({
         service: "yt",
         title: item.title,
@@ -164,11 +166,17 @@ const addToQueue = async (message: Discord.Message, memoryQueues: MemoryQueues, 
           };
         });
 
-        for (const dbTrack of databaseTracksEnd) {
-          await prisma.track.create({
-            data: dbTrack,
-          });
-        }
+        // for (const dbTrack of databaseTracksEnd) {
+        //   await prisma.track.create({
+        //     data: dbTrack,
+        //   });
+        // }
+
+        console.log(`Adding ${preparedTracks.length} tracks to the database...`);
+        const op = await prisma.track.createMany({
+          data: databaseTracksEnd,
+        });
+        console.log(`${op.count} added to the database succesfully.`);
 
         message.channel.send(`${databaseTracksEnd.length} track(s) added to the end of the queue.`);
         message.channel.send(nowPlayingEmbed);
