@@ -4,7 +4,7 @@
   "description": "a discord bot that tells you the time, among other things.",
   "main": "src/index.ts",
   "scripts": {
-    "dev": "DATABASE_URL='file:./dev.db' nodemon --watch './**/*.ts' --exec 'ts-node' src/index.ts",
+    "dev": "nodemon --watch './**/*.ts' --exec 'ts-node' src/index.ts",
     "build": "npx tsc --build --clean && npx tsc --build",
     "db": "prisma migrate deploy"
   },
@@ -28,7 +28,6 @@
     "discord.js": "^12.5.3",
     "get-random-values": "^1.2.2",
     "soundcloud-downloader": "^1.0.0",
-    "sqlite3": "^5.0.2",
     "ytdl-core": "^4.9.1",
     "ytdl-core-discord": "^1.3.0",
     "ytpl": "^2.2.1"
