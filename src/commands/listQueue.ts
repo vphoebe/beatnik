@@ -1,8 +1,8 @@
 import Discord from "discord.js";
 import { MemoryQueues } from "..";
 import { PrismaClient, Track } from "@prisma/client";
-import getDurationString from "../util/duration";
-import config from "../util/readConfig";
+import getDurationString from "../lib/duration";
+import config from "../lib/readConfig";
 
 const prefix = config.prefix;
 const prisma = new PrismaClient();

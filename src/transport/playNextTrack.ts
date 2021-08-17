@@ -3,8 +3,8 @@ import Discord from "discord.js";
 import ytdl from "ytdl-core-discord";
 import { MemoryQueue, MemoryQueues } from "..";
 import clearQueue from "../commands/clearQueue";
-import getDurationString from "../util/duration";
-import config from "../util/readConfig";
+import getDurationString from "../lib/duration";
+import config from "../lib/readConfig";
 const scdl = require("soundcloud-downloader").default;
 
 const prisma = new PrismaClient();

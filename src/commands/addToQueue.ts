@@ -2,12 +2,12 @@ import Discord from "discord.js";
 import ytdl from "ytdl-core-discord";
 import ytpl from "ytpl";
 import YouTube from "discord-youtube-api";
-import config from "../util/readConfig";
+import config from "../lib/readConfig";
 import { MemoryQueues } from "..";
 import { PrismaClient, Track } from "@prisma/client";
-import shuffleArray from "../util/shuffleArray";
+import shuffleArray from "../lib/shuffleArray";
 import playNextTrack from "../transport/playNextTrack";
-import getDurationString from "../util/duration";
+import getDurationString from "../lib/duration";
 
 const youtubeKey = config.youtube_token;
 const scdl = require("soundcloud-downloader").default;

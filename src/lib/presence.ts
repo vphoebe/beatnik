@@ -1,5 +1,5 @@
 import { Client } from "discord.js";
-import BeatTime from "../classes/BeatTime";
+import BeatTime from "./BeatTime";
 let currentBeats: string;
 
 export default (client: Client) => {

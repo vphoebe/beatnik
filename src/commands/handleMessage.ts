@@ -3,7 +3,7 @@ import { MemoryQueues } from "..";
 import changeTrack from "../transport/changeTrack";
 import playNextTrack from "../transport/playNextTrack";
 import stopPlayback from "../transport/stopPlayback";
-import config from "../util/readConfig";
+import config from "../lib/readConfig";
 import addToQueue from "./addToQueue";
 import clearQueue from "./clearQueue";
 import listCommands from "./listCommands";

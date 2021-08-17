@@ -1,7 +1,7 @@
 import Discord, { Guild } from "discord.js";
-import presence from "./presence/presence";
+import presence from "./lib/presence";
 import handleMessage from "./commands/handleMessage";
-import config from "./util/readConfig";
+import config from "./lib/readConfig";
 
 export type MemoryQueue = {
   textChannel: Discord.TextChannel;

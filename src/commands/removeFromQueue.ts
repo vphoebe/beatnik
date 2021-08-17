@@ -2,7 +2,7 @@ import Discord, { Guild } from "discord.js";
 import { MemoryQueues } from "..";
 import { PrismaClient } from "@prisma/client";
 import changeTrack from "../transport/changeTrack";
-import config from "../util/readConfig";
+import config from "../lib/readConfig";
 
 const prisma = new PrismaClient();
 
