@@ -16,6 +16,9 @@ const listQueue = async (message: Discord.Message, memoryQueues: MemoryQueues) =
       where: {
         guildId: message.guild.id,
       },
+      orderBy: {
+        queueIndex: "asc",
+      },
     });
 
     if (dbQueue.length <= 0) {
