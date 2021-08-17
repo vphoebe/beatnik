@@ -57,8 +57,6 @@ const removeFromQueue = async (message: Discord.Message, guildId: string, memory
   } catch (err) {
     console.log(err);
     return message.channel.send(`Track not found in the queue. View the queue if you're not sure with ${config.prefix}q`);
-  } finally {
-    await prisma.$disconnect();
   }
 };
 

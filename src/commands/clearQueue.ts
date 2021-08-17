@@ -17,8 +17,6 @@ const clearQueue = async (channel: Discord.TextChannel, guildId: string, memoryQ
     return channel.send(`${operation.count} tracks removed from the queue.`);
   } catch (err) {
     console.log(err);
-  } finally {
-    await prisma.$disconnect();
   }
 };
 

@@ -180,8 +180,6 @@ const addToQueue = async (message: Discord.Message, memoryQueues: MemoryQueues, 
         message.channel.send(nowPlayingEmbed);
       } catch (err) {
         console.log(err);
-      } finally {
-        await prisma.$disconnect();
       }
       break;
 

@@ -60,8 +60,6 @@ const listQueue = async (message: Discord.Message, memoryQueues: MemoryQueues) =
     }
   } catch (err) {
     console.log(err);
-  } finally {
-    await prisma.$disconnect();
   }
 };
 
