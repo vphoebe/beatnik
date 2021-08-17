@@ -149,13 +149,11 @@ const addToQueue = async (message: Discord.Message, memoryQueues: MemoryQueues, 
   switch (location) {
     case "end":
       try {
-        const guildQueueItems = await prisma.track.findMany({
+        const queueLength = await prisma.track.count({
           where: {
             guildId,
           },
         });
-
-        const queueLength = guildQueueItems.length; // current length of queue in db
 
         const databaseTracksEnd: Track[] = preparedTracks.map((track, idx) => {
           return {
@@ -163,12 +161,6 @@ const addToQueue = async (message: Discord.Message, memoryQueues: MemoryQueues, 
             queueIndex: idx + queueLength,
           };
         });
-
-        // for (const dbTrack of databaseTracksEnd) {
-        //   await prisma.track.create({
-        //     data: dbTrack,
-        //   });
-        // }
 
         console.log(`Adding ${preparedTracks.length} tracks to the database...`);
         const op = await prisma.track.createMany({
