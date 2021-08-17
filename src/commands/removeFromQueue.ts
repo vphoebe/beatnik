@@ -1,10 +1,8 @@
 import Discord, { Guild } from "discord.js";
 import { MemoryQueues } from "..";
-import { PrismaClient } from "@prisma/client";
+import { prisma } from "../lib/prisma";
 import changeTrack from "../transport/changeTrack";
 import config from "../lib/readConfig";
-
-const prisma = new PrismaClient();
 
 const removeFromQueue = async (message: Discord.Message, guildId: string, memoryQueues: MemoryQueues) => {
   const args = message.content.split(" ");

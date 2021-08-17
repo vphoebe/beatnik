@@ -1,11 +1,10 @@
 import Discord from "discord.js";
 import { MemoryQueues } from "..";
-import { PrismaClient, Track } from "@prisma/client";
+import { prisma } from "../lib/prisma";
 import getDurationString from "../lib/duration";
 import config from "../lib/readConfig";
 
 const prefix = config.prefix;
-const prisma = new PrismaClient();
 
 const listQueue = async (message: Discord.Message, memoryQueues: MemoryQueues) => {
   if (message.guild === null) return;

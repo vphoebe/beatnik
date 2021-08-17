@@ -4,7 +4,7 @@ import ytpl from "ytpl";
 import YouTube from "discord-youtube-api";
 import config from "../lib/readConfig";
 import { MemoryQueues } from "..";
-import { PrismaClient, Track } from "@prisma/client";
+import { prisma, Track } from "../lib/prisma";
 import shuffleArray from "../lib/shuffleArray";
 import playNextTrack from "../transport/playNextTrack";
 import getDurationString from "../lib/duration";
@@ -15,8 +15,6 @@ const ytsearch = new YouTube(youtubeKey);
 const prefix = config.prefix;
 
 type QueueableTrack = Omit<Track, "queueIndex">;
-
-const prisma = new PrismaClient();
 
 const addToQueue = async (message: Discord.Message, memoryQueues: MemoryQueues, location: "next" | "end") => {
   // ensure correct conditions

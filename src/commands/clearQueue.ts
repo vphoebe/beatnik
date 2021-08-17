@@ -1,8 +1,6 @@
 import Discord from "discord.js";
 import { MemoryQueues } from "..";
-import { PrismaClient } from "@prisma/client";
-
-const prisma = new PrismaClient();
+import { prisma } from "../lib/prisma";
 
 const clearQueue = async (channel: Discord.TextChannel, guildId: string, memoryQueues: MemoryQueues) => {
   const memoryQueue = memoryQueues.get(guildId);

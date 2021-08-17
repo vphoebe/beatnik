@@ -1,4 +1,4 @@
-import { PrismaClient } from "@prisma/client";
+import { prisma } from "../lib/prisma";
 import Discord from "discord.js";
 import ytdl from "ytdl-core-discord";
 import { MemoryQueue, MemoryQueues } from "..";
@@ -6,8 +6,6 @@ import clearQueue from "../commands/clearQueue";
 import getDurationString from "../lib/duration";
 import config from "../lib/readConfig";
 const scdl = require("soundcloud-downloader").default;
-
-const prisma = new PrismaClient();
 const defaultVolume = config.default_volume;
 
 const playNextTrack = async (guildId: string, memoryQueues: MemoryQueues, textChannel: Discord.TextChannel, voiceChannel: Discord.VoiceChannel) => {
