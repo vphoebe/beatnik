@@ -1,4 +1,4 @@
-import Discord, { Guild } from "discord.js";
+import Discord from "discord.js";
 import { MemoryQueues } from "..";
 import { prisma } from "../lib/prisma";
 import changeTrack from "../transport/changeTrack";
@@ -21,7 +21,7 @@ const removeFromQueue = async (message: Discord.Message, guildId: string, memory
   try {
     const removedTrack = await prisma.track.delete({
       where: {
-        queue_id: {
+        queuePosition: {
           guildId,
           queueIndex,
         },
@@ -41,7 +41,7 @@ const removeFromQueue = async (message: Discord.Message, guildId: string, memory
     for (const adjTrack of adjustableTracks) {
       await prisma.track.update({
         where: {
-          queue_id: {
+          queuePosition: {
             guildId: adjTrack.guildId,
             queueIndex: adjTrack.queueIndex,
           },

@@ -14,7 +14,7 @@ const scdl = require("soundcloud-downloader").default;
 const ytsearch = new YouTube(youtubeKey);
 const prefix = config.prefix;
 
-type QueueableTrack = Omit<Track, "queueIndex">;
+type QueueableTrack = Omit<Track, "queueIndex" | "id">;
 
 const addToQueue = async (message: Discord.Message, memoryQueues: MemoryQueues, location: "next" | "end") => {
   // ensure correct conditions
@@ -155,7 +155,7 @@ const addToQueue = async (message: Discord.Message, memoryQueues: MemoryQueues, 
           },
         });
 
-        const databaseTracksEnd: Track[] = preparedTracks.map((track, idx) => {
+        const databaseTracksEnd = preparedTracks.map((track, idx) => {
           return {
             ...track,
             queueIndex: idx + queueLength,
@@ -178,7 +178,7 @@ const addToQueue = async (message: Discord.Message, memoryQueues: MemoryQueues, 
     case "next":
       try {
         const currentIndex = memoryQueue?.currentIndex ?? -1;
-        const databaseTracksNext: Track[] = preparedTracks.map((track, idx) => {
+        const databaseTracksNext = preparedTracks.map((track, idx) => {
           // these are going to the front of the queue. add to current idx
           return {
             ...track,
@@ -186,36 +186,49 @@ const addToQueue = async (message: Discord.Message, memoryQueues: MemoryQueues, 
           };
         });
 
-        // but, we need to shift the indxs in the db
-        // since the queueIndex has to be unique,
-        // we have to start at the highest and increment from there
-
-        const dbQueueItems = await prisma.track.findMany({
-          orderBy: [{ queueIndex: "desc" }],
+        // increment the index of any track after this one to "make room"
+        const incrementOp = await prisma.track.updateMany({
           where: {
             guildId,
+            queueIndex: { gt: currentIndex },
+          },
+          data: {
+            queueIndex: { increment: databaseTracksNext.length },
           },
         });
 
-        // if something is playing now, we need to leave its index alone
-        // along with everything behind it in the queue
-        const filteredDbQueueItems = dbQueueItems.filter((item) => item.queueIndex > currentIndex);
+        console.log(`Adjusted ${incrementOp.count} tracks and added ${databaseTracksNext.length} tracks in front.`);
 
-        for (const dbQItem of filteredDbQueueItems) {
-          await prisma.track.update({
-            where: {
-              queue_id: {
-                guildId: dbQItem.guildId,
-                queueIndex: dbQItem.queueIndex,
-              },
-            },
-            data: {
-              queueIndex: {
-                increment: databaseTracksNext.length,
-              },
-            },
-          });
-        }
+        // // but, we need to shift the indxs in the db
+        // // since the queueIndex has to be unique,
+        // // we have to start at the highest and increment from there
+
+        // const dbQueueItems = await prisma.track.findMany({
+        //   orderBy: [{ queueIndex: "desc" }],
+        //   where: {
+        //     guildId,
+        //   },
+        // });
+
+        // // if something is playing now, we need to leave its index alone
+        // // along with everything behind it in the queue
+        // const filteredDbQueueItems = dbQueueItems.filter((item) => item.queueIndex > currentIndex);
+
+        // for (const dbQItem of filteredDbQueueItems) {
+        //   await prisma.track.update({
+        //     where: {
+        //       queue_id: {
+        //         guildId: dbQItem.guildId,
+        //         queueIndex: dbQItem.queueIndex,
+        //       },
+        //     },
+        //     data: {
+        //       queueIndex: {
+        //         increment: databaseTracksNext.length,
+        //       },
+        //     },
+        //   });
+        // }
 
         // now we add the new tracks
         for (const dbTrack of databaseTracksNext) {

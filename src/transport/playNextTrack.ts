@@ -35,7 +35,7 @@ const playNextTrack = async (guildId: string, memoryQueues: MemoryQueues, textCh
   const currentIdx = memoryQueue.currentIndex;
   const track = await prisma.track.findUnique({
     where: {
-      queue_id: {
+      queuePosition: {
         guildId,
         queueIndex: currentIdx,
       },
