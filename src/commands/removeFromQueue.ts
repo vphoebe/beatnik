@@ -29,30 +29,16 @@ const removeFromQueue = async (message: Discord.Message, guildId: string, memory
     });
 
     // adjust indicies of tracks that were in front of it
-    const adjustableTracks = await prisma.track.findMany({
-      orderBy: [{ queueIndex: "asc" }],
+    const adjustOp = await prisma.track.updateMany({
       where: {
-        queueIndex: {
-          gt: queueIndex,
-        },
+        queueIndex: { gt: queueIndex },
+      },
+      data: {
+        queueIndex: { decrement: 1 }, // only delete one at a time right now
       },
     });
 
-    for (const adjTrack of adjustableTracks) {
-      await prisma.track.update({
-        where: {
-          queuePosition: {
-            guildId: adjTrack.guildId,
-            queueIndex: adjTrack.queueIndex,
-          },
-        },
-        data: {
-          queueIndex: {
-            decrement: 1,
-          },
-        },
-      });
-    }
+    console.log(`Adjusted ${adjustOp.count} tracks and removed 1 track in front.`);
     return message.channel.send(`'${removedTrack.title}' removed from the queue.`);
   } catch (err) {
     console.log(err);

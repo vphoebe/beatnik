@@ -199,37 +199,6 @@ const addToQueue = async (message: Discord.Message, memoryQueues: MemoryQueues, 
 
         console.log(`Adjusted ${incrementOp.count} tracks and added ${databaseTracksNext.length} tracks in front.`);
 
-        // // but, we need to shift the indxs in the db
-        // // since the queueIndex has to be unique,
-        // // we have to start at the highest and increment from there
-
-        // const dbQueueItems = await prisma.track.findMany({
-        //   orderBy: [{ queueIndex: "desc" }],
-        //   where: {
-        //     guildId,
-        //   },
-        // });
-
-        // // if something is playing now, we need to leave its index alone
-        // // along with everything behind it in the queue
-        // const filteredDbQueueItems = dbQueueItems.filter((item) => item.queueIndex > currentIndex);
-
-        // for (const dbQItem of filteredDbQueueItems) {
-        //   await prisma.track.update({
-        //     where: {
-        //       queue_id: {
-        //         guildId: dbQItem.guildId,
-        //         queueIndex: dbQItem.queueIndex,
-        //       },
-        //     },
-        //     data: {
-        //       queueIndex: {
-        //         increment: databaseTracksNext.length,
-        //       },
-        //     },
-        //   });
-        // }
-
         // now we add the new tracks
         for (const dbTrack of databaseTracksNext) {
           await prisma.track.create({
