@@ -7,8 +7,12 @@ CREATE TABLE "Track" (
     "url" TEXT NOT NULL,
     "user" TEXT NOT NULL,
     "thumbnailUrl" TEXT NOT NULL,
-    "lengthInSec" INTEGER NOT NULL
+    "lengthInSec" INTEGER NOT NULL,
+    "id" TEXT NOT NULL,
+
+    PRIMARY KEY ("id")
 );
 
--- CreateIndex
-CREATE UNIQUE INDEX "queue_id" ON "Track"("guildId", "queueIndex");
+alter table "Track" add constraint "queuePosition"
+  unique("guildId", "queueIndex")
+  deferrable initially deferred;
