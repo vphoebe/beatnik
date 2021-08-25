@@ -2,6 +2,7 @@ import Discord, { Guild } from "discord.js";
 import presence from "./lib/presence";
 import handleMessage from "./commands/handleMessage";
 import config from "./lib/readConfig";
+import stopPlayback from "./transport/stopPlayback";
 
 export type MemoryQueue = {
   textChannel: Discord.TextChannel;
@@ -31,15 +32,14 @@ client.on("message", (message) => {
   handleMessage(message, memoryQueues);
 });
 
-// client.on("voiceStateUpdate", (oldState, newState) => {
-//   // leave channel if it's just the bot
-//   if (oldState.channelID !== oldState.guild.me?.voice.channelID || newState.channel) return;
-//   const totalMembers = oldState.channel?.members.size;
-//   if (totalMembers && totalMembers - 1 === 0) {
-//     console.log(`Leaving voice channel ${oldState.channelID}`);
-//     globalQueues.delete(oldState.guild.id);
-//     return oldState.channel?.leave();
-//   }
-// });
+client.on("voiceStateUpdate", (oldState, newState) => {
+  // leave channel if it's just the bot
+  if (oldState.channelID !== oldState.guild.me?.voice.channelID || newState.channel) return;
+  const totalMembers = oldState.channel?.members.size;
+  if (totalMembers && totalMembers - 1 === 0) {
+    console.log(`Leaving voice channel ${oldState.channelID}`);
+    stopPlayback(oldState.guild.id, memoryQueues);
+  }
+});
 
 client.login(config.discord_token);

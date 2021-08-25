@@ -73,7 +73,7 @@ const handleMessage = (message: Discord.Message, memoryQueues: MemoryQueues) => 
       break;
     case "stop":
       // leave voice channel but keep position in queue
-      stopPlayback(message.channel as Discord.TextChannel, guildId, memoryQueues);
+      stopPlayback(guildId, memoryQueues, message.channel as Discord.TextChannel);
       break;
     case "clear":
       // clear queue for this guild
