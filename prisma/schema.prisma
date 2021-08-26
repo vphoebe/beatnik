@@ -1,13 +1,10 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-datasource db {
-  provider = "sqlite"
-  url      = env("DATABASE_URL")
-}
-
 generator client {
   provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
 
 model Track {
@@ -19,6 +16,7 @@ model Track {
   user         String
   thumbnailUrl String
   lengthInSec  Int
+  id           String @id @default(cuid())
 
-  @@unique(fields: [guildId, queueIndex], name: "queue_id")
+  @@unique([guildId, queueIndex], name: "queuePosition")
 }

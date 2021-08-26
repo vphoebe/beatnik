@@ -20,6 +20,8 @@ a discord bot that tells you the time, among other things.
 
 Duplicate the `config.json.sample` file and fill in your values. Rename to `config.json.` You'll need to bind mount this into the Docker container at the following path: `/usr/app/config.json`
 
+You'll also need a local Postgres database that the Docker image can access. Configure its connection URI as an environment variable called `DATABASE_URL`
+
 Then start the Docker container. You can view the logs to make sure the configuration was read successfully.
 
 ## Basic commands

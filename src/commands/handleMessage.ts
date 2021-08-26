@@ -3,7 +3,7 @@ import { MemoryQueues } from "..";
 import changeTrack from "../transport/changeTrack";
 import playNextTrack from "../transport/playNextTrack";
 import stopPlayback from "../transport/stopPlayback";
-import config from "../util/readConfig";
+import config from "../lib/readConfig";
 import addToQueue from "./addToQueue";
 import clearQueue from "./clearQueue";
 import listCommands from "./listCommands";
@@ -73,7 +73,7 @@ const handleMessage = (message: Discord.Message, memoryQueues: MemoryQueues) => 
       break;
     case "stop":
       // leave voice channel but keep position in queue
-      stopPlayback(message.channel as Discord.TextChannel, guildId, memoryQueues);
+      stopPlayback(guildId, memoryQueues, message.channel as Discord.TextChannel);
       break;
     case "clear":
       // clear queue for this guild

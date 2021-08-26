@@ -1,11 +1,10 @@
 import Discord from "discord.js";
 import { MemoryQueues } from "..";
-import { PrismaClient, Track } from "@prisma/client";
-import getDurationString from "../util/duration";
-import config from "../util/readConfig";
+import { prisma } from "../lib/prisma";
+import getDurationString from "../lib/duration";
+import config from "../lib/readConfig";
 
 const prefix = config.prefix;
-const prisma = new PrismaClient();
 
 const listQueue = async (message: Discord.Message, memoryQueues: MemoryQueues) => {
   if (message.guild === null) return;
@@ -15,6 +14,9 @@ const listQueue = async (message: Discord.Message, memoryQueues: MemoryQueues) =
     const dbQueue = await prisma.track.findMany({
       where: {
         guildId: message.guild.id,
+      },
+      orderBy: {
+        queueIndex: "asc",
       },
     });
 
@@ -58,8 +60,6 @@ const listQueue = async (message: Discord.Message, memoryQueues: MemoryQueues) =
     }
   } catch (err) {
     console.log(err);
-  } finally {
-    await prisma.$disconnect();
   }
 };
 

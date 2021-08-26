@@ -1,5 +1,5 @@
 import Discord from "discord.js";
-import config from "../util/readConfig";
+import config from "../lib/readConfig";
 
 const prefix = config.prefix;
 

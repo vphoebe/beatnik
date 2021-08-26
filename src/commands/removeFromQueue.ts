@@ -1,10 +1,8 @@
-import Discord, { Guild } from "discord.js";
+import Discord from "discord.js";
 import { MemoryQueues } from "..";
-import { PrismaClient } from "@prisma/client";
+import { prisma } from "../lib/prisma";
 import changeTrack from "../transport/changeTrack";
-import config from "../util/readConfig";
-
-const prisma = new PrismaClient();
+import config from "../lib/readConfig";
 
 const removeFromQueue = async (message: Discord.Message, guildId: string, memoryQueues: MemoryQueues) => {
   const args = message.content.split(" ");
@@ -23,7 +21,7 @@ const removeFromQueue = async (message: Discord.Message, guildId: string, memory
   try {
     const removedTrack = await prisma.track.delete({
       where: {
-        queue_id: {
+        queuePosition: {
           guildId,
           queueIndex,
         },
@@ -31,36 +29,20 @@ const removeFromQueue = async (message: Discord.Message, guildId: string, memory
     });
 
     // adjust indicies of tracks that were in front of it
-    const adjustableTracks = await prisma.track.findMany({
-      orderBy: [{ queueIndex: "asc" }],
+    const adjustOp = await prisma.track.updateMany({
       where: {
-        queueIndex: {
-          gt: queueIndex,
-        },
+        queueIndex: { gt: queueIndex },
+      },
+      data: {
+        queueIndex: { decrement: 1 }, // only delete one at a time right now
       },
     });
 
-    for (const adjTrack of adjustableTracks) {
-      await prisma.track.update({
-        where: {
-          queue_id: {
-            guildId: adjTrack.guildId,
-            queueIndex: adjTrack.queueIndex,
-          },
-        },
-        data: {
-          queueIndex: {
-            decrement: 1,
-          },
-        },
-      });
-    }
+    console.log(`Adjusted ${adjustOp.count} tracks and removed 1 track in front.`);
     return message.channel.send(`'${removedTrack.title}' removed from the queue.`);
   } catch (err) {
     console.log(err);
     return message.channel.send(`Track not found in the queue. View the queue if you're not sure with ${config.prefix}q`);
-  } finally {
-    await prisma.$disconnect();
   }
 };
 
