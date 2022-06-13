@@ -11,6 +11,10 @@ export const execute: CommandExecuter = async (interaction) => {
   const guildId = interaction.guildId;
   if (!guildId) return;
   const savedUrls = await getAllSavedUrls(guildId);
+  if (savedUrls.length === 0) {
+    await interaction.reply("No saved URLs in this server.");
+    return;
+  }
   const embed = await getSavedUrlListEmbed(savedUrls);
   await interaction.reply({ embeds: [embed], ephemeral: true });
   return;
