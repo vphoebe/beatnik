@@ -4,7 +4,8 @@
   "description": "next-generation beatnik",
   "main": "index.js",
   "scripts": {
-    "start": "ts-node-dev src/index.ts",
+    "dev": "ts-node-dev src/index.ts",
+    "build": "tsc --build --clean && tsc --build",
     "deploy:global": "ts-node src/deploy-global-commands.ts"
   },
   "author": "vphoebe",
