@@ -67,7 +67,7 @@ export const execute: CommandExecuter = async (interaction) => {
     return;
   } catch (err) {
     console.error(err);
-    await interaction.reply(`Something went wrong: ${err}!`);
+    await interaction.editReply(`Something went wrong: ${err}!`);
   }
 };
 

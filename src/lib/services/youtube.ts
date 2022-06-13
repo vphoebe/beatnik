@@ -71,7 +71,7 @@ export async function parsedQueryToYoutubeQueuedTracks(
       addedBy,
     }));
   } else {
-    throw new Error("invalidQuery");
+    throw new Error("Unknown error with query");
   }
 }
 

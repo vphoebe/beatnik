@@ -41,7 +41,7 @@ export async function parsePlayQuery(query: string): Promise<ParsedQuery> {
         type: "video",
       };
     } else {
-      throw new Error("noResults");
+      throw new Error(`No results found for ${query}!`);
     }
   } else {
     // see if it's a valid service url
@@ -61,7 +61,7 @@ export async function parsePlayQuery(query: string): Promise<ParsedQuery> {
         type: "playlist",
       };
     } else {
-      throw new Error("unsupportedUrl");
+      throw new Error("Unsupported URL");
     }
   }
 }
