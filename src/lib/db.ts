@@ -1,9 +1,11 @@
-import "dotenv/config";
+import { getDatabasePath } from "./environment";
 import { DataTypes, Model, Sequelize } from "sequelize";
 
-const sequelize = new Sequelize({
+const sequelize = new Sequelize("database", "user", "password", {
+  host: "localhost",
   dialect: "sqlite",
-  storage: process.env.DATABASE_PATH,
+  logging: false,
+  storage: getDatabasePath(),
 });
 
 export async function connectToDb() {
