@@ -7,7 +7,7 @@ import { inlineCode, SlashCommandBuilder } from "@discordjs/builders";
 
 export const builder = new SlashCommandBuilder()
   .setName("load")
-  .setDescription("Load a saved URL by name.")
+  .setDescription("Load a saved URL by name and start playing.")
   .addStringOption((option) =>
     option
       .setName("name")
