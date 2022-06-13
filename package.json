@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "ts-node-dev src/index.ts",
     "build": "tsc --build --clean && tsc --build",
-    "dev:deployglobal": "ts-node src/deploy-global-commands.ts"
+    "dev:deployglobal": "ts-node src/deploy-global-commands.ts",
+    "build:docker": "npm run build && docker build -t beatnik-dev ."
   },
   "author": "vphoebe",
   "license": "MIT",
