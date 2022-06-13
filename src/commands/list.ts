@@ -13,7 +13,7 @@ export const execute: CommandExecuter = async (interaction) => {
   await interaction.deferReply({ ephemeral: true });
   const savedUrls = await getAllSavedUrls(guildId);
   if (savedUrls.length === 0) {
-    await interaction.reply("No saved URLs in this server.");
+    await interaction.editReply("No saved URLs in this server.");
     return;
   }
   const embed = await getSavedUrlListEmbed(savedUrls);
