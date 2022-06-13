@@ -68,7 +68,8 @@ export async function getSavedUrlListEmbed(savedUrls: SavedUrlType[]) {
   const metadatas = await Promise.all(metadataPromises);
   const strings = metadatas.map((metadata, i) => {
     const su = savedUrls[i];
-    return `${inlineCode(su.name)} ${hyperlink(metadata.title, su.url)} (${
+    return `${inlineCode(su.name)}
+    ${hyperlink(metadata.title, su.url)} ${italic(metadata.author)} (${
       metadata.numberOfTracks
     } tracks)`;
   });
