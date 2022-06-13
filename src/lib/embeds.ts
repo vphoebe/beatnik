@@ -1,5 +1,5 @@
 import { QueuedTrack } from "../classes/Queue";
-import { SavedUrlType } from "./db";
+import { SavedUrl } from "./db";
 import { parsePlayQuery } from "./parsePlayQuery";
 import { parsedQueryToMetadata } from "./services/youtube";
 import { getDurationString } from "./util";
@@ -61,7 +61,7 @@ export function getQueueListEmbed(
     .addField(`(Page ${pageNumber} of ${totalPages})`, fieldText);
 }
 
-export async function getSavedUrlListEmbed(savedUrls: SavedUrlType[]) {
+export async function getSavedUrlListEmbed(savedUrls: SavedUrl[]) {
   const queryPromises = savedUrls.map((su) => parsePlayQuery(su.url));
   const queries = await Promise.all(queryPromises);
   const metadataPromises = queries.map((q) => parsedQueryToMetadata(q));

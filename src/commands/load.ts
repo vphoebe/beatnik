@@ -35,9 +35,9 @@ export const execute: CommandExecuter = async (interaction) => {
   const name = interaction.options.getString("name", true);
   const isNext = interaction.options.getBoolean("next") ?? false;
   const isShuffle = interaction.options.getBoolean("shuffle") ?? false;
-  const savedUrlObject = await getSavedUrl(guildId, name);
+  const savedUrl = await getSavedUrl(guildId, name);
 
-  if (!savedUrlObject) {
+  if (!savedUrl) {
     await interaction.editReply({
       content: `No saved URL found for ${inlineCode(name)}.`,
     });
@@ -48,7 +48,7 @@ export const execute: CommandExecuter = async (interaction) => {
     const queue = await getQueue(interaction);
     const numberAddedToQueue = await addToQueue(
       queue,
-      savedUrlObject.url,
+      savedUrl,
       interaction.user.id,
       isShuffle,
       isNext
