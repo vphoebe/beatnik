@@ -1,6 +1,6 @@
 import { Command, CommandExecuter } from ".";
 import { addToQueue } from "../lib/addToQueue";
-import { SavedUrl } from "../lib/db";
+import { getSavedUrl } from "../lib/db";
 import { getQueue } from "../lib/queue";
 import { inlineCode, SlashCommandBuilder } from "@discordjs/builders";
 
@@ -33,10 +33,7 @@ export const execute: CommandExecuter = async (interaction) => {
   const name = interaction.options.getString("name", true);
   const isNext = interaction.options.getBoolean("next") ?? false;
   const isShuffle = interaction.options.getBoolean("shuffle") ?? false;
-  const savedUrlObject = await SavedUrl.findOne({
-    attributes: ["url"],
-    where: { name, guildId },
-  });
+  const savedUrlObject = await getSavedUrl(guildId, name);
 
   if (!savedUrlObject) {
     await interaction.reply({

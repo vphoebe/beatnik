@@ -28,3 +28,22 @@ export const SavedUrl = sequelize.define<SavedUrlType>("SavedUrl", {
   name: DataTypes.STRING,
   url: DataTypes.STRING,
 });
+
+export async function getSavedUrl(guildId: string, name: string) {
+  return await SavedUrl.findOne({
+    where: { name, guildId },
+  });
+}
+
+export async function setSavedUrl(guildId: string, name: string, url: string) {
+  const existing = await SavedUrl.findOne({ where: { guildId, name } });
+  let operation = "Saved";
+  if (existing) {
+    existing.set({ url });
+    await existing.save();
+    operation = "Updated";
+  } else {
+    await SavedUrl.create({ guildId, name, url });
+  }
+  return operation;
+}
