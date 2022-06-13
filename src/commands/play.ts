@@ -1,5 +1,6 @@
 import { Command, CommandExecuter } from ".";
 import { addToQueue } from "../lib/addToQueue";
+import { getAddedToQueueMessage } from "../lib/embeds";
 import { getQueue } from "../lib/queue";
 import { SlashCommandBuilder } from "@discordjs/builders";
 
@@ -48,11 +49,12 @@ export const execute: CommandExecuter = async (interaction) => {
       isNext
     );
     await interaction.reply({
-      content: `Added ${numberAddedToQueue} track${
-        numberAddedToQueue !== 1 ? "s" : ""
-      } to the ${isNext ? "start" : "end"} of the queue. ${
-        !queue.isPlaying ? "Starting playback!" : ""
-      }`,
+      content: getAddedToQueueMessage(
+        numberAddedToQueue,
+        queue.isPlaying,
+        isNext,
+        isShuffle
+      ),
       ephemeral: true,
     });
     if (!queue.isPlaying) {

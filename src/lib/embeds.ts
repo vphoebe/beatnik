@@ -79,3 +79,18 @@ export async function getSavedUrlListEmbed(savedUrls: SavedUrlType[]) {
     )
     .addField("Commands", strings.join("\n\n"));
 }
+
+export function getAddedToQueueMessage(
+  numberAddedToQueue: number,
+  isPlaying: boolean,
+  isNext: boolean,
+  isShuffle: boolean
+) {
+  const location = isNext ? "start" : "end";
+  const action = isShuffle ? "Shuffled" : "Added";
+  const startPlaying = !isPlaying ? "Starting playback!" : "";
+
+  return `${action} ${numberAddedToQueue} track${
+    numberAddedToQueue !== 1 ? "s" : ""
+  } at the ${location} of the queue. ${startPlaying}`;
+}
