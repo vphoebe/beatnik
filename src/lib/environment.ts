@@ -17,3 +17,12 @@ export function getClientId() {
   }
   return clientId;
 }
+
+export function getDatabasePath() {
+  const databasePath = process.env.DATABASE_PATH;
+  if (!databasePath) {
+    console.error("No DATABASE_PATH found in .env, exiting!");
+    process.exit();
+  }
+  return databasePath;
+}
