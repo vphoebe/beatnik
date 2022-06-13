@@ -28,13 +28,18 @@ export const execute: CommandExecuter = async (interaction) => {
   const name = interaction.options.getString("name", true);
   const url = interaction.options.getString("url", true);
 
-  const operation = await setSavedUrl(guildId, name, url);
-  console.log("[DB]", operation, guildId, name, url);
+  try {
+    const operation = await setSavedUrl(guildId, name, url);
+    console.log("[DB]", operation, guildId, name, url);
 
-  await interaction.reply({
-    content: `${operation} ${hideLinkEmbed(url)} as ${inlineCode(name)} !`,
-    ephemeral: true,
-  });
+    await interaction.reply({
+      content: `${operation} ${hideLinkEmbed(url)} as ${inlineCode(name)} !`,
+      ephemeral: true,
+    });
+  } catch (err) {
+    console.error(err);
+    await interaction.reply(`Something went wrong! ${err}`);
+  }
 };
 
 export default { builder, execute, global: false } as Command;

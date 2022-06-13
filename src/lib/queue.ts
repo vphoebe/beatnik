@@ -1,7 +1,7 @@
 import { Queue } from "../classes/Queue";
 import { CommandInteraction } from "discord.js";
 
-export const guildQueues = new Map<string, Queue>();
+const allGuildQueues = new Map<string, Queue>();
 
 export async function getQueue(
   interaction: CommandInteraction
@@ -10,10 +10,10 @@ export async function getQueue(
   if (!guildId) {
     throw new Error("Unable to find your guild ID. Are you in a server?");
   }
-  const existingQueue = guildQueues.has(guildId);
+  const existingQueue = allGuildQueues.has(guildId);
   let queue: Queue;
   if (existingQueue) {
-    queue = guildQueues.get(guildId) as Queue;
+    queue = allGuildQueues.get(guildId) as Queue;
   } else {
     const requestingUserId = interaction.user.id;
     const requestingMember =
@@ -24,8 +24,12 @@ export async function getQueue(
     if (!voiceChannel) {
       throw new Error("Please join a voice channel to control the music!");
     }
-    guildQueues.set(guildId, new Queue(voiceChannel, interaction.channel));
-    queue = guildQueues.get(guildId) as Queue;
+    allGuildQueues.set(guildId, new Queue(voiceChannel, interaction.channel));
+    queue = allGuildQueues.get(guildId) as Queue;
   }
   return queue;
+}
+
+export async function destroyQueue(guildId: string) {
+  allGuildQueues.delete(guildId);
 }

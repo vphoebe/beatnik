@@ -3,7 +3,7 @@ import {
   createVoiceConnection,
 } from "../lib/connection";
 import { getNowPlayingEmbed } from "../lib/embeds";
-import { guildQueues } from "../lib/queue";
+import { destroyQueue } from "../lib/queue";
 import { createYoutubeTrackResource } from "../lib/services/youtube";
 import { shuffleArray } from "../lib/util";
 import {
@@ -97,7 +97,7 @@ export class Queue extends EventEmitter {
   async stop() {
     this.connection.destroy();
     this.subscription?.unsubscribe();
-    guildQueues.delete(this.guildId);
+    destroyQueue(this.guildId);
   }
 
   async next() {

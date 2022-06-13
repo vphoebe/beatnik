@@ -1,6 +1,5 @@
 import { Command, CommandExecuter } from ".";
-import { Queue } from "../classes/Queue";
-import { guildQueues } from "../lib/queue";
+import { getQueue } from "../lib/queue";
 import { SlashCommandBuilder } from "@discordjs/builders";
 
 export const builder = new SlashCommandBuilder()
@@ -20,10 +19,8 @@ export const execute: CommandExecuter = async (interaction) => {
   const skipIndex = interaction.options.getInteger("track", false);
   if (!guildId) return;
 
-  const existingQueue = guildQueues.has(guildId);
-  let queue: Queue;
-  if (existingQueue) {
-    queue = guildQueues.get(guildId) as Queue;
+  try {
+    const queue = await getQueue(interaction);
     if (skipIndex) {
       if (skipIndex - 1 < queue.tracks.length) {
         await queue.jump(skipIndex - 1);
@@ -41,8 +38,9 @@ export const execute: CommandExecuter = async (interaction) => {
       content: "Skipping this track!",
       ephemeral: true,
     });
-  } else {
-    await interaction.reply("Nothing is playing right now.");
+  } catch (err) {
+    console.error(err);
+    await interaction.reply(`Something went wrong! ${err}`);
   }
 };
 
