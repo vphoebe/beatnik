@@ -55,3 +55,13 @@ export async function setSavedUrl(guildId: string, name: string, url: string) {
   }
   return operation;
 }
+
+export async function removeSavedUrl(guildId: string, name: string) {
+  const existing = await SavedUrl.findOne({ where: { guildId, name } });
+  if (existing) {
+    await existing.destroy();
+    return true;
+  } else {
+    return false;
+  }
+}

@@ -4,6 +4,7 @@ import list from "./list";
 import load from "./load";
 import play from "./play";
 import queue from "./queue";
+import remove from "./remove";
 import save from "./save";
 import shuffle from "./shuffle";
 import skip from "./skip";
@@ -36,4 +37,5 @@ export const commandList: CommandList = {
   save,
   load,
   list,
+  remove,
 };
