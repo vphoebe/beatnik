@@ -21,9 +21,11 @@ export const execute: CommandExecuter = async (interaction) => {
   let pageNumber = interaction.options.getInteger("page");
 
   if (!queue) {
-    await interaction.reply(
-      "No queue exists for this server right now. Start playing something!"
-    );
+    await interaction.reply({
+      content:
+        "No queue exists for this server right now. Start playing something!",
+      ephemeral: true,
+    });
     return;
   }
 
