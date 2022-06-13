@@ -1,7 +1,11 @@
 import { commandList } from "./commands";
 import { connectToDb } from "./lib/db";
 import { getToken } from "./lib/environment";
+import { generateDependencyReport } from "@discordjs/voice";
 import { Client, Intents } from "discord.js";
+
+// Check for dependencies
+console.log(generateDependencyReport());
 
 // Create a new client instance
 const client = new Client({
