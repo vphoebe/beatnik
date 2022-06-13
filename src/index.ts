@@ -1,4 +1,5 @@
 import { commandList } from "./commands";
+import { connectToDb } from "./lib/db";
 import { getToken } from "./lib/environment";
 import { Client, Intents } from "discord.js";
 
@@ -9,7 +10,8 @@ const client = new Client({
 const token = getToken();
 
 // When the client is ready, run this code (only once)
-client.once("ready", () => {
+client.once("ready", async () => {
+  await connectToDb();
   console.log("~~ beatnik is ready to go! ~~");
 });
 

@@ -1,19 +1,16 @@
 import { Command, CommandExecuter } from ".";
-import { Queue } from "../classes/Queue";
 import { addToQueue } from "../lib/addToQueue";
-import { parsePlayQuery } from "../lib/parsePlayQuery";
-import { getQueue, guildQueues } from "../lib/queue";
-import { parsedQueryToYoutubeQueuedTracks } from "../lib/services/youtube";
-import { shuffleArray } from "../lib/util";
-import { SlashCommandBuilder } from "@discordjs/builders";
+import { SavedUrl } from "../lib/db";
+import { getQueue } from "../lib/queue";
+import { inlineCode, SlashCommandBuilder } from "@discordjs/builders";
 
 export const builder = new SlashCommandBuilder()
-  .setName("play")
-  .setDescription("Play/queue a track from a URL or search term.")
+  .setName("load")
+  .setDescription("Load a saved URL by name.")
   .addStringOption((option) =>
     option
-      .setName("query")
-      .setDescription("A valid URL or search term to play.")
+      .setName("name")
+      .setDescription("Name of the saved URL.")
       .setRequired(true)
   )
   .addBooleanOption((option) =>
@@ -33,12 +30,18 @@ export const execute: CommandExecuter = async (interaction) => {
   const guildId = interaction.guildId;
   if (!guildId) return;
 
-  const query = interaction.options.getString("query", true);
+  const name = interaction.options.getString("name", true);
   const isNext = interaction.options.getBoolean("next") ?? false;
   const isShuffle = interaction.options.getBoolean("shuffle") ?? false;
+  const savedUrlObject = await SavedUrl.findOne({
+    attributes: ["url"],
+    where: { name, guildId },
+  });
 
-  if (!query) {
-    await interaction.reply("Please provide a valid URL or search term.");
+  if (!savedUrlObject) {
+    await interaction.reply({
+      content: `No saved URL found for ${inlineCode(name)}.`,
+    });
     return;
   }
 
@@ -46,7 +49,7 @@ export const execute: CommandExecuter = async (interaction) => {
     const queue = await getQueue(interaction);
     const numberAddedToQueue = await addToQueue(
       queue,
-      query,
+      savedUrlObject.url,
       interaction.user.id,
       isShuffle,
       isNext

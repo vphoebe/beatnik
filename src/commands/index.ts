@@ -1,7 +1,9 @@
 import install from "./global/install";
 import uninstall from "./global/uninstall";
+import load from "./load";
 import play from "./play";
 import queue from "./queue";
+import save from "./save";
 import shuffle from "./shuffle";
 import skip from "./skip";
 import stop from "./stop";
@@ -30,4 +32,6 @@ export const commandList: CommandList = {
   stop,
   skip,
   shuffle,
+  save,
+  load,
 };
