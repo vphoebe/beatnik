@@ -3,7 +3,16 @@ import { CommandInteraction } from "discord.js";
 
 const allGuildQueues = new Map<string, Queue>();
 
-export async function getQueue(
+function getVoiceChannelFromInteraction(interaction: CommandInteraction) {
+  const requestingUserId = interaction.user.id;
+  const requestingMember =
+    interaction.guild?.members.cache.get(requestingUserId);
+  if (!requestingMember)
+    throw new Error("No guild member found for this user.");
+  return requestingMember.voice.channel;
+}
+
+export async function getOrCreateQueue(
   interaction: CommandInteraction
 ): Promise<Queue> {
   const guildId = interaction.guildId;
@@ -15,12 +24,7 @@ export async function getQueue(
   if (existingQueue) {
     queue = allGuildQueues.get(guildId) as Queue;
   } else {
-    const requestingUserId = interaction.user.id;
-    const requestingMember =
-      interaction.guild?.members.cache.get(requestingUserId);
-    if (!requestingMember)
-      throw new Error("No guild member found for this user.");
-    const voiceChannel = requestingMember.voice.channel;
+    const voiceChannel = getVoiceChannelFromInteraction(interaction);
     if (!voiceChannel) {
       throw new Error("Please join a voice channel to control the music!");
     }
@@ -28,6 +32,20 @@ export async function getQueue(
     queue = allGuildQueues.get(guildId) as Queue;
   }
   return queue;
+}
+
+export async function getExistingQueue(
+  interaction: CommandInteraction
+): Promise<Queue | undefined> {
+  const guildId = interaction.guildId;
+  if (!guildId) {
+    throw new Error("Unable to find your guild ID. Are you in a server?");
+  }
+  const voiceChannel = getVoiceChannelFromInteraction(interaction);
+  if (!voiceChannel) {
+    throw new Error("Please join a voice channel to control the music!");
+  }
+  return allGuildQueues.get(guildId);
 }
 
 export async function destroyQueue(guildId: string) {

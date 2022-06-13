@@ -1,6 +1,6 @@
 import { Command, CommandExecuter } from ".";
 import { getNowPlayingEmbed, getQueueListEmbed } from "../lib/embeds";
-import { getQueue } from "../lib/queue";
+import { getExistingQueue } from "../lib/queue";
 import { SlashCommandBuilder } from "@discordjs/builders";
 
 export const builder = new SlashCommandBuilder()
@@ -18,11 +18,16 @@ export const execute: CommandExecuter = async (interaction) => {
   if (!guildId) return;
 
   try {
-    const queue = await getQueue(interaction);
+    const queue = await getExistingQueue(interaction);
+    if (!queue) {
+      await interaction.reply(
+        "No queue currently exists. Start playing something!"
+      );
+      return;
+    }
+
     let pageNumber = interaction.options.getInteger("page");
-
     const { tracks, pages, currentIndex, nowPlaying } = queue;
-
     if (!pageNumber) {
       // get now playing track's page
       pageNumber = Math.ceil((currentIndex + 1) / 10);

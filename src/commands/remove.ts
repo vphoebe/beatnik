@@ -1,6 +1,6 @@
 import { Command, CommandExecuter } from ".";
 import { removeSavedUrl } from "../lib/db";
-import { getQueue } from "../lib/queue";
+import { getExistingQueue } from "../lib/queue";
 import { inlineCode, SlashCommandBuilder } from "@discordjs/builders";
 
 export const builder = new SlashCommandBuilder()
@@ -36,7 +36,11 @@ export const execute: CommandExecuter = async (interaction) => {
   try {
     if (subcommand === "queue") {
       const trackNumber = interaction.options.getInteger("track", true);
-      const queue = await getQueue(interaction);
+      const queue = await getExistingQueue(interaction);
+      if (!queue) {
+        await interaction.reply("No queue currently exists.");
+        return;
+      }
       const removed = queue.remove(trackNumber - 1);
       if (trackNumber - 1 === queue.currentIndex) {
         await queue.next();

@@ -1,5 +1,5 @@
 import { Command, CommandExecuter } from ".";
-import { getQueue } from "../lib/queue";
+import { getExistingQueue } from "../lib/queue";
 import { SlashCommandBuilder } from "@discordjs/builders";
 
 export const builder = new SlashCommandBuilder()
@@ -20,7 +20,13 @@ export const execute: CommandExecuter = async (interaction) => {
   if (!guildId) return;
 
   try {
-    const queue = await getQueue(interaction);
+    const queue = await getExistingQueue(interaction);
+    if (!queue) {
+      await interaction.reply(
+        "No queue currently exists. Start playing something!"
+      );
+      return;
+    }
     if (skipIndex) {
       if (skipIndex - 1 < queue.tracks.length) {
         await queue.jump(skipIndex - 1);
