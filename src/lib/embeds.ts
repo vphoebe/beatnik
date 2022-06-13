@@ -20,7 +20,7 @@ const baseEmbed = () =>
 
 export function getNowPlayingEmbed(track: QueuedTrack) {
   return baseEmbed()
-    .setAuthor({ name: "Now playing on beatnik:" })
+    .setAuthor({ name: "Now playing on beatnik" })
     .setTitle(track.title)
     .setThumbnail(track.thumbnailImageUrl ?? "")
     .setDescription(
@@ -75,7 +75,7 @@ export async function getSavedUrlListEmbed(savedUrls: SavedUrlType[]) {
   });
 
   return baseEmbed()
-    .setAuthor({ name: "Saved URL commands" })
+    .setAuthor({ name: "Saved URLs" })
     .setDescription(
       `Use ${inlineCode("/load [name]")} to play these saved URLs.`
     )
