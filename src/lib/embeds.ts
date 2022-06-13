@@ -1,6 +1,15 @@
 import { QueuedTrack } from "../classes/Queue";
+import { SavedUrlType } from "./db";
+import { parsePlayQuery } from "./parsePlayQuery";
+import { parsedQueryToMetadata } from "./services/youtube";
 import { getDurationString } from "./util";
-import { bold, italic, userMention } from "@discordjs/builders";
+import {
+  bold,
+  hyperlink,
+  inlineCode,
+  italic,
+  userMention,
+} from "@discordjs/builders";
 import { MessageEmbed } from "discord.js";
 
 const baseEmbed = () =>
@@ -50,4 +59,23 @@ export function getQueueListEmbed(
   return baseEmbed()
     .setAuthor({ name: "Current queue for beatnik" })
     .addField(`(Page ${pageNumber} of ${totalPages})`, fieldText);
+}
+
+export async function getSavedUrlListEmbed(savedUrls: SavedUrlType[]) {
+  const strings: string[] = [];
+  for (const su of savedUrls) {
+    const query = await parsePlayQuery(su.url);
+    const metadata = await parsedQueryToMetadata(query);
+    const str = `${inlineCode(su.name)} ${hyperlink(metadata.title, su.url)} (${
+      metadata.numberOfTracks
+    } tracks)`;
+    strings.push(str);
+  }
+
+  return baseEmbed()
+    .setAuthor({ name: "Saved URL commands" })
+    .setDescription(
+      `Use ${inlineCode("/load [name]")} to play these saved URLs.`
+    )
+    .addField("Commands", strings.join("\n\n"));
 }

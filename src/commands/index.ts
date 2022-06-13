@@ -1,5 +1,6 @@
 import install from "./global/install";
 import uninstall from "./global/uninstall";
+import list from "./list";
 import load from "./load";
 import play from "./play";
 import queue from "./queue";
@@ -34,4 +35,5 @@ export const commandList: CommandList = {
   shuffle,
   save,
   load,
+  list,
 };

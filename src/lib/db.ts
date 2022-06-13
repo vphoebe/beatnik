@@ -17,7 +17,7 @@ export async function connectToDb() {
   }
 }
 
-interface SavedUrlType extends Model {
+export interface SavedUrlType extends Model {
   guildId: string;
   name: string;
   url: string;
@@ -32,6 +32,12 @@ export const SavedUrl = sequelize.define<SavedUrlType>("SavedUrl", {
 export async function getSavedUrl(guildId: string, name: string) {
   return await SavedUrl.findOne({
     where: { name, guildId },
+  });
+}
+
+export async function getAllSavedUrls(guildId: string) {
+  return await SavedUrl.findAll({
+    where: { guildId },
   });
 }
 

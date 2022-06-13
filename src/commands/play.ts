@@ -1,10 +1,6 @@
 import { Command, CommandExecuter } from ".";
-import { Queue } from "../classes/Queue";
 import { addToQueue } from "../lib/addToQueue";
-import { parsePlayQuery } from "../lib/parsePlayQuery";
-import { getQueue, guildQueues } from "../lib/queue";
-import { parsedQueryToYoutubeQueuedTracks } from "../lib/services/youtube";
-import { shuffleArray } from "../lib/util";
+import { getQueue } from "../lib/queue";
 import { SlashCommandBuilder } from "@discordjs/builders";
 
 export const builder = new SlashCommandBuilder()
