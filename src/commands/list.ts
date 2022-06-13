@@ -10,13 +10,14 @@ export const builder = new SlashCommandBuilder()
 export const execute: CommandExecuter = async (interaction) => {
   const guildId = interaction.guildId;
   if (!guildId) return;
+  await interaction.deferReply({ ephemeral: true });
   const savedUrls = await getAllSavedUrls(guildId);
   if (savedUrls.length === 0) {
     await interaction.reply("No saved URLs in this server.");
     return;
   }
   const embed = await getSavedUrlListEmbed(savedUrls);
-  await interaction.reply({ embeds: [embed], ephemeral: true });
+  await interaction.editReply({ embeds: [embed] });
   return;
 };
 

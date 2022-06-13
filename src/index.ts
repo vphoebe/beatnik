@@ -21,6 +21,9 @@ client.on("interactionCreate", async (interaction) => {
   if (!runCommand) return;
   try {
     await runCommand.execute(interaction);
+    console.log(
+      `[COM] ${interaction.guildId}: ${interaction.commandName}: ${interaction.user.username}`
+    );
   } catch (err) {
     console.error(err);
     await interaction.reply({

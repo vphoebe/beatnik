@@ -31,13 +31,14 @@ export const execute: CommandExecuter = async (interaction) => {
   const guildId = interaction.guildId;
   if (!guildId) return;
 
+  await interaction.deferReply({ ephemeral: true });
   const name = interaction.options.getString("name", true);
   const isNext = interaction.options.getBoolean("next") ?? false;
   const isShuffle = interaction.options.getBoolean("shuffle") ?? false;
   const savedUrlObject = await getSavedUrl(guildId, name);
 
   if (!savedUrlObject) {
-    await interaction.reply({
+    await interaction.editReply({
       content: `No saved URL found for ${inlineCode(name)}.`,
     });
     return;
@@ -52,14 +53,13 @@ export const execute: CommandExecuter = async (interaction) => {
       isShuffle,
       isNext
     );
-    await interaction.reply({
+    await interaction.editReply({
       content: getAddedToQueueMessage(
         numberAddedToQueue,
         queue.isPlaying,
         isNext,
         isShuffle
       ),
-      ephemeral: true,
     });
     if (!queue.isPlaying) {
       await queue.play();

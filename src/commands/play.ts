@@ -30,12 +30,13 @@ export const execute: CommandExecuter = async (interaction) => {
   const guildId = interaction.guildId;
   if (!guildId) return;
 
+  await interaction.deferReply({ ephemeral: true });
   const query = interaction.options.getString("query", true);
   const isNext = interaction.options.getBoolean("next") ?? false;
   const isShuffle = interaction.options.getBoolean("shuffle") ?? false;
 
   if (!query) {
-    await interaction.reply("Please provide a valid URL or search term.");
+    await interaction.editReply("Please provide a valid URL or search term.");
     return;
   }
 
@@ -48,14 +49,13 @@ export const execute: CommandExecuter = async (interaction) => {
       isShuffle,
       isNext
     );
-    await interaction.reply({
+    await interaction.editReply({
       content: getAddedToQueueMessage(
         numberAddedToQueue,
         queue.isPlaying,
         isNext,
         isShuffle
       ),
-      ephemeral: true,
     });
     if (!queue.isPlaying) {
       await queue.play();
