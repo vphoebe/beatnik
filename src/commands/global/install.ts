@@ -7,7 +7,8 @@ import { CommandInteraction } from "discord.js";
 
 export const builder = new SlashCommandBuilder()
   .setName("install")
-  .setDescription("Installs or updates beatnik slash commands on your server.");
+  .setDescription("Installs or updates beatnik slash commands on your server.")
+  .setDMPermission(false);
 
 export async function execute(interaction: CommandInteraction) {
   const guildId = interaction.guildId;
