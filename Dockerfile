@@ -16,7 +16,5 @@ WORKDIR /usr/app
 COPY --from=build /usr/app/node_modules/ ./node_modules/
 COPY --from=build /usr/app/build ./build
 COPY --from=build /usr/app/ecosystem.config.js ./
-ADD start.sh /usr/app
-RUN chmod +x ./start.sh
 RUN apk add --no-cache ffmpeg
-CMD ["sh", "./start.sh"]
+CMD ["pm2-runtime", "ecosystem.config.js"]
