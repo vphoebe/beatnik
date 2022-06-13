@@ -62,15 +62,16 @@ export function getQueueListEmbed(
 }
 
 export async function getSavedUrlListEmbed(savedUrls: SavedUrlType[]) {
-  const strings: string[] = [];
-  for (const su of savedUrls) {
-    const query = await parsePlayQuery(su.url);
-    const metadata = await parsedQueryToMetadata(query);
-    const str = `${inlineCode(su.name)} ${hyperlink(metadata.title, su.url)} (${
+  const queryPromises = savedUrls.map((su) => parsePlayQuery(su.url));
+  const queries = await Promise.all(queryPromises);
+  const metadataPromises = queries.map((q) => parsedQueryToMetadata(q));
+  const metadatas = await Promise.all(metadataPromises);
+  const strings = metadatas.map((metadata, i) => {
+    const su = savedUrls[i];
+    return `${inlineCode(su.name)} ${hyperlink(metadata.title, su.url)} (${
       metadata.numberOfTracks
     } tracks)`;
-    strings.push(str);
-  }
+  });
 
   return baseEmbed()
     .setAuthor({ name: "Saved URL commands" })
