@@ -1,20 +1,14 @@
-FROM node:16-alpine as build
-WORKDIR /usr/app
-COPY . .
-RUN npm install
-RUN npm run build
-RUN npm prune --production
-
-FROM keymetrics/pm2:16-alpine
+FROM node:16
 ENV PM2_PUBLIC_KEY="" \
   PM2_SECRET_KEY="" \
   TOKEN="" \
   CLIENT_ID="" \ 
-  DATABASE_PATH="" \
-  NODE_ENV="production"
+  DATABASE_PATH=""
 WORKDIR /usr/app
-COPY --from=build /usr/app/node_modules/ ./node_modules/
-COPY --from=build /usr/app/build ./build
-COPY --from=build /usr/app/ecosystem.config.js ./
-RUN apk add --no-cache ffmpeg
+COPY . .
+RUN apt-get update && apt-get install -y ffmpeg
+RUN npm install pm2 -g
+RUN npm install
+RUN npm rebuild
+RUN npm run build
 CMD ["pm2-runtime", "ecosystem.config.js"]
