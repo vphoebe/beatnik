@@ -1,6 +1,7 @@
 import { Command, CommandExecuter } from ".";
 import { getAllSavedUrls } from "../lib/db";
 import { getSavedUrlListEmbed } from "../lib/embeds";
+import { errorReply } from "../lib/replies";
 import { SlashCommandBuilder } from "@discordjs/builders";
 
 export const builder = new SlashCommandBuilder()
@@ -22,7 +23,7 @@ export const execute: CommandExecuter = async (interaction) => {
     return;
   } catch (err) {
     console.error(err);
-    await interaction.editReply(`Something went wrong! ${err}`);
+    await interaction.editReply(errorReply(err, false));
   }
 };
 

@@ -1,6 +1,7 @@
 import { Command, CommandExecuter } from ".";
 import { removeSavedUrl } from "../lib/db";
 import { getExistingQueue } from "../lib/queue";
+import { errorReply, noQueueReply } from "../lib/replies";
 import { inlineCode, SlashCommandBuilder } from "@discordjs/builders";
 
 export const builder = new SlashCommandBuilder()
@@ -38,7 +39,7 @@ export const execute: CommandExecuter = async (interaction) => {
       const trackNumber = interaction.options.getInteger("track", true);
       const queue = await getExistingQueue(interaction);
       if (!queue) {
-        await interaction.reply("No queue currently exists.");
+        await interaction.reply(noQueueReply);
         return;
       }
       const removed = queue.remove(trackNumber - 1);
@@ -68,7 +69,7 @@ export const execute: CommandExecuter = async (interaction) => {
     }
   } catch (err) {
     console.error(err);
-    await interaction.reply(`Something went wrong: ${err}!`);
+    await interaction.reply(errorReply(err));
   }
 };
 

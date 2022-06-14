@@ -1,5 +1,6 @@
 import { Command, CommandExecuter } from ".";
 import { getExistingQueue } from "../lib/queue";
+import { errorReply, noQueueReply } from "../lib/replies";
 import { SlashCommandBuilder } from "@discordjs/builders";
 
 export const builder = new SlashCommandBuilder()
@@ -15,9 +16,7 @@ export const execute: CommandExecuter = async (interaction) => {
   try {
     const queue = await getExistingQueue(interaction);
     if (!queue) {
-      await interaction.reply(
-        "No queue currently exists. Start playing something!"
-      );
+      await interaction.reply(noQueueReply);
       return;
     }
     await queue.shuffle();
@@ -27,7 +26,7 @@ export const execute: CommandExecuter = async (interaction) => {
     });
   } catch (err) {
     console.error(err);
-    await interaction.reply(`Something went wrong! ${err}`);
+    await interaction.reply(errorReply(err));
   }
 };
 

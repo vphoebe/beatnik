@@ -1,5 +1,6 @@
 import { Command, CommandExecuter } from ".";
 import { setSavedUrl } from "../lib/db";
+import { errorReply } from "../lib/replies";
 import {
   hideLinkEmbed,
   inlineCode,
@@ -38,7 +39,7 @@ export const execute: CommandExecuter = async (interaction) => {
     });
   } catch (err) {
     console.error(err);
-    await interaction.reply(`Something went wrong! ${err}`);
+    await interaction.reply(errorReply(err, false));
   }
 };
 

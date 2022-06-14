@@ -3,6 +3,7 @@ import { addToQueue } from "../lib/addToQueue";
 import { getSavedUrl } from "../lib/db";
 import { getAddedToQueueMessage } from "../lib/embeds";
 import { getOrCreateQueue } from "../lib/queue";
+import { errorReply } from "../lib/replies";
 import { inlineCode, SlashCommandBuilder } from "@discordjs/builders";
 
 export const builder = new SlashCommandBuilder()
@@ -67,7 +68,7 @@ export const execute: CommandExecuter = async (interaction) => {
     return;
   } catch (err) {
     console.error(err);
-    await interaction.editReply(`Something went wrong: ${err}!`);
+    await interaction.editReply(errorReply(err, false));
   }
 };
 
