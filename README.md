@@ -56,7 +56,7 @@ Beatnik uses Discord slash commands. You can just type `/` in your text channel,
 
 |Command| Description | Options |
 |--|--|--|
-| /play [url]  | Plays a URL (or searches for a text query). `next` will add the track next in the queue instead of at the end. `shuffle` will shuffle a playlist link as it gets added. | next, shuffle
+| /play [query]  | Plays a URL, or searches for a text query and plays the first result. `next` will add the track next in the queue instead of at the end. `shuffle` will shuffle a playlist link as it gets added. | next, shuffle
 | /stop  | Stops music, clears the queue, and removes Beatnik from the voice channel.  |  |
 | /skip [track?]  | Skips the current playing track in the queue. Use the `track` option to skip to a specific track. | |
 | /shuffle | Shuffles all the tracks in the queue and starts playing from the top. | |
