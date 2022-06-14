@@ -7,7 +7,8 @@
     "dev": "ts-node-dev src/index.ts",
     "build": "tsc --build --clean && tsc --build",
     "dev:deployglobal": "ts-node src/deploy-global-commands.ts",
-    "build:docker": "npm run build && docker build -t beatnik-dev ."
+    "build:docker": "npm run build && docker build -t beatnik-dev .",
+    "start": "pm2-runtime ecosystem.config.js"
   },
   "author": "vphoebe",
   "license": "MIT",
