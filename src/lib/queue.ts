@@ -1,7 +1,7 @@
 import { Queue } from "../classes/Queue";
 import { CommandInteraction } from "discord.js";
 
-const allGuildQueues = new Map<string, Queue>();
+export const allGuildQueues = new Map<string, Queue>();
 
 function getVoiceChannelFromInteraction(interaction: CommandInteraction) {
   const requestingUserId = interaction.user.id;

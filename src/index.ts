@@ -1,5 +1,6 @@
 import { commandList } from "./commands";
 import { getToken } from "./lib/environment";
+import { allGuildQueues } from "./lib/queue";
 import { generateDependencyReport } from "@discordjs/voice";
 import { Client, Intents } from "discord.js";
 
@@ -32,6 +33,21 @@ client.on("interactionCreate", async (interaction) => {
       content: "There was an error while executing this command!",
       ephemeral: true,
     });
+  }
+});
+
+client.on("voiceStateUpdate", async (oldState) => {
+  const totalMembers = oldState.channel?.members.size;
+  if (totalMembers === 1) {
+    // just the bot remains, leave the channel
+    try {
+      const queue = allGuildQueues.get(oldState.guild.id);
+      if (queue) {
+        await queue.stop();
+      }
+    } catch (err) {
+      console.error(err);
+    }
   }
 });
 
