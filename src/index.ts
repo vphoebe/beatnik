@@ -1,5 +1,6 @@
 import { commandList } from "./commands";
 import { getToken } from "./lib/environment";
+import { startPresenceLifecycle } from "./lib/presence";
 import { allGuildQueues } from "./lib/queue";
 import { generateDependencyReport } from "@discordjs/voice";
 import { Client, Intents } from "discord.js";
@@ -8,7 +9,7 @@ import { Client, Intents } from "discord.js";
 console.log(generateDependencyReport());
 
 // Create a new client instance
-const client = new Client({
+export const client = new Client({
   intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_VOICE_STATES],
 });
 const token = getToken();
@@ -16,6 +17,7 @@ const token = getToken();
 // When the client is ready, run this code (only once)
 client.once("ready", async () => {
   console.log("~~ beatnik is ready to go! ~~");
+  startPresenceLifecycle(client);
 });
 
 client.on("interactionCreate", async (interaction) => {
