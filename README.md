@@ -21,9 +21,7 @@ Beatnik is designed to be operated yourself, so there's a few things to set up f
 ### Docker (recommended)
 If you are familiar at all with Docker, this is the fastest way to get Beatnik up and running. The [latest Docker image](https://hub.docker.com/r/nickseman/beatnik) is at `nickseman/beatnik:latest`
 
-Trust me, getting the dependencies to install correctly can be annoying, especially if you're on a new architecture like Apple M1. Docker takes care of all of it for you. 
-
-Make sure to configure the Docker container's environment according to the [Environment](#Environment) section below. You'll probably want to bind the path that you specify for `DATABASE_PATH` to somewhere outside the container in case it needs to be updated or re-created.
+Make sure to configure the Docker container's environment according to the [Environment](#Environment) section below. You'll probably want to bind the path that you specify for `DATABASE_PATH` to somewhere outside the container so you don't lose your saved URLS, in case the container needs to be updated or re-created.
 
 Skip down to [Invite](#Invite) to see what's next.
 
@@ -58,16 +56,16 @@ Beatnik uses Discord slash commands. You can just type `/` in your text channel,
 
 |Command| Description | Options |
 |--|--|--|
-| /play  | Plays a URL (or searches for a text query). `next` will add the track next in the queue instead of at the end. `shuffle` will shuffle a playlist link as it gets added. | next, shuffle
+| /play [url]  | Plays a URL (or searches for a text query). `next` will add the track next in the queue instead of at the end. `shuffle` will shuffle a playlist link as it gets added. | next, shuffle
 | /stop  | Stops music, clears the queue, and removes Beatnik from the voice channel.  |  |
-| /skip  | Skips the current playing track in the queue. Use the `track` option to skip to a specific track. | track |
+| /skip [track?]  | Skips the current playing track in the queue. Use the `track` option to skip to a specific track. | |
 | /shuffle | Shuffles all the tracks in the queue and starts playing from the top. | |
-| /queue | Lists the current queue and currently playing track. | |
-| /save | Gives a `name` to a URL so you can load it into the queue easily later. | name |
-| /load | Loads a saved URL with `name` into the queue. The same options as `/play` apply here. | name, next, shuffle
+| /queue [page?] | Lists the current queue and currently playing track. Specify a page to see the rest of the queue. | |
+| /save [name] [url] | Gives a `name` to a URL so you can load it into the queue easily later. | |
+| /load [name] | Loads a saved URL with `name` into the queue. The same options as `/play` apply here. | next, shuffle
 | /list | Lists all saved URLs in the guild | |
-| /remove queue | Removes a track from the queue | track |
-| /remove saved | Removes a saved URL with `name` from the guild. | name |
+| /remove queue [track] | Removes a track from the queue | |
+| /remove saved [name] | Removes a saved URL with `name` from the guild. | |
 | /install | Installs Beatnik commmands to your guild. Admins only. |
 | /uninstall | Removes Beatnik commands from your guild. Admins only. |
  
