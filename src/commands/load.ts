@@ -32,7 +32,7 @@ export const execute: CommandExecuter = async (interaction) => {
   const guildId = interaction.guildId;
   if (!guildId) return;
 
-  await interaction.deferReply({ ephemeral: true });
+  await interaction.deferReply();
   const name = interaction.options.getString("name", true);
   const isNext = interaction.options.getBoolean("next") ?? false;
   const isShuffle = interaction.options.getBoolean("shuffle") ?? false;
