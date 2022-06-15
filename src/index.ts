@@ -16,7 +16,7 @@ const token = getToken();
 
 // When the client is ready, run this code (only once)
 client.once("ready", async () => {
-  console.log("~~ beatnik is ready to go! ~~");
+  console.log("~~ Beatnik is ready to go! ~~");
   startPresenceLifecycle(client);
 });
 

@@ -7,7 +7,7 @@ import { CommandInteraction } from "discord.js";
 
 export const builder = new SlashCommandBuilder()
   .setName("install")
-  .setDescription("Installs or updates beatnik slash commands on your server.")
+  .setDescription("Installs or updates Beatnik slash commands on your server.")
   .setDMPermission(false)
   .setDefaultMemberPermissions(PermissionFlagsBits.Administrator);
 

@@ -14,5 +14,5 @@ const rest = new REST({ version: "9" }).setToken(token);
 
 rest
   .put(Routes.applicationCommands(clientId), { body: globalCommands })
-  .then(() => console.log("Registered beatnik global commands"))
+  .then(() => console.log("Registered Beatnik global commands"))
   .catch((err) => console.error(err));

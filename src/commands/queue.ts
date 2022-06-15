@@ -42,7 +42,11 @@ export const execute: CommandExecuter = async (interaction) => {
         });
         return;
       }
-      const nowPlayingEmbed = getNowPlayingEmbed(nowPlaying);
+      const nowPlayingEmbed = getNowPlayingEmbed(
+        nowPlaying,
+        currentIndex + 1,
+        tracks.length
+      );
       const queueListEmbed = getQueueListEmbed(
         pagedTracks,
         pageNumber,

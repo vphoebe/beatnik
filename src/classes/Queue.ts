@@ -80,7 +80,11 @@ export class Queue extends EventEmitter {
       }
       // send embed in the registered text channel
       if (this.textChannel) {
-        const nowPlayingEmbed = getNowPlayingEmbed(this.nowPlaying);
+        const nowPlayingEmbed = getNowPlayingEmbed(
+          this.nowPlaying,
+          this.currentIndex + 1,
+          this.tracks.length
+        );
         this.textChannel.send({ embeds: [nowPlayingEmbed] });
       }
       console.log(

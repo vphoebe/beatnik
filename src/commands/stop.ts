@@ -5,7 +5,7 @@ import { SlashCommandBuilder } from "@discordjs/builders";
 
 export const builder = new SlashCommandBuilder()
   .setName("stop")
-  .setDescription("Stop beatnik playback and clear the queue.");
+  .setDescription("Stop Beatnik playback and clear the queue.");
 
 export const execute: CommandExecuter = async (interaction) => {
   const guildId = interaction.guildId;

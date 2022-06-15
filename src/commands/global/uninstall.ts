@@ -7,7 +7,7 @@ import { CommandInteraction } from "discord.js";
 
 export const builder = new SlashCommandBuilder()
   .setName("uninstall")
-  .setDescription("Uninstalls beatnik slash commands from your server.")
+  .setDescription("Uninstalls Beatnik slash commands from your server.")
   .setDMPermission(false)
   .setDefaultMemberPermissions(PermissionFlagsBits.Administrator);
 export async function execute(interaction: CommandInteraction) {

@@ -16,11 +16,17 @@ const baseEmbed = () =>
   new MessageEmbed()
     .setColor("ORANGE")
     .setTimestamp()
-    .setFooter({ text: "sent by beatnik" });
+    .setFooter({ text: "sent by Beatnik" });
 
-export function getNowPlayingEmbed(track: QueuedTrack) {
+export function getNowPlayingEmbed(
+  track: QueuedTrack,
+  currentIndex: number,
+  totalQueued: number
+) {
   return baseEmbed()
-    .setAuthor({ name: "Now playing on beatnik" })
+    .setAuthor({
+      name: `Now playing on Beatnik (track ${currentIndex} of ${totalQueued})`,
+    })
     .setTitle(track.title)
     .setThumbnail(track.thumbnailImageUrl ?? "")
     .setDescription(
@@ -57,7 +63,7 @@ export function getQueueListEmbed(
       ? trackStrings.join("\n\n")
       : "Nothing is after this track.";
   return baseEmbed()
-    .setAuthor({ name: "Current queue for beatnik" })
+    .setAuthor({ name: "Current queue for Beatnik" })
     .addField(`(Page ${pageNumber} of ${totalPages})`, fieldText);
 }
 
