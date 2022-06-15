@@ -1,9 +1,11 @@
-FROM node:16 as builder
+FROM node:16-alpine as builder
 WORKDIR /usr/beatnik-build
 ENV NODE_ENV="development"
 COPY package.json ./
 COPY package-lock.json ./
 COPY tsconfig.json ./
+RUN apk add --no-cache python3 build-base
+RUN npm install -g node-gyp
 RUN npm install
 COPY ./src ./src
 RUN npm run build
