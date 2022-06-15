@@ -34,7 +34,7 @@ Skip down to [Invite](#Invite) to see what's next.
 6. It's best to run Beatnik with `pm2` so that the process is managed for you. Run `npm install -g pm2` to install `pm2` on your system.
 7. Run `npm start` and you're up and running. Skip down to [Invite](#Invite) to see what's next.
 
-If you don't want to use `pm2`, you can run `build/index.js` however you want to start the bot. Before you do so though, run `build/deploy-global-commands.js` or else you won't be able to install the commands to your guild (server.) 
+If you don't want to use `pm2`, you can run `build/index.js` however you want to start the bot. Before you do so though, run `build/deploy-global-commands.js` or else you won't be able to install the commands to your guild. 
 
 ### Environment
 Whether you're using Docker or Node.js, you'll need to configure the environment variables with a few things from the bot application you created earlier on the Discord developer portal.
@@ -42,7 +42,7 @@ Whether you're using Docker or Node.js, you'll need to configure the environment
 |--|--|--|
 | TOKEN | Your Discord bot's token | xxxxxxxxxxxx.yyyyyyyyy | 
 | CLIENT_ID | Your Discord bot's client ID | 00000000000 |
-| DATABASE_PATH | A path to a SQLite database file (one will be created for you once the app runs.) | `/Users/You/Documents/beatnik.db`
+| DATABASE_PATH | A valid path that Beatnik can use to create a SQLite file. Make sure to end it with `beatnik.sqlite`. Beatnik will create the file for you when it launches. | `/Users/You/Documents/beatnik.sqlite`
 
 ### Invite
 Check out the Discord developer portal > OAuth2 > URL Generator to create an invite link. Make sure the `bot` and `application.commands` scopes are set, and `Connect` and `Speak` are enabled in the bot permissions under Voice.
@@ -63,8 +63,8 @@ Beatnik uses Discord slash commands. You can just type `/` in your text channel,
 | /queue [page?] | Lists the current queue and currently playing track. Specify a page to see the rest of the queue. | |
 | /save [name] [url] | Gives a `name` to a URL so you can load it into the queue easily later. | |
 | /load [name] | Loads a saved URL with `name` into the queue. The same options as `/play` apply here. | next, shuffle
-| /list | Lists all saved URLs in the guild | |
-| /remove queue [track] | Removes a track from the queue | |
+| /list | Lists all saved URLs in the guild. | |
+| /remove queue [track] | Removes a track from the queue. | |
 | /remove saved [name] | Removes a saved URL with `name` from the guild. | |
 | /install | Installs Beatnik commmands to your guild. Admins only. |
 | /uninstall | Removes Beatnik commands from your guild. Admins only. |
