@@ -12,6 +12,7 @@ console.log(generateDependencyReport());
 export const client = new Client({
   intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_VOICE_STATES],
 });
+
 const token = getToken();
 
 // When the client is ready, run this code (only once)

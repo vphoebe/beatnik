@@ -14,7 +14,7 @@ import { MessageEmbed } from "discord.js";
 
 const baseEmbed = () =>
   new MessageEmbed()
-    .setColor("ORANGE")
+    .setColor("#F6921E")
     .setTimestamp()
     .setFooter({ text: "sent by Beatnik" });
 
@@ -25,16 +25,18 @@ export function getNowPlayingEmbed(
 ) {
   return baseEmbed()
     .setAuthor({
-      name: `Now playing on Beatnik (track ${currentIndex} of ${totalQueued})`,
+      name: `Now playing on Beatnik`,
     })
     .setTitle(track.title)
     .setThumbnail(track.thumbnailImageUrl ?? "")
     .setDescription(
       `:cinema: ${italic(
         track.channel ?? "unknown"
-      )}  :hourglass: ${getDurationString(
+      )} :hourglass: ${getDurationString(
         track.length
-      )} :technologist: ${userMention(track.addedBy)}`
+      )} \n:technologist: ${userMention(
+        track.addedBy
+      )} :cd: ${currentIndex} of ${totalQueued}`
     )
     .setURL(track.url);
 }
@@ -85,7 +87,7 @@ export async function getSavedUrlListEmbed(savedUrls: SavedUrl[]) {
     .setDescription(
       `Use ${inlineCode("/load [name]")} to play these saved URLs.`
     )
-    .addField("Commands", strings.join("\n\n"));
+    .addField("Saved URL names", strings.join("\n\n"));
 }
 
 export function getAddedToQueueMessage(
