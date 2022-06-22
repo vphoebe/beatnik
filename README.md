@@ -42,7 +42,7 @@ Whether you're using Docker or Node.js, you'll need to configure the environment
 |--|--|--|
 | TOKEN | Your Discord bot's token | xxxxxxxxxxxx.yyyyyyyyy | 
 | CLIENT_ID | Your Discord bot's client ID | 00000000000 |
-| DATABASE_PATH | A valid path that Beatnik can use to create a SQLite file. Make sure to end it with `beatnik.sqlite`. Beatnik will create the file for you when it launches. | `/Users/You/Documents/beatnik.sqlite`
+| DATABASE_PATH | A valid path that Beatnik can use to create a SQLite file. Make sure to end it with `beatnik.sqlite`. Beatnik will create the file for you when it launches. | `/Users/You/Documents/beatnik.sqlite` or in Docker the default is `/usr/beatnik/beatnik.sqlite`
 
 ### Invite
 Check out the Discord developer portal > OAuth2 > URL Generator to create an invite link. Make sure the `bot` and `application.commands` scopes are set, and `Connect` and `Speak` are enabled in the bot permissions under Voice. Also, once Beatnik is invited, ensure it gets assigned a role that lets it post messages in at least one text channel. Now Playing embeds and other messages are posted in the channel where the command was called.

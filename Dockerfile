@@ -16,7 +16,7 @@ ENV PM2_PUBLIC_KEY="" \
   PM2_SECRET_KEY="" \
   TOKEN="" \
   CLIENT_ID="" \ 
-  DATABASE_PATH="" \
+  DATABASE_PATH="/usr/beatnik/beatnik.sqlite" \
   NODE_ENV="production"
 WORKDIR /usr/beatnik
 COPY --from=builder /usr/beatnik-build/node_modules ./node_modules
