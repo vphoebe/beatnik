@@ -3,6 +3,7 @@ import { getClientId, getToken } from "./lib/environment";
 import { log } from "./lib/logger";
 import { startPresenceLifecycle } from "./lib/presence";
 import { allGuildQueues } from "./lib/queue";
+import { errorReply } from "./lib/replies";
 import { generateDependencyReport } from "@discordjs/voice";
 import { Client, Intents } from "discord.js";
 
@@ -48,6 +49,13 @@ client.on("interactionCreate", async (interaction) => {
     await runCommand.execute(interaction);
   } catch (err) {
     console.error(err, interaction);
+    if (interaction.deferred) {
+      await interaction.editReply(
+        errorReply(err, interaction.ephemeral ?? false)
+      );
+    } else {
+      await interaction.reply(errorReply(err, interaction.ephemeral ?? false));
+    }
   }
 });
 
