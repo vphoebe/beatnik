@@ -1,7 +1,6 @@
 import { Command, CommandExecuter } from ".";
 import { setSavedUrl } from "../lib/db";
 import { log } from "../lib/logger";
-import { errorReply } from "../lib/replies";
 import {
   hideLinkEmbed,
   inlineCode,
@@ -29,26 +28,20 @@ export const execute: CommandExecuter = async (interaction) => {
   if (!guildId) return;
   const name = interaction.options.getString("name", true);
   const url = interaction.options.getString("url", true);
-
-  try {
-    const operation = await setSavedUrl(guildId, name, url);
-    const messageContent = `${operation} ${hideLinkEmbed(url)} as ${inlineCode(
-      name
-    )} !`;
-    log({
-      type: "DB",
-      guildId,
-      user: interaction.user.username,
-      message: messageContent,
-    });
-    await interaction.reply({
-      content: messageContent,
-      ephemeral: true,
-    });
-  } catch (err) {
-    console.error(err);
-    await interaction.reply(errorReply(err, false));
-  }
+  const operation = await setSavedUrl(guildId, name, url);
+  const messageContent = `${operation} ${hideLinkEmbed(url)} as ${inlineCode(
+    name
+  )} !`;
+  log({
+    type: "DB",
+    guildId,
+    user: interaction.user.username,
+    message: messageContent,
+  });
+  await interaction.reply({
+    content: messageContent,
+    ephemeral: true,
+  });
 };
 
 export default { builder, execute, global: false } as Command;

@@ -1,6 +1,6 @@
 import { Command, CommandExecuter } from ".";
 import { getExistingQueue } from "../lib/queue";
-import { errorReply, noQueueReply } from "../lib/replies";
+import { noQueueReply } from "../lib/replies";
 import { SlashCommandBuilder } from "@discordjs/builders";
 
 export const builder = new SlashCommandBuilder()
@@ -19,34 +19,28 @@ export const execute: CommandExecuter = async (interaction) => {
   const guildId = interaction.guildId;
   const skipIndex = interaction.options.getInteger("track", false);
   if (!guildId) return;
-
-  try {
-    const queue = await getExistingQueue(interaction);
-    if (!queue) {
-      await interaction.reply(noQueueReply);
+  const queue = await getExistingQueue(interaction);
+  if (!queue) {
+    await interaction.reply(noQueueReply);
+    return;
+  }
+  if (skipIndex) {
+    if (skipIndex - 1 < queue.tracks.length) {
+      await queue.jump(skipIndex - 1);
+    } else {
+      await interaction.reply({
+        content: "Invalid track number.",
+        ephemeral: true,
+      });
       return;
     }
-    if (skipIndex) {
-      if (skipIndex - 1 < queue.tracks.length) {
-        await queue.jump(skipIndex - 1);
-      } else {
-        await interaction.reply({
-          content: "Invalid track number.",
-          ephemeral: true,
-        });
-        return;
-      }
-    } else {
-      await queue.next();
-    }
-    await interaction.reply({
-      content: "Skipping this track!",
-      ephemeral: true,
-    });
-  } catch (err) {
-    console.error(err);
-    await interaction.reply(errorReply(err));
+  } else {
+    await queue.next();
   }
+  await interaction.reply({
+    content: "Skipping this track!",
+    ephemeral: true,
+  });
 };
 
 export default { builder, execute, global: false } as Command;
