@@ -1,8 +1,7 @@
 {
   "name": "beatnik",
   "version": "3.0.0",
-  "description": "next-generation beatnik",
-  "main": "index.js",
+  "description": "modern and simple Discord music bot with easy-to-use commands",
   "scripts": {
     "dev": "ts-node-dev src/index.ts",
     "build": "tsc --build --clean && tsc --build",
