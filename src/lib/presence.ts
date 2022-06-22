@@ -1,20 +1,38 @@
-import { Client } from "discord.js";
-import BeatTime from "./BeatTime";
-let currentBeats: string;
+import { getBeatTimeString } from "./util";
+import { ActivitiesOptions, Client, PresenceStatusData } from "discord.js";
 
-export default (client: Client) => {
-  const setPresence = () => {
-    const newBeats = new BeatTime().string;
-    if (newBeats !== currentBeats) {
-      currentBeats = newBeats;
-      client.user?.setPresence({
-        activity: {
-          name: currentBeats,
-          type: "PLAYING",
-        },
-      });
-    }
+export function getIdleActivity() {
+  const activity: ActivitiesOptions = {
+    name: `@${getBeatTimeString()}`,
+    type: "PLAYING",
   };
-  setPresence();
-  return setInterval(setPresence, 500);
-};
+  return activity;
+}
+
+export function updatePresence(
+  client: Client,
+  status: PresenceStatusData,
+  activity: ActivitiesOptions
+): void {
+  client.user?.setPresence({ status, activities: [activity] });
+  return;
+}
+
+export function startPresenceLifecycle(client: Client) {
+  function checkStatusAndUpdate() {
+    const user = client.user;
+    if (!user) return;
+    const currentActivities = user.presence.activities;
+    const potentialNewStatus = `@${getBeatTimeString()}`;
+    if (currentActivities && currentActivities.length > 0) {
+      const currentStatus = user.presence.activities[0].name;
+      if (currentStatus !== potentialNewStatus) {
+        updatePresence(client, "online", getIdleActivity());
+      }
+    } else {
+      updatePresence(client, "online", getIdleActivity());
+    }
+  }
+  checkStatusAndUpdate();
+  return setInterval(checkStatusAndUpdate, 10000);
+}

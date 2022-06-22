@@ -1,51 +1,71 @@
-# beatnik
+# Beatnik: a Discord music bot
 
-a discord bot that tells you the time, among other things.
+Run your own modern and simple Discord music bot with easy-to-use commands that anyone on your server can understand.
 
-## Current features
-
-- Music bot: Play YouTube videos or playlists and SoundCloud tracks in voice channels.
-- Beat time clock: View current Swatch Internet Time in the bot's status message.
+## Features
+- Fully utilizes simple to understand Discord slash commands
+- Robust music queue management (add, remove, skip, shuffle, etc.)
+- Save URLs so you can queue them easily later
+- Status updates with current Swatch Internet Time so you can sync up your raids
+- Prioritizes Opus-encoded streams from services to increase performance
+- Supported music sources:
+	- YouTube
+- Easy setup
+	- No service API keys required
+	- No database processes to maintain, just a single database file
+	- Run with Docker or natively with Node.js
 
 ## Installation
+Beatnik is designed to be operated yourself, so there's a few things to set up first. Before you do anything though, you'll need to set up an application and bot on the [Discord developer portal](https://discord.com/developers/applications).  Make sure to have this page handy because you'll need some info soon.
 
-`beatnik` runs in Docker for production, via `pm2`. You can also run it directly locally if you wish, but you'll need to install `ffmpeg`.
+### Docker (recommended)
+If you are familiar at all with Docker, this is the fastest way to get Beatnik up and running. The [latest Docker image](https://hub.docker.com/r/nickseman/beatnik) is at `nickseman/beatnik:latest`
 
-### Prerequisites
+Make sure to configure the Docker container's environment according to the [Environment](#Environment) section below. You'll probably want to bind the path that you specify for `DATABASE_PATH` to somewhere outside the container so you don't lose your saved URLS, in case the container needs to be updated or re-created.
 
-- Discord Bot token
-- YouTube Data API token (for search functionality)
+Skip down to [Invite](#Invite) to see what's next.
 
-### Configuration
+### Local Node.js (via pm2)
+1. Clone this repository somewhere locally. You'll need Node.js 16 or later installed.
+2. Run `npm install` to install all the dependencies.
+3. Make sure ``ffmpeg`` is installed on your OS. The command above won't install it, and it's required for Beatnik to play audio.
+4. Run `npm run build` to actually build the application.
+5. Set up your `.env` file by creating `.env` in the same directory, and filling out the fields as described below in [Environment](#Environment).
+6. It's best to run Beatnik with `pm2` so that the process is managed for you. Run `npm install -g pm2` to install `pm2` on your system.
+7. Run `npm start` and you're up and running. Skip down to [Invite](#Invite) to see what's next.
 
-Duplicate the `config.json.sample` file and fill in your values. Rename to `config.json.` You'll need to bind mount this into the Docker container at the following path: `/usr/app/config.json`
+If you don't want to use `pm2`, you can run `build/index.js` however you want to start the bot. Before you do so though, run `build/deploy-global-commands.js` or else you won't be able to install the commands to your guild. 
 
-You'll also need a local Postgres database that the Docker image can access. Configure its connection URI as an environment variable called `DATABASE_URL`
+### Environment
+Whether you're using Docker or Node.js, you'll need to configure the environment variables with a few things from the bot application you created earlier on the Discord developer portal.
+| Variable | Value | Example |
+|--|--|--|
+| TOKEN | Your Discord bot's token | xxxxxxxxxxxx.yyyyyyyyy | 
+| CLIENT_ID | Your Discord bot's client ID | 00000000000 |
+| DATABASE_PATH | A valid path that Beatnik can use to create a SQLite file. Make sure to end it with `beatnik.sqlite`. Beatnik will create the file for you when it launches. | `/Users/You/Documents/beatnik.sqlite` or in Docker the default is `/usr/beatnik/beatnik.sqlite`
 
-Then start the Docker container. You can view the logs to make sure the configuration was read successfully.
+### Invite
+Check out the Discord developer portal > OAuth2 > URL Generator to create an invite link. Make sure the `bot` and `application.commands` scopes are set, and `Connect` and `Speak` are enabled in the bot permissions under Voice. Also, once Beatnik is invited, ensure it gets assigned a role that lets it post messages in at least one text channel. Now Playing embeds and other messages are posted in the channel where the command was called.
 
-## Basic commands
+### Install
+You need to be a server administrator to install Beatnik. Type `/install` in any text channel the bot can see, and the commands will now be available.
 
-The default prefix is `-` but can be configured.
+## Usage and commands
 
-`-p`: Play a URL of a video or playlist, or search a term and play the first result. Adds to the end of the queue if present. Use it by itself after to resume a queue if nothing is playing.
+Beatnik uses Discord slash commands. You can just type `/` in your text channel, and then click the Beatnik icon to see all the commands. Or you can read this.
 
-`-p:shuffle`: Shuffle a YouTube playlist url while adding to the queue.
-
-`-next`: Add to the next spot in the queue, instead of the end.
-
-`-q`: Displays the current queue. Use this to see a number for each queued track to use it for other commands.
-
-`-jump`: Jump to a specific track using its queue number.
-
-`-delete`: Delete a specific track using its queue number.
-
-`-skip`: Skips to the next track in the queue.
-
-`-back`: Play the previous track in the queue..
-
-`-stop`: Stops playback, but maintains the queue for resume later. beatnik leaves the voice channel.
-
-`-clear`: Stops playback and clears the current queue. beatnik leaves the voice channel.
-
-`-h`: Shows this list of commands.
+|Command| Description | Options |
+|--|--|--|
+| /play [query]  | Plays a URL, or searches for a text query and plays the first result. `next` will add the track next in the queue instead of at the end. `shuffle` will shuffle a playlist link as it gets added. | next, shuffle
+| /stop  | Stops music, clears the queue, and removes Beatnik from the voice channel.  |  |
+| /skip [track?]  | Skips the current playing track in the queue. Use the `track` option to skip to a specific track. | |
+| /shuffle | Shuffles all the tracks in the queue and starts playing from the top. | |
+| /queue [page?] | Lists the current queue and currently playing track. Specify a page to see the rest of the queue. | |
+| /save [name] [url] | Gives a `name` to a URL so you can load it into the queue easily later. | |
+| /load [name] | Loads a saved URL with `name` into the queue. The same options as `/play` apply here. | next, shuffle
+| /list | Lists all saved URLs in the guild. | |
+| /remove queue [track] | Removes a track from the queue. | |
+| /remove saved [name] | Removes a saved URL with `name` from the guild. | |
+| /install | Installs Beatnik commmands to your guild. Admins only. |
+| /uninstall | Removes Beatnik commands from your guild. Admins only. |
+ 

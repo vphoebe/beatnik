@@ -1,20 +1,27 @@
-FROM node:14-alpine as build
-WORKDIR /usr/app
-COPY . .
+FROM node:16-alpine as builder
+WORKDIR /usr/beatnik-build
+ENV NODE_ENV="development"
+COPY package.json ./
+COPY package-lock.json ./
+COPY tsconfig.json ./
+RUN apk add --no-cache python3 build-base
+RUN npm install --location=global node-gyp
 RUN npm install
+COPY ./src ./src
 RUN npm run build
-RUN npm prune --production
+RUN npm prune --omit=dev
 
-FROM keymetrics/pm2:14-alpine
+FROM node:16-alpine as prod
 ENV PM2_PUBLIC_KEY="" \
   PM2_SECRET_KEY="" \
+  TOKEN="" \
+  CLIENT_ID="" \ 
+  DATABASE_PATH="/usr/beatnik/beatnik.sqlite" \
   NODE_ENV="production"
-WORKDIR /usr/app
-COPY --from=build /usr/app/node_modules/ ./node_modules/
-COPY --from=build /usr/app/build ./build
-COPY --from=build /usr/app/ecosystem.config.js ./
-COPY --from=build /usr/app/prisma/ ./prisma
-ADD start.sh /usr/app
-RUN chmod +x ./start.sh
+WORKDIR /usr/beatnik
+COPY --from=builder /usr/beatnik-build/node_modules ./node_modules
+COPY --from=builder /usr/beatnik-build/build ./build
+COPY ecosystem.config.js ./
 RUN apk add --no-cache ffmpeg
-CMD ["sh", "./start.sh"]
+RUN npm install --location=global pm2
+CMD ["pm2-runtime", "ecosystem.config.js"]
