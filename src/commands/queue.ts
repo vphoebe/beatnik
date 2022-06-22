@@ -58,7 +58,10 @@ export const execute: CommandExecuter = async (interaction) => {
     });
     return;
   } else {
-    await interaction.reply("Nothing in the queue.");
+    await interaction.reply({
+      content: "Nothing in the queue.",
+      ephemeral: true,
+    });
   }
 };
 
