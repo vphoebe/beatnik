@@ -1,5 +1,6 @@
 import { Command } from "..";
 import { getClientId, getToken } from "../../lib/environment";
+import { log } from "../../lib/logger";
 import { SlashCommandBuilder } from "@discordjs/builders";
 import { REST } from "@discordjs/rest";
 import { PermissionFlagsBits, Routes } from "discord-api-types/v9";
@@ -29,7 +30,12 @@ export async function execute(interaction: CommandInteraction) {
         )
       );
       await Promise.all(promises);
-      console.log(`Beatnik uninstalled from ${guildId}.`);
+      log({
+        type: "INFO",
+        user: "BOT",
+        guildId,
+        message: `Uninstalled guild commands.`,
+      });
       await interaction.reply("Beatnik has been uninstalled from this server.");
     });
 }

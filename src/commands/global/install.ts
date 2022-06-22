@@ -1,5 +1,6 @@
 import { Command, commandList } from "..";
 import { getClientId, getToken } from "../../lib/environment";
+import { log } from "../../lib/logger";
 import { SlashCommandBuilder } from "@discordjs/builders";
 import { REST } from "@discordjs/rest";
 import { PermissionFlagsBits, Routes } from "discord-api-types/v9";
@@ -28,9 +29,12 @@ export async function execute(interaction: CommandInteraction) {
       body: guildCommands,
     })
     .then(async () => {
-      console.log(
-        `Successfully registered application commands to ${guildId}.`
-      );
+      log({
+        type: "INFO",
+        guildId,
+        user: "BOT",
+        message: "Registered guild commands",
+      });
       await interaction.reply(`Beatnik commands installed!`);
     })
     .catch(console.error);

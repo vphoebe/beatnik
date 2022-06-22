@@ -1,11 +1,21 @@
 import { commandList } from "./commands";
-import { getToken } from "./lib/environment";
+import { getClientId, getToken } from "./lib/environment";
+import { log } from "./lib/logger";
 import { startPresenceLifecycle } from "./lib/presence";
 import { allGuildQueues } from "./lib/queue";
 import { generateDependencyReport } from "@discordjs/voice";
 import { Client, Intents } from "discord.js";
 
+const token = getToken();
+const clientId = getClientId();
+
 // Check for dependencies
+log({
+  type: "INFO",
+  message: "Checking dependencies...",
+  user: "BOT",
+  guildId: clientId,
+});
 console.log(generateDependencyReport());
 
 // Create a new client instance
@@ -13,11 +23,14 @@ export const client = new Client({
   intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_VOICE_STATES],
 });
 
-const token = getToken();
-
 // When the client is ready, run this code (only once)
 client.once("ready", async () => {
-  console.log("~~ Beatnik is ready to go! ~~");
+  log({
+    type: "INFO",
+    user: "BOT",
+    guildId: clientId,
+    message: "Beatnik is ready to go!",
+  });
   startPresenceLifecycle(client);
 });
 
@@ -26,9 +39,12 @@ client.on("interactionCreate", async (interaction) => {
   const runCommand = commandList[interaction.commandName];
   if (!runCommand) return;
   try {
-    console.log(
-      `[COM] ${interaction.guildId}: ${interaction.commandName}: ${interaction.user.username}`
-    );
+    log({
+      type: "CMD",
+      user: interaction.user.username,
+      guildId: interaction.guildId ?? "N/A",
+      message: `Ran ${interaction.commandName}`,
+    });
     await runCommand.execute(interaction);
   } catch (err) {
     console.error(err, interaction);

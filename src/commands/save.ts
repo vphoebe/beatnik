@@ -1,5 +1,6 @@
 import { Command, CommandExecuter } from ".";
 import { setSavedUrl } from "../lib/db";
+import { log } from "../lib/logger";
 import { errorReply } from "../lib/replies";
 import {
   hideLinkEmbed,
@@ -31,10 +32,17 @@ export const execute: CommandExecuter = async (interaction) => {
 
   try {
     const operation = await setSavedUrl(guildId, name, url);
-    console.log("[DB]", operation, guildId, name, url);
-
+    const messageContent = `${operation} ${hideLinkEmbed(url)} as ${inlineCode(
+      name
+    )} !`;
+    log({
+      type: "DB",
+      guildId,
+      user: interaction.user.username,
+      message: messageContent,
+    });
     await interaction.reply({
-      content: `${operation} ${hideLinkEmbed(url)} as ${inlineCode(name)} !`,
+      content: messageContent,
       ephemeral: true,
     });
   } catch (err) {

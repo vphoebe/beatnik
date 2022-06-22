@@ -3,6 +3,7 @@ import {
   createVoiceConnection,
 } from "../lib/connection";
 import { getNowPlayingEmbed } from "../lib/embeds";
+import { log } from "../lib/logger";
 import { destroyQueue } from "../lib/queue";
 import { createYoutubeTrackResource } from "../lib/services/youtube";
 import { shuffleArray } from "../lib/util";
@@ -87,11 +88,12 @@ export class Queue extends EventEmitter {
         );
         this.textChannel.send({ embeds: [nowPlayingEmbed] });
       }
-      console.log(
-        `${new Date().toLocaleDateString()} ${new Date().toLocaleTimeString()}  [${
-          this.guildId
-        }]: Playing ${this.nowPlaying.url}`
-      );
+      log({
+        type: "INFO",
+        user: "BOT",
+        guildId: this.guildId,
+        message: `Playing ${this.nowPlaying.url}`,
+      });
       return this.nowPlaying;
     } catch (err) {
       console.error(err);
