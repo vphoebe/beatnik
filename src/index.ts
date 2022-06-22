@@ -26,16 +26,12 @@ client.on("interactionCreate", async (interaction) => {
   const runCommand = commandList[interaction.commandName];
   if (!runCommand) return;
   try {
-    await runCommand.execute(interaction);
     console.log(
       `[COM] ${interaction.guildId}: ${interaction.commandName}: ${interaction.user.username}`
     );
+    await runCommand.execute(interaction);
   } catch (err) {
-    console.error(err);
-    await interaction.reply({
-      content: "There was an error while executing this command!",
-      ephemeral: true,
-    });
+    console.error(err, interaction);
   }
 });
 
