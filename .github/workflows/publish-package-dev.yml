@@ -3,7 +3,6 @@ on:
   push:
     branches:
       - dev
-      - next
 
 jobs:
   push_to_registry:
@@ -23,4 +22,4 @@ jobs:
         uses: docker/build-push-action@v3.0.0
         with:
           push: true
-          tags: nickseman/beatnik:next
+          tags: nickseman/beatnik:dev
