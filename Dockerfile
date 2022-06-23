@@ -1,12 +1,10 @@
 FROM node:16-alpine as builder
-WORKDIR /usr/beatnik-build
-ENV NODE_ENV="development"
-COPY package.json ./
+WORKDIR /builder
 COPY package-lock.json ./
+COPY package.json ./
 COPY tsconfig.json ./
 RUN apk add --no-cache python3 build-base
-RUN npm install --location=global node-gyp
-RUN npm install
+RUN npm ci
 COPY ./src ./src
 RUN npm run build
 RUN npm prune --omit=dev
@@ -19,8 +17,8 @@ ENV PM2_PUBLIC_KEY="" \
   DATABASE_PATH="/usr/beatnik/beatnik.sqlite" \
   NODE_ENV="production"
 WORKDIR /usr/beatnik
-COPY --from=builder /usr/beatnik-build/node_modules ./node_modules
-COPY --from=builder /usr/beatnik-build/build ./build
+COPY --from=builder /builder/node_modules ./node_modules
+COPY --from=builder /builder/build ./build
 COPY ecosystem.config.js ./
 RUN apk add --no-cache ffmpeg
 RUN npm install --location=global pm2
