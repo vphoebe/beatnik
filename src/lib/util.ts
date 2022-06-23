@@ -4,7 +4,7 @@ export const getDurationString = (seconds: number | null) => {
     const minutes = Math.floor(seconds / 60) - hours * 60;
     const sec = Math.floor(seconds % 60);
     return `${hours > 0 ? `${hours}:` : ""}${
-      minutes > 10 ? minutes : `0${minutes}`
+      minutes > 10 || !hours ? minutes : `0${minutes}`
     }:${sec < 10 ? `0${sec}` : sec}`;
   }
   return "unknown";
