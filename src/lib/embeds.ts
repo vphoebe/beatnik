@@ -3,13 +3,7 @@ import { SavedUrl } from "./db";
 import { parsePlayQuery } from "./parsePlayQuery";
 import { parsedQueryToMetadata } from "./services/youtube";
 import { getDurationString } from "./util";
-import {
-  bold,
-  hyperlink,
-  inlineCode,
-  italic,
-  userMention,
-} from "@discordjs/builders";
+import { bold, inlineCode, italic, userMention } from "@discordjs/builders";
 import { MessageEmbed } from "discord.js";
 
 const baseEmbed = () =>
@@ -76,10 +70,7 @@ export async function getSavedUrlListEmbed(savedUrls: SavedUrl[]) {
   const metadatas = await Promise.all(metadataPromises);
   const strings = metadatas.map((metadata, i) => {
     const su = savedUrls[i];
-    return `${inlineCode(su.name)}
-    ${hyperlink(metadata.title, su.url)} ${italic(metadata.author)} (${
-      metadata.numberOfTracks
-    } tracks)`;
+    return `${inlineCode(su.name)} (${metadata.numberOfTracks} tracks)`;
   });
 
   return baseEmbed()
