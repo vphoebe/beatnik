@@ -4,10 +4,10 @@ import { parsePlayQuery } from "./parsePlayQuery";
 import { parsedQueryToMetadata } from "./services/youtube";
 import { getDurationString } from "./util";
 import { bold, inlineCode, italic, userMention } from "@discordjs/builders";
-import { MessageEmbed } from "discord.js";
+import { EmbedBuilder } from "discord.js";
 
 const baseEmbed = () =>
-  new MessageEmbed()
+  new EmbedBuilder()
     .setColor("#F6921E")
     .setTimestamp()
     .setFooter({ text: "sent by Beatnik" });
@@ -43,7 +43,7 @@ export function getQueueListEmbed(
 ) {
   const trackStrings = tracks.map((t, relativeIndex) => {
     const indexOffset = 1 + 10 * (pageNumber - 1);
-    const shortTitle =
+    const shortTitle: string =
       t.title.length > 50 ? `${t.title.substring(0, 45)}...` : t.title;
     const absoluteIndex = relativeIndex + indexOffset;
     const isNowPlaying = currentIndex + 1 === absoluteIndex;
@@ -60,7 +60,10 @@ export function getQueueListEmbed(
       : "Nothing is after this track.";
   return baseEmbed()
     .setAuthor({ name: "Current queue for Beatnik" })
-    .addField(`(Page ${pageNumber} of ${totalPages})`, fieldText);
+    .addFields({
+      name: `(Page ${pageNumber} of ${totalPages})`,
+      value: fieldText,
+    });
 }
 
 export async function getSavedUrlListEmbed(savedUrls: SavedUrl[]) {
@@ -78,7 +81,7 @@ export async function getSavedUrlListEmbed(savedUrls: SavedUrl[]) {
     .setDescription(
       `Use ${inlineCode("/load [name]")} to play these saved URLs.`
     )
-    .addField("Saved URL names", strings.join("\n\n"));
+    .addFields({ name: "Saved URL names", value: strings.join("\n\n") });
 }
 
 export function getAddedToQueueMessage(

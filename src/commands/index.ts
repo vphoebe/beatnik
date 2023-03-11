@@ -9,8 +9,7 @@ import save from "./save";
 import shuffle from "./shuffle";
 import skip from "./skip";
 import stop from "./stop";
-import { SlashCommandBuilder } from "@discordjs/builders";
-import { CommandInteraction } from "discord.js";
+import { ChatInputCommandInteraction, SlashCommandBuilder } from "discord.js";
 
 export type Command = {
   builder: SlashCommandBuilder;
@@ -19,7 +18,7 @@ export type Command = {
 };
 
 export type CommandExecuter = (
-  interaction: CommandInteraction
+  interaction: ChatInputCommandInteraction
 ) => Promise<void>;
 
 export type CommandList = {
