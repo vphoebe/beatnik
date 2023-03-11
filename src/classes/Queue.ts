@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 import {
   getExistingVoiceConnection,
   createVoiceConnection,
@@ -51,6 +52,7 @@ export class Queue extends EventEmitter {
         this.next();
       } else {
         this.stop();
+        //@ts-ignore
         textChannel?.send(":wave: Nothing left in the queue!");
       }
     });
@@ -86,6 +88,7 @@ export class Queue extends EventEmitter {
           this.currentIndex + 1,
           this.tracks.length
         );
+        //@ts-ignore
         this.textChannel.send({ embeds: [nowPlayingEmbed] });
       }
       log({

@@ -5,7 +5,11 @@ import { startPresenceLifecycle } from "./lib/presence";
 import { allGuildQueues } from "./lib/queue";
 import { errorReply } from "./lib/replies";
 import { generateDependencyReport } from "@discordjs/voice";
-import { Client, Intents } from "discord.js";
+import {
+  ChatInputCommandInteraction,
+  Client,
+  GatewayIntentBits,
+} from "discord.js";
 
 const token = getToken();
 const clientId = getClientId();
@@ -21,7 +25,7 @@ console.log(generateDependencyReport());
 
 // Create a new client instance
 export const client = new Client({
-  intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_VOICE_STATES],
+  intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildVoiceStates],
 });
 
 // When the client is ready, run this code (only once)
@@ -46,7 +50,7 @@ client.on("interactionCreate", async (interaction) => {
       guildId: interaction.guildId ?? "N/A",
       message: `Ran ${interaction.commandName}`,
     });
-    await runCommand.execute(interaction);
+    await runCommand.execute(interaction as ChatInputCommandInteraction);
   } catch (err) {
     console.error(err, interaction);
     if (interaction.deferred) {

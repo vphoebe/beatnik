@@ -1,10 +1,15 @@
 import { getBeatTimeString } from "./util";
-import { ActivitiesOptions, Client, PresenceStatusData } from "discord.js";
+import {
+  ActivitiesOptions,
+  ActivityType,
+  Client,
+  PresenceStatusData,
+} from "discord.js";
 
 export function getIdleActivity() {
   const activity: ActivitiesOptions = {
     name: `@${getBeatTimeString()}`,
-    type: "PLAYING",
+    type: ActivityType.Playing,
   };
   return activity;
 }

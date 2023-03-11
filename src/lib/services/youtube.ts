@@ -76,18 +76,17 @@ export async function parsedQueryToYoutubeQueuedTracks(
 }
 
 export async function createYoutubeTrackResource(track: QueuedTrack) {
-  return createAudioResource(
-    await ytdlPlayer(track.url, {
-      highWaterMark: 1 << 62,
-      liveBuffer: 1 << 62,
-      dlChunkSize: 0, //disabling chunking is recommended in discord bot
-      quality: "lowestaudio",
-    }),
-    {
-      inputType: StreamType.Opus,
-      metadata: {
-        title: track.title,
-      },
-    }
-  );
+  const options = {
+    highWaterMark: 1 << 62,
+    liveBuffer: 1 << 62,
+    dlChunkSize: 0, //disabling chunking is recommended in discord bot
+    quality: "lowestaudio",
+  };
+  const stream = await ytdlPlayer(track.url, options);
+  return createAudioResource(stream, {
+    inputType: StreamType.Opus,
+    metadata: {
+      title: track.title,
+    },
+  });
 }
