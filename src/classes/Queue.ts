@@ -23,6 +23,7 @@ export enum TrackService {
 
 export type QueuedTrack = {
   url: string;
+  id: string;
   title: string;
   addedBy: string;
   service: TrackService;

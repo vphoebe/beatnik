@@ -1,4 +1,5 @@
 import { QueuedTrack } from "../../classes/Queue";
+import { checkCacheExists, readFromCache, writeToCache } from "../cache";
 import { ParsedQuery } from "../parsePlayQuery";
 import { createAudioResource, StreamType } from "@discordjs/voice";
 import ytdl from "ytdl-core";
@@ -48,11 +49,12 @@ export async function parsedQueryToYoutubeQueuedTracks(
   if (type === "video") {
     const info = await ytdl.getInfo(url);
     const { videoDetails } = info;
-    const { title, lengthSeconds, thumbnails, author } = videoDetails;
+    const { title, lengthSeconds, thumbnails, author, videoId } = videoDetails;
     const track = {
       title,
       length: parseInt(lengthSeconds),
       url,
+      id: videoId,
       service,
       channel: author.name,
       thumbnailImageUrl: thumbnails[0].url,
@@ -65,6 +67,7 @@ export async function parsedQueryToYoutubeQueuedTracks(
       title: item.title,
       length: item.durationSec ?? 0,
       url: item.shortUrl,
+      id: item.id,
       service,
       channel: item.author.name,
       thumbnailImageUrl: item.bestThumbnail.url ?? undefined,
@@ -79,10 +82,19 @@ export async function createYoutubeTrackResource(track: QueuedTrack) {
   const options = {
     highWaterMark: 1 << 62,
     liveBuffer: 1 << 62,
-    dlChunkSize: 0, //disabling chunking is recommended in discord bot
+    dlChunkSize: 0, // disabling chunking is recommended in discord bot
     quality: "lowestaudio",
   };
-  const stream = await ytdlPlayer(track.url, options);
+  const cacheHit = checkCacheExists(track.id);
+  let stream;
+  if (cacheHit) {
+    stream = readFromCache(track.id);
+  } else {
+    stream = await ytdlPlayer(track.url, options);
+    // write the track to cache
+    const cacheStream = await ytdlPlayer(track.url, options);
+    writeToCache(track.id, cacheStream);
+  }
   return createAudioResource(stream, {
     inputType: StreamType.Opus,
     metadata: {
