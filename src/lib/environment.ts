@@ -28,7 +28,7 @@ export function getDatabasePath() {
   return databasePath;
 }
 
-export function getCachePath() {
+export function getCacheDir() {
   const cachePath = process.env.CACHE_PATH;
   const DISABLE_CACHE = process.env.DISABLE_CACHE === "true";
   if (DISABLE_CACHE) return undefined;
