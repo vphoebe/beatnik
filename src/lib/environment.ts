@@ -1,4 +1,5 @@
 import "dotenv/config";
+import { existsSync } from "node:fs";
 
 export function getToken() {
   const token = process.env.TOKEN;
@@ -25,4 +26,19 @@ export function getDatabasePath() {
     process.exit();
   }
   return databasePath;
+}
+
+export function getCachePath() {
+  const cachePath = process.env.CACHE_PATH;
+  const DISABLE_CACHE = process.env.DISABLE_CACHE === "true";
+  if (DISABLE_CACHE) return undefined;
+  if (!cachePath) {
+    console.error("No CACHE_PATH found in .env!");
+  } else {
+    if (!existsSync(cachePath)) {
+      console.error(`CACHE_PATH ${cachePath} does not exist!`);
+      return undefined;
+    }
+  }
+  return cachePath;
 }
