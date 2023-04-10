@@ -77,7 +77,9 @@ export class Queue extends EventEmitter {
   async play() {
     try {
       this.isPlaying = true;
-      const resource = await createYoutubeTrackResource(this.nowPlaying);
+      const { resource, fromCache } = await createYoutubeTrackResource(
+        this.nowPlaying
+      );
       this.audioPlayer.play(resource);
       if (!this.subscription) {
         this.connection.subscribe(this.audioPlayer);
@@ -96,7 +98,9 @@ export class Queue extends EventEmitter {
         type: "INFO",
         user: "BOT",
         guildId: this.guildId,
-        message: `Playing ${this.nowPlaying.url}`,
+        message: `Playing ${this.nowPlaying.id} ${
+          fromCache ? "from cache" : "from URL"
+        }`,
       });
       return this.nowPlaying;
     } catch (err) {
