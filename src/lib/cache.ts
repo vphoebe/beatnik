@@ -7,19 +7,15 @@ import { Readable } from "node:stream";
 
 function getCacheItemPath(id: string) {
   const cacheDir = getCacheDir();
-  if (cacheDir) {
-    return path.join(cacheDir, id + ".cache");
-  }
-  return undefined;
+  if (!cacheDir) return undefined;
+  return path.join(cacheDir, id + ".cache");
 }
 
 async function getAllCacheFiles() {
   const cacheDir = getCacheDir();
-  if (cacheDir) {
-    const files = await readdir(cacheDir);
-    return files.filter((filename) => filename.includes(".cache"));
-  }
-  return [];
+  if (!cacheDir) return [];
+  const files = await readdir(cacheDir);
+  return files.filter((filename) => filename.includes(".cache"));
 }
 
 async function getCacheTable() {
@@ -44,69 +40,64 @@ async function getCacheTable() {
 
 export function writeToCache(id: string, stream: Readable): void {
   const cachePath = getCacheItemPath(id);
-  if (cachePath) {
-    const fileStream = fs.createWriteStream(cachePath);
-    stream.pipe(fileStream);
-    fileStream.on("close", () => {
-      log({
-        type: "CACHE",
-        user: "BOT",
-        message: `${id} successfully written to cache.`,
-      });
-      getCacheTable().then(({ totalSize }) => {
-        if (totalSize >= getMaxCacheSize() * 1024 ** 2) {
-          evictCache();
-        }
-      });
+  if (!cachePath) return;
+  const fileStream = fs.createWriteStream(cachePath);
+  stream.pipe(fileStream);
+  fileStream.on("close", () => {
+    log({
+      type: "CACHE",
+      user: "BOT",
+      message: `${id} successfully written to cache.`,
     });
-  }
+    getCacheTable().then(({ totalSize }) => {
+      if (totalSize >= getMaxCacheSize() * 1024 ** 2) {
+        evictCache();
+      }
+    });
+  });
 }
 
 export function readFromCache(id: string): Readable | undefined {
   const cachePath = getCacheItemPath(id);
-  if (cachePath) {
-    const time = new Date();
-    const fileStream = fs.createReadStream(cachePath);
-    fs.utimesSync(cachePath, time, time);
-    return fileStream;
-  }
+  if (!cachePath) return undefined;
+  const time = new Date();
+  const fileStream = fs.createReadStream(cachePath);
+  fs.utimesSync(cachePath, time, time);
+  return fileStream;
 }
 
 export function checkIdIsCached(id: string): boolean {
   const cachePath = getCacheItemPath(id);
-  if (cachePath) {
-    return fs.existsSync(cachePath);
-  }
-  return false;
+  if (!cachePath) return false;
+  return fs.existsSync(cachePath);
 }
 
 export async function evictCache(evictAll?: boolean) {
   const cacheDir = getCacheDir();
-  if (cacheDir) {
-    if (evictAll) {
-      const cacheFiles = await getAllCacheFiles();
-      for (const file of cacheFiles) {
-        await rm(path.join(cacheDir, file));
-        log({
-          type: "CACHE",
-          message: `Removed all files from ${getMaxCacheSize()} MB cache.`,
-          user: "BOT",
-        });
-      }
-    } else {
-      // remove oldest lastModified file
-      const { table } = await getCacheTable();
-      table.sort((a, b) => {
-        return a.atime.getTime() - b.atime.getTime();
-      });
-      const file = table[0].file;
-      const cachePath = path.join(cacheDir, file);
-      await rm(cachePath);
+  if (!cacheDir) return;
+  if (evictAll) {
+    const cacheFiles = await getAllCacheFiles();
+    for (const file of cacheFiles) {
+      await rm(path.join(cacheDir, file));
       log({
         type: "CACHE",
-        message: `Removed ${file} from ${getMaxCacheSize()} MB cache as it hasn't been accessed since ${table[0].atime.toLocaleDateString()}`,
+        message: `Removed all files from ${getMaxCacheSize()} MB cache.`,
         user: "BOT",
       });
     }
+  } else {
+    // remove oldest lastModified file
+    const { table } = await getCacheTable();
+    table.sort((a, b) => {
+      return a.atime.getTime() - b.atime.getTime();
+    });
+    const file = table[0].file;
+    const cachePath = path.join(cacheDir, file);
+    await rm(cachePath);
+    log({
+      type: "CACHE",
+      message: `Removed ${file} from ${getMaxCacheSize()} MB cache as it hasn't been accessed since ${table[0].atime.toLocaleDateString()}`,
+      user: "BOT",
+    });
   }
 }
