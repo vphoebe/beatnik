@@ -42,3 +42,8 @@ export function getCachePath() {
   }
   return cachePath;
 }
+
+export function getMaxCacheSize() {
+  const maxSize = process.env.MAX_CACHE_SIZE_IN_MB;
+  return maxSize ? parseInt(maxSize) : 128;
+}
