@@ -30,8 +30,8 @@ export function getDatabasePath() {
 
 export function getCacheDir() {
   const cachePath = process.env.CACHE_PATH;
-  const DISABLE_CACHE = process.env.DISABLE_CACHE === "true";
-  if (DISABLE_CACHE) return undefined;
+  const maxCacheSize = getMaxCacheSize();
+  if (maxCacheSize === 0) return undefined;
   if (!cachePath) {
     console.error("No CACHE_PATH found in .env!");
   } else {
