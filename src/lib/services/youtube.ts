@@ -1,8 +1,9 @@
 import { QueuedTrack } from "../../classes/Queue";
+import { checkIdIsCached, readFromCache, writeToCache } from "../cache";
 import { ParsedQuery } from "../parsePlayQuery";
-import { createAudioResource, StreamType } from "@discordjs/voice";
-import ytdl from "ytdl-core";
-import ytdlPlayer from "ytdl-core-discord";
+import { createAudioResource, demuxProbe } from "@discordjs/voice";
+import { Readable } from "stream";
+import ytdl, { videoFormat } from "ytdl-core";
 import ytpl from "ytpl";
 
 type SimpleMetadata = {
@@ -11,6 +12,43 @@ type SimpleMetadata = {
   author: string;
   numberOfTracks: number;
 };
+
+// implemented from https://github.com/amishshah/ytdl-core-discord/commit/cb3dc69692f9231c63f6858e150df3dcb893c2b0
+function findWebmOpusFormat(format: videoFormat) {
+  return (
+    format.codecs === "opus" &&
+    format.container === "webm" &&
+    format.audioSampleRate === "48000"
+  );
+}
+
+// implemented from https://github.com/amishshah/ytdl-core-discord/commit/cb3dc69692f9231c63f6858e150df3dcb893c2b0
+export async function getYtStream(
+  id: string,
+  url: string,
+  options: ytdl.downloadOptions = {}
+): Promise<{ stream: Readable; fromCache: boolean }> {
+  const cacheHit = checkIdIsCached(id);
+  if (!cacheHit) {
+    // play live url, and update cache
+    const info = await ytdl.getInfo(url);
+    const format = info.formats.find(findWebmOpusFormat);
+    const canDemux = format && info.videoDetails.lengthSeconds !== "0";
+    if (canDemux) {
+      options = { ...options, filter: findWebmOpusFormat };
+    } else if (info.videoDetails.lengthSeconds !== "0") {
+      options = { ...options, filter: "audioonly" };
+    }
+    const stream = ytdl.downloadFromInfo(info, options);
+    const cacheStream = ytdl.downloadFromInfo(info, options);
+    writeToCache(id, cacheStream);
+    return { stream, fromCache: false };
+  } else {
+    // we know this cache stream exists because we checked the cache hit
+    const cacheStream = readFromCache(id) as Readable;
+    return { stream: cacheStream, fromCache: true };
+  }
+}
 
 export async function parsedQueryToMetadata(
   query: ParsedQuery
@@ -48,11 +86,12 @@ export async function parsedQueryToYoutubeQueuedTracks(
   if (type === "video") {
     const info = await ytdl.getInfo(url);
     const { videoDetails } = info;
-    const { title, lengthSeconds, thumbnails, author } = videoDetails;
+    const { title, lengthSeconds, thumbnails, author, videoId } = videoDetails;
     const track = {
       title,
       length: parseInt(lengthSeconds),
       url,
+      id: videoId,
       service,
       channel: author.name,
       thumbnailImageUrl: thumbnails[0].url,
@@ -65,6 +104,7 @@ export async function parsedQueryToYoutubeQueuedTracks(
       title: item.title,
       length: item.durationSec ?? 0,
       url: item.shortUrl,
+      id: item.id,
       service,
       channel: item.author.name,
       thumbnailImageUrl: item.bestThumbnail.url ?? undefined,
@@ -79,14 +119,23 @@ export async function createYoutubeTrackResource(track: QueuedTrack) {
   const options = {
     highWaterMark: 1 << 62,
     liveBuffer: 1 << 62,
-    dlChunkSize: 0, //disabling chunking is recommended in discord bot
+    dlChunkSize: 0, // disabling chunking is recommended in discord bot
     quality: "lowestaudio",
   };
-  const stream = await ytdlPlayer(track.url, options);
-  return createAudioResource(stream, {
-    inputType: StreamType.Opus,
+
+  const { stream: ytStream, fromCache } = await getYtStream(
+    track.id,
+    track.url,
+    options
+  );
+  const { stream, type } = await demuxProbe(ytStream);
+
+  const resource = createAudioResource(stream, {
+    inputType: type,
     metadata: {
       title: track.title,
     },
   });
+
+  return { resource, fromCache };
 }
