@@ -1,4 +1,5 @@
 import "dotenv/config";
+import { existsSync } from "node:fs";
 
 export function getToken() {
   const token = process.env.TOKEN;
@@ -25,4 +26,24 @@ export function getDatabasePath() {
     process.exit();
   }
   return databasePath;
+}
+
+export function getCacheDir() {
+  const cachePath = process.env.CACHE_PATH;
+  const maxCacheSize = getMaxCacheSize();
+  if (maxCacheSize === 0) return undefined;
+  if (!cachePath) {
+    console.error("No CACHE_PATH found in .env!");
+  } else {
+    if (!existsSync(cachePath)) {
+      console.error(`CACHE_PATH ${cachePath} does not exist!`);
+      return undefined;
+    }
+  }
+  return cachePath;
+}
+
+export function getMaxCacheSize() {
+  const maxSize = process.env.MAX_CACHE_SIZE_IN_MB;
+  return maxSize ? parseInt(maxSize) : 128;
 }

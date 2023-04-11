@@ -1,6 +1,6 @@
 export type LoggerOptions = {
-  type: "CMD" | "INFO" | "DB";
-  guildId: string;
+  type: "CMD" | "INFO" | "DB" | "CACHE";
+  guildId?: string;
   user: string;
   message: string;
 };
@@ -8,6 +8,8 @@ export type LoggerOptions = {
 export function log(options: LoggerOptions) {
   const { type, guildId, user, message } = options;
   return console.info(
-    `${new Date().toLocaleDateString()} ${new Date().toLocaleTimeString()} [${type}] [${user}@${guildId}]: ${message}`
+    `${new Date().toLocaleDateString()} ${new Date().toLocaleTimeString()} [${type}] [${user}${
+      guildId ? `@${guildId}` : ""
+    }]: ${message}`
   );
 }

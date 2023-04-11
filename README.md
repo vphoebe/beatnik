@@ -1,11 +1,12 @@
 # Beatnik: a Discord music bot
 
-Run your own modern and simple Discord music bot with easy-to-use commands that anyone on your server can understand.
+Run your own modern and simple Discord music bot with easy-to-use native slash commands.
 
 ## Features
 - Fully utilizes simple to understand Discord slash commands
 - Robust music queue management (add, remove, skip, shuffle, etc.)
 - Save URLs so you can queue them easily later
+- Configurable cache to improve performance of frequently queued content
 - Status updates with current Swatch Internet Time so you can sync up your raids
 - Prioritizes Opus-encoded streams from services to increase performance
 - Supported music sources:
@@ -21,7 +22,7 @@ Beatnik is designed to be operated yourself, so there's a few things to set up f
 ### Docker (recommended)
 If you are familiar at all with Docker, this is the fastest way to get Beatnik up and running. The [latest Docker image](https://hub.docker.com/r/nickseman/beatnik) is at `nickseman/beatnik:latest`
 
-Make sure to configure the Docker container's environment according to the [Environment](#Environment) section below. You'll probably want to bind the path that you specify for `DATABASE_PATH` to somewhere outside the container so you don't lose your saved URLS, in case the container needs to be updated or re-created.
+Make sure to configure the Docker container's environment according to the [Environment](#Environment) section below. You'll probably want to bind the path that you specify for `DATABASE_PATH` to somewhere outside the container so you don't lose your saved URLS, in case the container needs to be updated or re-created. You can also bind the path for `CACHE_PATH` outside of Docker if you'd like, but it's not required.
 
 Skip down to [Invite](#Invite) to see what's next.
 
@@ -43,6 +44,8 @@ Whether you're using Docker or Node.js, you'll need to configure the environment
 | TOKEN | Your Discord bot's token | xxxxxxxxxxxx.yyyyyyyyy | 
 | CLIENT_ID | Your Discord bot's client ID | 00000000000 |
 | DATABASE_PATH | A valid path that Beatnik can use to create a SQLite file. Make sure to end it with `beatnik.sqlite`. Beatnik will create the file for you when it launches. | `/Users/You/Documents/beatnik.sqlite` or in Docker the default is `/usr/beatnik/beatnik.sqlite`
+| CACHE_PATH | A valid directory that Beatnik can use to save its cache. Not required if `MAX_CACHE_SIZE_IN_MB` is set to `0`. | In Docker, the default is `/usr/beatnik/cache`
+| MAX_CACHE_SIZE_IN_MB | How much space in megabytes that the cache can expand to. Set this value to `0` to disable caching entirely. | `128`
 
 ### Invite
 Check out the Discord developer portal > OAuth2 > URL Generator to create an invite link. Make sure the `bot` and `application.commands` scopes are set, and `Connect` and `Speak` are enabled in the bot permissions under Voice. Also, once Beatnik is invited, ensure it gets assigned a role that lets it post messages in at least one text channel. Now Playing embeds and other messages are posted in the channel where the command was called.
