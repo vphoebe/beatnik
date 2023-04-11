@@ -15,6 +15,8 @@ ENV PM2_PUBLIC_KEY="" \
   TOKEN="" \
   CLIENT_ID="" \ 
   DATABASE_PATH="/usr/beatnik/beatnik.sqlite" \
+  CACHE_PATH="/usr/beatnik/cache" \
+  MAX_CACHE_SIZE_IN_MB="128" \
   NODE_ENV="production"
 WORKDIR /usr/beatnik
 COPY --from=builder /builder/node_modules ./node_modules
