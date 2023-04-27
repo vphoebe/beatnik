@@ -104,7 +104,8 @@ export class Queue extends EventEmitter {
       });
       return this.nowPlaying;
     } catch (err) {
-      console.error(err);
+      console.error("play() method error", this.nowPlaying.url, err);
+      await this.next();
     }
   }
 
