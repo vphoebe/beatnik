@@ -41,18 +41,18 @@ client.once("ready", async () => {
 
 client.on("interactionCreate", async (interaction) => {
   if (!interaction.isCommand()) return;
+  log({
+    type: "CMD",
+    user: interaction.user.username,
+    guildId: interaction.guildId ?? "N/A",
+    message: `Ran ${interaction.commandName}`,
+  });
   const runCommand = commandList[interaction.commandName];
   if (!runCommand) return;
   try {
-    log({
-      type: "CMD",
-      user: interaction.user.username,
-      guildId: interaction.guildId ?? "N/A",
-      message: `Ran ${interaction.commandName}`,
-    });
     await runCommand.execute(interaction as ChatInputCommandInteraction);
   } catch (err) {
-    console.error(err, interaction);
+    console.error(err);
     if (interaction.deferred) {
       await interaction.editReply(
         errorReply(err, interaction.ephemeral ?? false)
