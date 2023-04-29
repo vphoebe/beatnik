@@ -104,7 +104,17 @@ export class Queue extends EventEmitter {
       });
       return this.nowPlaying;
     } catch (err) {
-      console.error("play() method error", this.nowPlaying.url, err);
+      log({
+        type: "ERROR",
+        user: "BOT",
+        guildId: this.guildId,
+        message: `Error playing! Error was:`,
+      });
+      console.error(err);
+      //@ts-ignore
+      this.textChannel.send(
+        `Unable to play ${this.nowPlaying.url}, skipping...`
+      );
       await this.next();
     }
   }

@@ -11,7 +11,7 @@ export const noQueueReply: InteractionReplyOptions = ephemeral(
 export const errorReply = (
   err: unknown,
   isEphemeral = true
-): InteractionReplyOptions =>
-  isEphemeral
-    ? ephemeral(`Something went wrong: ${err}`)
-    : { content: `Something went wrong: ${err}` };
+): InteractionReplyOptions => {
+  const message = `Something went wrong! Tell someone with authority about the following error message: \`\`\`${err}\`\`\``;
+  return isEphemeral ? ephemeral(message) : { content: message };
+};
