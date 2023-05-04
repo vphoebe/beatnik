@@ -4,13 +4,13 @@
   "description": "modern and simple Discord music bot with easy-to-use commands",
   "type": "module",
   "scripts": {
-    "dev": "ts-node-dev src/index.ts",
+    "dev": "nodemon src/index.ts",
     "dev:deployglobal": "ts-node src/deploy-global-commands.ts",
     "build": "tsc --build --clean && tsc --build",
     "typecheck": "tsc --noEmit",
-    "build:docker": "npm run build && docker build -t beatnik-dev .",
-    "build:dockerx64": "npm run build && docker buildx build --platform linux/amd64 -t beatnik-dev-x64 .",
-    "start": "pm2-runtime ecosystem.config.js"
+    "build:docker": "pnpm build && docker build -t beatnik-dev .",
+    "build:dockerx64": "pnpm build && docker buildx build --platform linux/amd64 -t beatnik-dev-x64 .",
+    "start": "pm2-runtime ecosystem.config.cjs"
   },
   "author": "vphoebe",
   "license": "MIT",
@@ -21,7 +21,7 @@
     "@discordjs/voice": "^0.16.0",
     "@keyv/sqlite": "^3.5.2",
     "discord-api-types": "^0.33.5",
-    "discord.js": "^14.7.1",
+    "discord.js": "^14.10.2",
     "dotenv": "^16.0.1",
     "keyv": "^4.3.0",
     "sodium-native": "^3.3.0",
@@ -32,14 +32,14 @@
   },
   "devDependencies": {
     "@trivago/prettier-plugin-sort-imports": "^3.2.0",
-    "@types/node": "^17.0.34",
+    "@types/node": "^18.16.3",
     "@typescript-eslint/eslint-plugin": "^5.25.0",
     "@typescript-eslint/parser": "^5.25.0",
     "eslint": "^8.15.0",
     "eslint-plugin-require-extensions": "^0.1.3",
+    "nodemon": "^2.0.22",
     "prettier": "2.6.2",
-    "ts-node": "^10.7.0",
-    "ts-node-dev": "^2.0.0",
+    "ts-node": "^10.9.1",
     "typescript": "^4.6.4"
   },
   "engines": {

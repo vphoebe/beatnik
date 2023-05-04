@@ -1,4 +1,4 @@
-import { getDatabasePath } from './environment.js';
+import { getDatabasePath } from "./environment.js";
 import Keyv from "keyv";
 
 export type SavedUrl = {
@@ -8,6 +8,7 @@ export type SavedUrl = {
 };
 
 function getKeyv(guildId: string) {
+  console.log(getDatabasePath());
   return new Keyv(`sqlite://${getDatabasePath()}`, { namespace: guildId }).on(
     "error",
     (err) => {
