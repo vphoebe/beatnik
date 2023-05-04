@@ -27,7 +27,7 @@ Make sure to configure the Docker container's environment according to the [Envi
 Skip down to [Invite](#Invite) to see what's next.
 
 ### Local Node.js (via pm2)
-1. Clone this repository somewhere locally. You'll need Node.js 16 or later installed.
+1. Clone this repository somewhere locally. You'll need Node.js 18 or later installed.
 2. Run `npm install` to install all the dependencies.
 3. Make sure ``ffmpeg`` is installed on your OS. The command above won't install it, and it's required for Beatnik to play audio.
 4. Run `npm run build` to actually build the application.
