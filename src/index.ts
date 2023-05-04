@@ -1,9 +1,9 @@
-import { commandList } from "./commands";
-import { getClientId, getToken } from "./lib/environment";
-import { log } from "./lib/logger";
-import { startPresenceLifecycle } from "./lib/presence";
-import { allGuildQueues } from "./lib/queue";
-import { errorReply } from "./lib/replies";
+import { commandList } from "./commands/index.js";
+import { getClientId, getToken } from "./lib/environment.js";
+import { log } from "./lib/logger.js";
+import { startPresenceLifecycle } from "./lib/presence.js";
+import { allGuildQueues } from "./lib/queue.js";
+import { errorReply } from "./lib/replies.js";
 import { generateDependencyReport } from "@discordjs/voice";
 import {
   ChatInputCommandInteraction,

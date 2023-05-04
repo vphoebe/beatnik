@@ -1,4 +1,4 @@
-import { getDatabasePath } from "./environment";
+import { getDatabasePath } from './environment.js';
 import Keyv from "keyv";
 
 export type SavedUrl = {

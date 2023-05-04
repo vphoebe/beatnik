@@ -2,12 +2,12 @@
 import {
   getExistingVoiceConnection,
   createVoiceConnection,
-} from "../lib/connection";
-import { getNowPlayingEmbed } from "../lib/embeds";
-import { log } from "../lib/logger";
-import { destroyQueue } from "../lib/queue";
-import { createYoutubeTrackResource } from "../lib/services/youtube";
-import { shuffleArray } from "../lib/util";
+} from '../lib/connection.js';
+import { getNowPlayingEmbed } from '../lib/embeds.js';
+import { log } from '../lib/logger.js';
+import { destroyQueue } from '../lib/queue.js';
+import { createYoutubeTrackResource } from '../lib/services/youtube.js';
+import { shuffleArray } from '../lib/util.js';
 import {
   AudioPlayer,
   AudioPlayerStatus,

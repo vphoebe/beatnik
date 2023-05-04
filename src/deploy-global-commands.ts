@@ -1,6 +1,6 @@
-import { commandList } from "./commands";
-import { getClientId, getToken } from "./lib/environment";
-import { log } from "./lib/logger";
+import { commandList } from './commands/index.js';
+import { getClientId, getToken } from './lib/environment.js';
+import { log } from './lib/logger.js';
 import { REST } from "@discordjs/rest";
 import { Routes } from "discord-api-types/v9";
 

@@ -1,5 +1,5 @@
-import { getCacheDir, getMaxCacheSize } from "./environment";
-import { log } from "./logger";
+import { getCacheDir, getMaxCacheSize } from './environment.js';
+import { log } from './logger.js';
 import fs from "node:fs";
 import { readdir, rm, stat } from "node:fs/promises";
 import path from "node:path";
