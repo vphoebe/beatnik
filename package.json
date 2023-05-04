@@ -6,6 +6,7 @@
     "dev": "ts-node-dev src/index.ts",
     "dev:deployglobal": "ts-node src/deploy-global-commands.ts",
     "build": "tsc --build --clean && tsc --build",
+    "typecheck": "tsc --noEmit",
     "build:docker": "npm run build && docker build -t beatnik-dev .",
     "build:dockerx64": "npm run build && docker buildx build --platform linux/amd64 -t beatnik-dev-x64 .",
     "start": "pm2-runtime ecosystem.config.js"
@@ -38,5 +39,8 @@
     "ts-node": "^10.7.0",
     "ts-node-dev": "^2.0.0",
     "typescript": "^4.6.4"
+  },
+  "engines": {
+    "node": ">=18"
   }
 }
