@@ -1,6 +1,6 @@
 {
   "name": "beatnik",
-  "version": "3.1.1",
+  "version": "3.1.4",
   "description": "modern and simple Discord music bot with easy-to-use commands",
   "scripts": {
     "dev": "ts-node-dev src/index.ts",
