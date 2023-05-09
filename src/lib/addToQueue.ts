@@ -1,7 +1,7 @@
-import { Queue } from '../classes/Queue.js';
-import { parsePlayQuery } from './parsePlayQuery.js';
-import { parsedQueryToYoutubeQueuedTracks } from './services/youtube.js';
-import { shuffleArray } from './util.js';
+import { Queue } from "../classes/Queue.js";
+import { parsePlayQuery } from "./parsePlayQuery.js";
+import { parsedQueryToYoutubeQueuedTracks } from "./services/youtube.js";
+import { shuffleArray } from "./util.js";
 
 export async function addToQueue(
   queue: Queue,

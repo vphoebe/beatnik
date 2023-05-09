@@ -1,4 +1,4 @@
-import { TrackService } from '../classes/Queue.js';
+import { TrackService } from "../classes/Queue.js";
 import * as yt from "youtube-search-without-api-key";
 
 export type ParsedQuery = {

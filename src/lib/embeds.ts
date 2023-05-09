@@ -1,8 +1,8 @@
-import { QueuedTrack } from '../classes/Queue.js';
-import { SavedUrl } from './db.js';
-import { parsePlayQuery } from './parsePlayQuery.js';
-import { parsedQueryToMetadata } from './services/youtube.js';
-import { getDurationString } from './util.js';
+import { QueuedTrack } from "../classes/Queue.js";
+import { SavedUrl } from "./db.js";
+import { parsePlayQuery } from "./parsePlayQuery.js";
+import { parsedQueryToMetadata } from "./services/youtube.js";
+import { getDurationString } from "./util.js";
 import { bold, inlineCode, italic, userMention } from "@discordjs/builders";
 import { EmbedBuilder } from "discord.js";
 

@@ -1,6 +1,6 @@
-import { Command, CommandExecuter } from './index.js';
-import { getExistingQueue } from '../lib/queue.js';
-import { noQueueReply } from '../lib/replies.js';
+import { Command, CommandExecuter } from "./index.js";
+import { getExistingQueue } from "../lib/queue.js";
+import { noQueueReply } from "../lib/replies.js";
 import { SlashCommandBuilder } from "@discordjs/builders";
 
 export const builder = new SlashCommandBuilder()

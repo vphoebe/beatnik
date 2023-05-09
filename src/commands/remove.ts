@@ -1,7 +1,7 @@
-import { Command, CommandExecuter } from './index.js';
-import { removeSavedUrl } from '../lib/db.js';
-import { getExistingQueue } from '../lib/queue.js';
-import { noQueueReply } from '../lib/replies.js';
+import { Command, CommandExecuter } from "./index.js";
+import { removeSavedUrl } from "../lib/db.js";
+import { getExistingQueue } from "../lib/queue.js";
+import { noQueueReply } from "../lib/replies.js";
 import { inlineCode, SlashCommandBuilder } from "@discordjs/builders";
 
 export const builder = new SlashCommandBuilder()
