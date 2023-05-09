@@ -8,7 +8,6 @@ export type SavedUrl = {
 };
 
 function getKeyv(guildId: string) {
-  console.log(getDatabasePath());
   return new Keyv(`sqlite://${getDatabasePath()}`, { namespace: guildId }).on(
     "error",
     (err) => {
