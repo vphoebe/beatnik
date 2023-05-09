@@ -1,13 +1,14 @@
 FROM node:18-alpine as builder
 WORKDIR /builder
-COPY package-lock.json ./
+COPY pnpm-lock.yaml ./
 COPY package.json ./
 COPY tsconfig.json ./
+RUN npm install --location=global pnpm
 RUN apk add --no-cache python3 build-base
-RUN npm ci
+RUN pnpm install --frozen-lockfile true
 COPY ./src ./src
-RUN npm run build
-RUN npm prune --omit=dev
+RUN pnpm build
+RUN pnpm prune --prod
 
 FROM node:18-alpine as prod
 ENV PM2_PUBLIC_KEY="" \
@@ -20,9 +21,11 @@ ENV PM2_PUBLIC_KEY="" \
   NODE_ENV="production"
 WORKDIR /usr/beatnik
 RUN mkdir cache
-COPY --from=builder /builder/node_modules ./node_modules
-COPY --from=builder /builder/build ./build
-COPY ecosystem.config.js ./
+RUN touch beatnik.sqlite
 RUN apk add --no-cache ffmpeg
 RUN npm install --location=global pm2
-CMD ["pm2-runtime", "ecosystem.config.js"]
+COPY ecosystem.config.cjs ./
+COPY package.json ./
+COPY --from=builder /builder/node_modules ./node_modules
+COPY --from=builder /builder/build ./build
+CMD ["pm2-runtime", "ecosystem.config.cjs"]

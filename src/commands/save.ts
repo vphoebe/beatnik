@@ -1,6 +1,6 @@
-import { Command, CommandExecuter } from ".";
-import { setSavedUrl } from "../lib/db";
-import { log } from "../lib/logger";
+import { Command, CommandExecuter } from "./index.js";
+import { setSavedUrl } from "../lib/db.js";
+import { log } from "../lib/logger.js";
 import {
   hideLinkEmbed,
   inlineCode,

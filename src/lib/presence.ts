@@ -1,4 +1,4 @@
-import { getBeatTimeString } from "./util";
+import { getBeatTimeString } from "./util.js";
 import {
   ActivitiesOptions,
   ActivityType,

@@ -1,7 +1,7 @@
-import { Command, CommandExecuter } from ".";
-import { addToQueue } from "../lib/addToQueue";
-import { getAddedToQueueMessage } from "../lib/embeds";
-import { getOrCreateQueue } from "../lib/queue";
+import { Command, CommandExecuter } from "./index.js";
+import { addToQueue } from "../lib/addToQueue.js";
+import { getAddedToQueueMessage } from "../lib/embeds.js";
+import { getOrCreateQueue } from "../lib/queue.js";
 import { SlashCommandBuilder } from "@discordjs/builders";
 
 export const builder = new SlashCommandBuilder()

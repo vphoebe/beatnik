@@ -1,6 +1,6 @@
-import { Command, CommandExecuter } from ".";
-import { getAllSavedUrls } from "../lib/db";
-import { getSavedUrlListEmbed } from "../lib/embeds";
+import { Command, CommandExecuter } from "./index.js";
+import { getAllSavedUrls } from "../lib/db.js";
+import { getSavedUrlListEmbed } from "../lib/embeds.js";
 import { SlashCommandBuilder } from "@discordjs/builders";
 
 export const builder = new SlashCommandBuilder()

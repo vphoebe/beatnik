@@ -1,14 +1,15 @@
-name: Publish Docker image
+name: Publish Docker image (release)
 on:
   release:
     types: [published]
+
 jobs:
   push_to_registry:
-    name: Push Docker image to Docker Hub
+    name: (release) Push Docker image to Docker Hub
     runs-on: ubuntu-latest
     steps:
-      - name: Check out the repo
-        uses: actions/checkout@v3
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
 
       - name: Log in to Docker Hub
         uses: docker/login-action@v2
@@ -17,7 +18,7 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
 
       - name: Build and push Docker image
-        uses: docker/build-push-action@v3.0.0
+        uses: docker/build-push-action@v4
         with:
           push: true
           tags: nickseman/beatnik:latest

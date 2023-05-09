@@ -1,6 +1,6 @@
-import { Command } from "..";
-import { getClientId, getToken } from "../../lib/environment";
-import { log } from "../../lib/logger";
+import { Command } from "../index.js";
+import { getClientId, getToken } from "../../lib/environment.js";
+import { log } from "../../lib/logger.js";
 import { SlashCommandBuilder } from "@discordjs/builders";
 import { REST } from "@discordjs/rest";
 import { PermissionFlagsBits, Routes } from "discord-api-types/v9";

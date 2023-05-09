@@ -1,14 +1,14 @@
-import install from "./global/install";
-import uninstall from "./global/uninstall";
-import list from "./list";
-import load from "./load";
-import play from "./play";
-import queue from "./queue";
-import remove from "./remove";
-import save from "./save";
-import shuffle from "./shuffle";
-import skip from "./skip";
-import stop from "./stop";
+import install from "./global/install.js";
+import uninstall from "./global/uninstall.js";
+import list from "./list.js";
+import load from "./load.js";
+import play from "./play.js";
+import queue from "./queue.js";
+import remove from "./remove.js";
+import save from "./save.js";
+import shuffle from "./shuffle.js";
+import skip from "./skip.js";
+import stop from "./stop.js";
 import { ChatInputCommandInteraction, SlashCommandBuilder } from "discord.js";
 
 export type Command = {

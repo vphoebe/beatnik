@@ -1,4 +1,4 @@
-import { Queue } from "../classes/Queue";
+import { Queue } from "../classes/Queue.js";
 import { CommandInteraction } from "discord.js";
 
 export const allGuildQueues = new Map<string, Queue>();

@@ -2,12 +2,12 @@
 import {
   getExistingVoiceConnection,
   createVoiceConnection,
-} from "../lib/connection";
-import { getNowPlayingEmbed } from "../lib/embeds";
-import { log } from "../lib/logger";
-import { destroyQueue } from "../lib/queue";
-import { createYoutubeTrackResource } from "../lib/services/youtube";
-import { shuffleArray } from "../lib/util";
+} from "../lib/connection.js";
+import { getNowPlayingEmbed } from "../lib/embeds.js";
+import { log } from "../lib/logger.js";
+import { destroyQueue } from "../lib/queue.js";
+import { createYoutubeTrackResource } from "../lib/services/youtube.js";
+import { shuffleArray } from "../lib/util.js";
 import {
   AudioPlayer,
   AudioPlayerStatus,
@@ -15,7 +15,6 @@ import {
   PlayerSubscription,
 } from "@discordjs/voice";
 import { TextBasedChannel, VoiceBasedChannel } from "discord.js";
-import { EventEmitter } from "stream";
 
 export enum TrackService {
   YouTube = "yt",
@@ -32,7 +31,7 @@ export type QueuedTrack = {
   channel?: string;
 };
 
-export class Queue extends EventEmitter {
+export class Queue {
   tracks: QueuedTrack[];
   voiceChannel: VoiceBasedChannel;
   textChannel: TextBasedChannel | null;
@@ -45,7 +44,6 @@ export class Queue extends EventEmitter {
     voiceChannel: VoiceBasedChannel,
     textChannel: TextBasedChannel | null
   ) {
-    super();
     this.tracks = [];
     this.currentIndex = 0;
     this.audioPlayer = createAudioPlayer().on(AudioPlayerStatus.Idle, () => {
