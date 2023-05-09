@@ -2,18 +2,19 @@
   "name": "beatnik",
   "version": "3.2.0",
   "description": "modern and simple Discord music bot with easy-to-use commands",
-  "type": "module",
-  "scripts": {
-    "dev": "nodemon src/beatnik.ts",
-    "dev:deploy": "nodemon src/deploy-global-commands.ts",
-    "build": "esbuild src/beatnik.ts src/deploy-global-commands.ts --outdir=build --platform=node --target=node18 --bundle --packages=external --out-extension:.js=.cjs --minify",
-    "typecheck": "tsc --noEmit",
-    "build:docker": "pnpm build && docker build -t beatnik-dev .",
-    "build:dockerx64": "pnpm build && docker buildx build --platform linux/amd64 -t beatnik-dev-x64 .",
-    "start": "pm2-runtime ecosystem.config.cjs"
-  },
   "author": "vphoebe",
   "license": "MIT",
+  "type": "module",
+  "scripts": {
+    "build": "esbuild src/beatnik.ts src/deploy-global-commands.ts --outdir=build --platform=node --target=node18 --bundle --packages=external --out-extension:.js=.cjs --minify",
+    "build:docker": "pnpm build && docker build -t beatnik-dev .",
+    "build:dockerx64": "pnpm build && docker buildx build --platform linux/amd64 -t beatnik-dev-x64 .",
+    "dev": "nodemon src/beatnik.ts",
+    "dev:deploy": "nodemon src/deploy-global-commands.ts",
+    "format": "prettier --write .",
+    "start": "pm2-runtime ecosystem.config.cjs",
+    "typecheck": "tsc --noEmit"
+  },
   "dependencies": {
     "@discordjs/builders": "^1.6.3",
     "@discordjs/opus": "^0.9.0",
