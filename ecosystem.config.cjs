@@ -1,11 +1,11 @@
 module.exports = {
   apps: [
     {
-      script: "build/index.js",
+      script: "build/index.cjs",
       name: "beatnik",
     },
     {
-      script: "build/deploy-global-commands.js",
+      script: "build/deploy-global-commands.cjs",
       name: "deploy-global-commands",
     },
   ],
