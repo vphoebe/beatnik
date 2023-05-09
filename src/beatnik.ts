@@ -14,13 +14,9 @@ import {
 const token = getToken();
 const clientId = getClientId();
 
-// Check for dependencies
-log({
-  type: "INFO",
-  message: "Checking dependencies...",
-  user: "BOT",
-  guildId: clientId,
-});
+console.log(`--------------------------------------------------
+welcome to beatnik
+version ${process.env.npm_package_version}`);
 console.log(generateDependencyReport());
 
 // Create a new client instance

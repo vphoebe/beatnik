@@ -1,7 +1,7 @@
 module.exports = {
   apps: [
     {
-      script: "build/index.cjs",
+      script: "build/beatnik.cjs",
       name: "beatnik",
     },
     {

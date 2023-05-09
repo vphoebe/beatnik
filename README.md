@@ -39,7 +39,7 @@ Skip down to [Invite](#Invite) to see what's next.
 6. It's best to run Beatnik with `pm2` so that the process is managed for you. Run `npm install -g pm2` to install `pm2` on your system.
 7. Run `pnpm start` and you're up and running. Skip down to [Invite](#Invite) to see what's next.
 
-If you don't want to use `pm2`, you can run `build/index.js` however you want to start the bot. Before you do so though, run `build/deploy-global-commands.js` or else you won't be able to install the commands to your guild. 
+If you don't want to use `pm2`, you can run `build/beatik.cjs` however you want to start the bot. Before you do so though, run `build/deploy-global-commands.cjs` or else you won't be able to install the commands to your guild. 
 
 ### Environment
 Whether you're using Docker or Node.js, you'll need to configure the environment variables with a few things from the bot application you created earlier on the Discord developer portal.
