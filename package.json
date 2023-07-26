@@ -28,7 +28,7 @@
     "sodium-native": "^3.3.0",
     "sqlite3": "^5.0.8",
     "youtube-search-without-api-key": "^1.0.7",
-    "ytdl-core": "git+ssh://git@github.com:khlevon/node-ytdl-core.git#v4.11.4-patch.1",
+    "ytdl-core": "^4.11.5",
     "ytpl": "^2.3.0"
   },
   "devDependencies": {
