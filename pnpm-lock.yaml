@@ -36,8 +36,8 @@ dependencies:
     specifier: ^3.3.0
     version: 3.3.0
   sqlite3:
-    specifier: ^5.0.8
-    version: 5.0.8
+    specifier: ^5.1.5
+    version: 5.1.5
   youtube-search-without-api-key:
     specifier: ^1.0.7
     version: 1.0.7
@@ -719,7 +719,7 @@ packages:
     engines: {node: '>= 12'}
     dependencies:
       pify: 5.0.0
-      sqlite3: 5.0.8
+      sqlite3: 5.1.5
     transitivePeerDependencies:
       - bluebird
       - encoding
@@ -2696,8 +2696,8 @@ packages:
     engines: {node: '>=0.10.0'}
     dev: true
 
-  /sqlite3@5.0.8:
-    resolution: {integrity: sha512-f2ACsbSyb2D1qFFcqIXPfFscLtPVOWJr5GmUzYxf4W+0qelu5MWrR+FAQE1d5IUArEltBrzSDxDORG8P/IkqyQ==}
+  /sqlite3@5.1.5:
+    resolution: {integrity: sha512-7sP16i4wI+yKnGOO2q2ijze7EjQ9US+Vw7DYYwxfFtqNZDGgBcEw0oeDaDvUTq66uJOzVd/z6MkIg+c9erSJKg==}
     requiresBuild: true
     peerDependenciesMeta:
       node-gyp:
