@@ -2,7 +2,7 @@ import { Command, CommandExecuter } from "./index.js";
 import { removeSavedUrl } from "../lib/db.js";
 import { getExistingQueue } from "../lib/queue.js";
 import { noQueueReply } from "../lib/replies.js";
-import { inlineCode, SlashCommandBuilder } from "@discordjs/builders";
+import { inlineCode, SlashCommandBuilder } from "discord.js";
 
 export const builder = new SlashCommandBuilder()
   .setName("remove")

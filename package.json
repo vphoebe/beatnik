@@ -16,13 +16,10 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@discordjs/builders": "^1.6.4",
     "@discordjs/opus": "^0.9.0",
-    "@discordjs/rest": "^2.0.0",
     "@discordjs/voice": "^0.16.0",
     "@keyv/sqlite": "^3.5.2",
-    "discord-api-types": "^0.33.5",
-    "discord.js": "^14.10.2",
+    "discord.js": "^14.12.1",
     "dotenv": "^16.0.1",
     "keyv": "^4.3.0",
     "sodium-native": "^3.3.0",

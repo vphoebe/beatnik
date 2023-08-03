@@ -1,9 +1,12 @@
 import { Command, commandList } from "../index.js";
 import { getClientId, getToken } from "../../lib/environment.js";
 import { log } from "../../lib/logger.js";
-import { SlashCommandBuilder } from "@discordjs/builders";
-import { REST } from "@discordjs/rest";
-import { PermissionFlagsBits, Routes } from "discord-api-types/v9";
+import {
+  REST,
+  Routes,
+  PermissionFlagsBits,
+  SlashCommandBuilder,
+} from "discord.js";
 import { CommandInteraction } from "discord.js";
 
 export const builder = new SlashCommandBuilder()
@@ -22,7 +25,7 @@ export async function execute(interaction: CommandInteraction) {
   const token = getToken();
   const clientId = getClientId();
 
-  const rest = new REST({ version: "9" }).setToken(token);
+  const rest = new REST().setToken(token);
 
   rest
     .put(Routes.applicationGuildCommands(clientId, guildId), {

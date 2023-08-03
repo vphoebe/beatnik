@@ -1,11 +1,7 @@
 import { Command, CommandExecuter } from "./index.js";
 import { setSavedUrl } from "../lib/db.js";
 import { log } from "../lib/logger.js";
-import {
-  hideLinkEmbed,
-  inlineCode,
-  SlashCommandBuilder,
-} from "@discordjs/builders";
+import { hideLinkEmbed, inlineCode, SlashCommandBuilder } from "discord.js";
 
 export const builder = new SlashCommandBuilder()
   .setName("save")

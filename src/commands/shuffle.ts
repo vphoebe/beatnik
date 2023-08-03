@@ -1,7 +1,7 @@
 import { Command, CommandExecuter } from "./index.js";
 import { getExistingQueue } from "../lib/queue.js";
 import { noQueueReply } from "../lib/replies.js";
-import { SlashCommandBuilder } from "@discordjs/builders";
+import { SlashCommandBuilder } from "discord.js";
 
 export const builder = new SlashCommandBuilder()
   .setName("shuffle")
