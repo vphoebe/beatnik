@@ -2,7 +2,7 @@ import { Command, CommandExecuter } from "./index.js";
 import { addToQueue } from "../lib/addToQueue.js";
 import { getAddedToQueueMessage } from "../lib/embeds.js";
 import { getOrCreateQueue } from "../lib/queue.js";
-import { SlashCommandBuilder } from "@discordjs/builders";
+import { SlashCommandBuilder } from "discord.js";
 
 export const builder = new SlashCommandBuilder()
   .setName("play")

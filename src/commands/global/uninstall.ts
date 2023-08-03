@@ -1,9 +1,12 @@
 import { Command } from "../index.js";
 import { getClientId, getToken } from "../../lib/environment.js";
 import { log } from "../../lib/logger.js";
-import { SlashCommandBuilder } from "@discordjs/builders";
-import { REST } from "@discordjs/rest";
-import { PermissionFlagsBits, Routes } from "discord-api-types/v9";
+import {
+  REST,
+  Routes,
+  PermissionFlagsBits,
+  SlashCommandBuilder,
+} from "discord.js";
 import { CommandInteraction } from "discord.js";
 
 export const builder = new SlashCommandBuilder()
@@ -18,18 +21,11 @@ export async function execute(interaction: CommandInteraction) {
   const token = getToken();
   const clientId = getClientId();
 
-  const rest = new REST({ version: "9" }).setToken(token);
+  const rest = new REST().setToken(token);
 
   rest
-    .get(Routes.applicationGuildCommands(clientId, guildId))
-    .then(async (data) => {
-      const typeSafeData = data as { id: string }[];
-      const promises = typeSafeData.map((command) =>
-        rest.delete(
-          `${Routes.applicationGuildCommands(clientId, guildId)}/${command.id}`
-        )
-      );
-      await Promise.all(promises);
+    .put(Routes.applicationGuildCommands(clientId, guildId), { body: [] })
+    .then(async () => {
       log({
         type: "INFO",
         user: "BOT",
@@ -37,7 +33,8 @@ export async function execute(interaction: CommandInteraction) {
         message: `Uninstalled guild commands.`,
       });
       await interaction.reply("Beatnik has been uninstalled from this server.");
-    });
+    })
+    .catch(console.error);
 }
 
 export default { builder, execute, global: true } as Command;

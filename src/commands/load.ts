@@ -3,7 +3,7 @@ import { addToQueue } from "../lib/addToQueue.js";
 import { getSavedUrl } from "../lib/db.js";
 import { getAddedToQueueMessage } from "../lib/embeds.js";
 import { getOrCreateQueue } from "../lib/queue.js";
-import { inlineCode, SlashCommandBuilder } from "@discordjs/builders";
+import { inlineCode, SlashCommandBuilder } from "discord.js";
 
 export const builder = new SlashCommandBuilder()
   .setName("load")
