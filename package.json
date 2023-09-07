@@ -1,6 +1,6 @@
 {
   "name": "beatnik",
-  "version": "3.2.2",
+  "version": "3.2.3",
   "description": "modern and simple Discord music bot with easy-to-use commands",
   "author": "vphoebe",
   "license": "MIT",
@@ -25,7 +25,7 @@
     "sodium-native": "^3.3.0",
     "sqlite3": "^5.1.5",
     "youtube-search-without-api-key": "^1.0.7",
-    "ytdl-core": "^4.11.5",
+    "ytdl-core": "git+ssh://git@github.com:khlevon/node-ytdl-core.git#v4.11.4-patch.2",
     "ytpl": "^2.3.0"
   },
   "devDependencies": {
