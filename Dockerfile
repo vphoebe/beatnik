@@ -3,7 +3,6 @@ WORKDIR /builder
 COPY pnpm-lock.yaml ./
 COPY package.json ./
 COPY tsconfig.json ./
-RUN apk add --no-cache git
 RUN npm install --location=global pnpm
 RUN apk add --no-cache python3 build-base
 RUN pnpm install --frozen-lockfile true
