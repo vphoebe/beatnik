@@ -9,6 +9,6 @@ updates:
       interval: "daily"
     target-branch: "dev"
     allow:
-      - dependency-name: "ytdl-core"
+      - dependency-name: "@distube/ytdl-core"
       - dependency-name: "@discordjs*"
       - dependency-name: "discord-js"
