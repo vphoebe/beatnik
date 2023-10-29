@@ -3,7 +3,7 @@ import { checkIdIsCached, readFromCache, writeToCache } from "../cache.js";
 import { ParsedQuery } from "../parsePlayQuery.js";
 import { createAudioResource, demuxProbe } from "@discordjs/voice";
 import { Readable } from "stream";
-import ytdl, { videoFormat } from "ytdl-core";
+import ytdl, { videoFormat } from "@distube/ytdl-core";
 import ytpl from "ytpl";
 
 type SimpleMetadata = {
