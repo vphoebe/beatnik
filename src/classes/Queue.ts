@@ -60,12 +60,8 @@ export class Queue {
     this.textChannel = textChannel;
   }
 
-  add(track: QueuedTrack, next = false) {
-    if (next) {
-      this.tracks.splice(this.currentIndex + 1, 0, track);
-    } else {
-      this.tracks.push(track);
-    }
+  add(track: QueuedTrack, start: number) {
+    this.tracks.splice(start, 0, track);
   }
 
   remove(idx: number) {
