@@ -16,8 +16,8 @@ export const builder = new SlashCommandBuilder()
   )
   .addBooleanOption((option) =>
     option
-      .setName("next")
-      .setDescription("Play next instead of add to the end of queue.")
+      .setName("end")
+      .setDescription("Add to the end of the queue, instead of next.")
       .setRequired(false)
   )
   .addBooleanOption((option) =>
@@ -33,7 +33,7 @@ export const execute: CommandExecuter = async (interaction) => {
 
   await interaction.deferReply();
   const name = interaction.options.getString("name", true);
-  const isNext = interaction.options.getBoolean("next") ?? false;
+  const isEnd = interaction.options.getBoolean("end") ?? false;
   const isShuffle = interaction.options.getBoolean("shuffle") ?? false;
   const savedUrl = await getSavedUrl(guildId, name);
 
@@ -50,13 +50,13 @@ export const execute: CommandExecuter = async (interaction) => {
     savedUrl,
     interaction.user.id,
     isShuffle,
-    isNext
+    isEnd
   );
   await interaction.editReply({
     content: getAddedToQueueMessage(
       numberAddedToQueue,
       queue.isPlaying,
-      isNext,
+      isEnd,
       isShuffle
     ),
   });

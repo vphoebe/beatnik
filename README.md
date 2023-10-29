@@ -69,13 +69,13 @@ Beatnik uses Discord slash commands. You can just type `/` in your text channel,
 
 |Command| Description | Options |
 |--|--|--|
-| `/play [query]` | Plays a URL, or searches for a text query and plays the first result. `next` will add the track next in the queue instead of at the end. `shuffle` will shuffle a playlist link as it gets added. | next, shuffle
+| `/play [query]` | Plays a URL, or searches for a text query and plays the first result. `end` will add the track to the end of the queue, instead of the beginning. `shuffle` will shuffle a playlist link as it gets added. | end, shuffle
 | `/stop`  | Stops music, clears the queue, and removes Beatnik from the voice channel.  |  |
 | `/skip [track?]`  | Skips the current playing track in the queue. Use the `track` option to skip to a specific track. | |
 | `/shuffle` | Shuffles all the tracks in the queue and starts playing from the top. | |
 | `/queue [page?]` | Lists the current queue and currently playing track. Specify a page to see the rest of the queue. | |
 | `/save [name] [url]` | Gives a `name` to a URL so you can load it into the queue easily later. | |
-| `/load [name]` | Loads a saved URL with `name` into the queue. The same options as `/play` apply here. | next, shuffle
+| `/load [name]` | Loads a saved URL with `name` into the queue. The same options as `/play` apply here. | end, shuffle
 | `/list` | Lists all saved URLs in the guild. | |
 | `/remove queue [track]` | Removes a track from the queue. | |
 | `/remove saved [name]` | Removes a saved URL with `name` from the guild. | |

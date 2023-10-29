@@ -87,10 +87,10 @@ export async function getSavedUrlListEmbed(savedUrls: SavedUrl[]) {
 export function getAddedToQueueMessage(
   numberAddedToQueue: number,
   isPlaying: boolean,
-  isNext: boolean,
+  isEnd: boolean,
   isShuffle: boolean
 ) {
-  const location = isNext ? "start" : "end";
+  const location = isEnd ? "end" : "start";
   const action = isShuffle ? "Shuffled" : "Added";
   const startPlaying = !isPlaying ? "Starting playback!" : "";
 

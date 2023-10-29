@@ -34,7 +34,7 @@ dependencies:
     version: 1.0.7
   ytdl-core:
     specifier: git+ssh://git@github.com:khlevon/node-ytdl-core.git#v4.11.4-patch.2
-    version: github.com/khlevon/node-ytdl-core/87450450caabb91f81afa6e66758bf2f629664a1
+    version: git@github.com+khlevon/node-ytdl-core/87450450caabb91f81afa6e66758bf2f629664a1
   ytpl:
     specifier: ^2.3.0
     version: 2.3.0
@@ -335,13 +335,6 @@ packages:
   /@discordjs/collection@1.5.3:
     resolution: {integrity: sha512-SVb428OMd3WO1paV3rm6tSjM4wC+Kecaa1EUGX7vc6/fddvw/6lg90z4QtCqm21zvVe92vMMDt9+DkIvjXImQQ==}
     engines: {node: '>=16.11.0'}
-    dev: false
-
-  /@discordjs/formatters@0.3.1:
-    resolution: {integrity: sha512-M7X4IGiSeh4znwcRGcs+49B5tBkNDn4k5bmhxJDAUhRxRHTiFAOTVUNQ6yAKySu5jZTnCbSvTYHW3w0rAzV1MA==}
-    engines: {node: '>=16.9.0'}
-    dependencies:
-      discord-api-types: 0.37.51
     dev: false
 
   /@discordjs/formatters@0.3.2:
@@ -1445,7 +1438,7 @@ packages:
     dependencies:
       '@discordjs/builders': 1.6.5
       '@discordjs/collection': 1.5.3
-      '@discordjs/formatters': 0.3.1
+      '@discordjs/formatters': 0.3.2
       '@discordjs/rest': 2.0.1
       '@discordjs/util': 1.0.1
       '@discordjs/ws': 1.0.1
@@ -3026,8 +3019,8 @@ packages:
       miniget: 4.2.2
     dev: false
 
-  github.com/khlevon/node-ytdl-core/87450450caabb91f81afa6e66758bf2f629664a1:
-    resolution: {tarball: https://codeload.github.com/khlevon/node-ytdl-core/tar.gz/87450450caabb91f81afa6e66758bf2f629664a1}
+  git@github.com+khlevon/node-ytdl-core/87450450caabb91f81afa6e66758bf2f629664a1:
+    resolution: {commit: 87450450caabb91f81afa6e66758bf2f629664a1, repo: git@github.com:khlevon/node-ytdl-core.git, type: git}
     name: ytdl-core
     version: 0.0.0-development
     engines: {node: '>=12'}

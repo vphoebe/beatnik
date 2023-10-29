@@ -8,13 +8,14 @@ export async function addToQueue(
   query: string,
   userId: string,
   shuffle = false,
-  next = false
+  end = false
 ) {
   const parsedQuery = await parsePlayQuery(query);
   let tracks = await parsedQueryToYoutubeQueuedTracks(parsedQuery, userId);
   if (shuffle) {
     tracks = shuffleArray(tracks);
   }
-  tracks.forEach((t) => queue.add(t, next));
+  const basis = end ? queue.tracks.length : queue.currentIndex + 1;
+  tracks.forEach((t, idx) => queue.add(t, basis + idx));
   return tracks.length;
 }
