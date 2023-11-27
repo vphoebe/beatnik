@@ -12,8 +12,8 @@ dependencies:
     specifier: ^0.16.1
     version: 0.16.1(@discordjs/opus@0.9.0)
   '@distube/ytdl-core':
-    specifier: ^4.13.2
-    version: 4.13.2
+    specifier: ^4.13.3
+    version: 4.13.3
   '@keyv/sqlite':
     specifier: ^3.5.2
     version: 3.5.2
@@ -435,12 +435,13 @@ packages:
       - utf-8-validate
     dev: false
 
-  /@distube/ytdl-core@4.13.2:
-    resolution: {integrity: sha512-FBjy4LXsBv34qFrmEF1dSbKWQtqB+yd0dt4MYYUq8oYys2Bvqps3QSFGTUZO5QA6nKD/XRsMJfcG5lgEJaUqiQ==}
+  /@distube/ytdl-core@4.13.3:
+    resolution: {integrity: sha512-WHVzp0NyUkmdxRkfU8tN7eRquL7bnia2U/EDNWVupCptRo7EToTdBKHwJrDFqvavbXsdqLG/kR1r+1LaPglrFQ==}
     engines: {node: '>=12'}
     dependencies:
       http-cookie-agent: 5.0.4(tough-cookie@4.1.3)(undici@5.27.2)
       m3u8stream: 0.8.6
+      miniget: 4.2.3
       sax: 1.2.4
       tough-cookie: 4.1.3
       undici: 5.27.2
@@ -2152,7 +2153,7 @@ packages:
     resolution: {integrity: sha512-LZj8kIVf9KCphiHmH7sbFQTVe4tOemb202fWwvJwR9W5ENW/1hxJN6ksAWGhQgSBSa3jyWhnjKU1Fw1GaOdbyA==}
     engines: {node: '>=12'}
     dependencies:
-      miniget: 4.2.2
+      miniget: 4.2.3
       sax: 1.2.4
     dev: false
 
@@ -2223,6 +2224,11 @@ packages:
 
   /miniget@4.2.2:
     resolution: {integrity: sha512-a7voNL1N5lDMxvTMExOkg+Fq89jM2vY8pAi9ZEWzZtfNmdfP6RXkvUtFnCAXoCv2T9k1v/fUJVaAEuepGcvLYA==}
+    engines: {node: '>=12'}
+    dev: false
+
+  /miniget@4.2.3:
+    resolution: {integrity: sha512-SjbDPDICJ1zT+ZvQwK0hUcRY4wxlhhNpHL9nJOB2MEAXRGagTljsO8MEDzQMTFf0Q8g4QNi8P9lEm/g7e+qgzA==}
     engines: {node: '>=12'}
     dev: false
 
