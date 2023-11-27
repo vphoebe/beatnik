@@ -120,7 +120,7 @@ export async function createYoutubeTrackResource(track: QueuedTrack) {
     highWaterMark: 1 << 62,
     liveBuffer: 1 << 62,
     dlChunkSize: 0, // disabling chunking is recommended in discord bot
-    quality: "lowestaudio",
+    quality: "highestaudio",
   };
 
   const { stream: ytStream, fromCache } = await getYtStream(
