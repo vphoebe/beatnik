@@ -40,7 +40,10 @@ export async function getYtStream(
       options = { ...options, filter: "audioonly" };
     }
     const stream = ytdl.downloadFromInfo(info, options);
-    const cacheStream = ytdl.downloadFromInfo(info, options);
+    const cacheStream = ytdl.downloadFromInfo(info, {
+      ...options,
+      dlChunkSize: 1024 * 1024 * 10,
+    });
     writeToCache(id, cacheStream);
     return { stream, fromCache: false };
   } else {
@@ -120,7 +123,6 @@ export async function createYoutubeTrackResource(track: QueuedTrack) {
     highWaterMark: 1 << 62,
     liveBuffer: 1 << 62,
     dlChunkSize: 0, // disabling chunking is recommended in discord bot
-    quality: "lowestaudio",
   };
 
   const { stream: ytStream, fromCache } = await getYtStream(
