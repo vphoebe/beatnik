@@ -101,3 +101,25 @@ export async function evictCache(evictAll?: boolean) {
     });
   }
 }
+
+export async function checkCacheValidity(version: string) {
+  const cacheDir = getCacheDir();
+  if (!cacheDir) return;
+
+  const versionFilepath = path.join(cacheDir, "version.txt");
+  const versionFileExists = fs.existsSync(versionFilepath);
+  if (!versionFileExists) {
+    console.log("No version file found in cache! Evicting...");
+    await evictCache(true);
+    fs.writeFileSync(versionFilepath, version, "utf-8");
+    return;
+  } else {
+    const versionData = fs.readFileSync(versionFilepath, "utf-8");
+    if (versionData !== version) {
+      console.log("Beatnik has updated, evicting cache...");
+      await evictCache(true);
+      fs.writeFileSync(versionFilepath, version, "utf-8");
+      return;
+    }
+  }
+}
