@@ -1,3 +1,5 @@
+import path from "node:path";
+import fs from "node:fs";
 import { commandList } from "./commands/index.js";
 import { checkCacheValidity } from "./lib/cache.js";
 import { getClientId, getToken } from "./lib/environment.js";
@@ -15,7 +17,8 @@ import {
 const token = getToken();
 const clientId = getClientId();
 
-const BEATNIK_VERSION = process.env.npm_package_version;
+const pkgjson = fs.readFileSync(path.join(".", "package.json"), "utf-8");
+export const BEATNIK_VERSION = JSON.parse(pkgjson).version;
 
 console.log(`--------------------------------------------------
 welcome to beatnik
