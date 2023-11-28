@@ -79,12 +79,12 @@ export async function evictCache(evictAll?: boolean) {
     const cacheFiles = await getAllCacheFiles();
     for (const file of cacheFiles) {
       await rm(path.join(cacheDir, file));
-      log({
-        type: "CACHE",
-        message: `Removed all files from ${getMaxCacheSize()} MB cache.`,
-        user: "BOT",
-      });
     }
+    log({
+      type: "CACHE",
+      message: `Removed all files from ${getMaxCacheSize()} MB cache.`,
+      user: "BOT",
+    });
   } else {
     // remove oldest lastModified file
     const { table } = await getCacheTable();
