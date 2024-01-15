@@ -7,6 +7,7 @@ module.exports = {
     {
       script: "build/deploy-global-commands.cjs",
       name: "deploy-global-commands",
+      autorestart: false,
     },
   ],
 };
