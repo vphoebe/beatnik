@@ -15,7 +15,8 @@ const baseEmbed = () =>
 export function getNowPlayingEmbed(
   track: QueuedTrack,
   currentIndex: number,
-  totalQueued: number
+  totalQueued: number,
+  fromCache: boolean | null
 ) {
   return baseEmbed()
     .setAuthor({
@@ -30,7 +31,9 @@ export function getNowPlayingEmbed(
         track.length
       )} \n:technologist: ${userMention(
         track.addedBy
-      )} :cd: ${currentIndex} of ${totalQueued}`
+      )} :cd: ${currentIndex} of ${totalQueued} ${
+        fromCache ? ":floppy_disk:" : ":globe_with_meridians:"
+      }`
     )
     .setURL(track.url);
 }
