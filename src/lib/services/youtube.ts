@@ -5,7 +5,7 @@ import { StreamType, createAudioResource, demuxProbe } from "@discordjs/voice";
 import { Readable } from "stream";
 import ytdl from "@distube/ytdl-core";
 import ytpl from "ytpl";
-import { YouTubeStream, stream as playDlStream } from "play-dl";
+import { stream as playDlStream } from "play-dl";
 
 type SimpleMetadata = {
   type: "video" | "playlist" | "unknown";
@@ -28,10 +28,11 @@ export async function getYtStream(
     const stream = await playDlStream(url, {
       quality: 2,
     });
-    const dlStream = await playDlStream(url, {
+    const cacheStream = await playDlStream(url, {
       quality: 2,
+      discordPlayerCompatibility: true,
     });
-    writeToCache(id, dlStream.stream);
+    writeToCache(id, cacheStream.stream);
     return { stream: stream.stream, type: stream.type, fromCache: false };
   } else {
     // we know this cache stream exists because we checked the cache hit
