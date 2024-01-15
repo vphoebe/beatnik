@@ -1,6 +1,6 @@
 {
   "name": "beatnik",
-  "version": "3.4.0",
+  "version": "3.4.1",
   "description": "modern and simple Discord music bot with easy-to-use commands",
   "author": "vphoebe",
   "license": "MIT",
@@ -12,7 +12,8 @@
     "dev": "nodemon src/beatnik.ts",
     "dev:deploy": "nodemon src/deploy-global-commands.ts",
     "format": "prettier --write .",
-    "start": "pm2-runtime ecosystem.config.cjs",
+    "deploy": "node build/deploy-global-commands.cjs",
+    "start": "npm run deploy && pm2-runtime ecosystem.config.cjs",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
@@ -20,6 +21,7 @@
     "@discordjs/voice": "^0.16.1",
     "@distube/ytdl-core": "^4.13.3",
     "@keyv/sqlite": "^3.5.2",
+    "cloneable-readable": "^3.0.0",
     "discord.js": "^14.12.1",
     "dotenv": "^16.0.1",
     "keyv": "^4.3.0",
@@ -31,6 +33,7 @@
   },
   "devDependencies": {
     "@trivago/prettier-plugin-sort-imports": "^3.2.0",
+    "@types/cloneable-readable": "^2.0.3",
     "@types/node": "^18.16.3",
     "@typescript-eslint/eslint-plugin": "^5.25.0",
     "@typescript-eslint/parser": "^5.25.0",

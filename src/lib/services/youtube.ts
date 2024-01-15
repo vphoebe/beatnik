@@ -6,6 +6,7 @@ import { Readable } from "stream";
 import ytdl from "@distube/ytdl-core";
 import ytpl from "ytpl";
 import { stream as playDlStream } from "play-dl";
+import cloneable from "cloneable-readable";
 
 type SimpleMetadata = {
   type: "video" | "playlist" | "unknown";
@@ -25,15 +26,13 @@ export async function getYtStream(
   const cacheHit = checkIdIsCached(id);
   if (!cacheHit) {
     // play live url, and update cache
-    const stream = await playDlStream(url, {
-      quality: 2,
-    });
-    const cacheStream = await playDlStream(url, {
+    const ytStream = await playDlStream(url, {
       quality: 2,
       discordPlayerCompatibility: true,
     });
-    writeToCache(id, cacheStream.stream);
-    return { stream: stream.stream, type: stream.type, fromCache: false };
+    const clone = cloneable(ytStream.stream);
+    writeToCache(id, clone.clone());
+    return { stream: clone, type: ytStream.type, fromCache: false };
   } else {
     // we know this cache stream exists because we checked the cache hit
     const cacheStream = readFromCache(id) as Readable;
