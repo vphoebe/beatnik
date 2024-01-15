@@ -55,7 +55,13 @@ async function getCacheTable() {
 export function writeToCache(id: string, stream: Readable): void {
   const cachePath = getCacheItemPath(id);
   if (!cachePath) return;
-  const fileStream = fs.createWriteStream(cachePath + ".part");
+
+  const partPath = cachePath + ".part";
+  if (fs.existsSync(partPath)) {
+    // remove in case the part never got renamed
+    fs.unlinkSync(partPath);
+  }
+  const fileStream = fs.createWriteStream(partPath);
   stream.pipe(fileStream);
   fileStream.on("error", (err) => {
     log({
@@ -63,16 +69,17 @@ export function writeToCache(id: string, stream: Readable): void {
       user: "BOT",
       message: err.message,
     });
-    fs.unlinkSync(cachePath);
+    fs.unlinkSync(partPath);
   });
   fileStream.on("finish", () => {
+    // remove .part to make valid cache object
+    fs.renameSync(partPath, cachePath);
+
     log({
       type: "CACHE",
       user: "BOT",
       message: `${id} successfully written to cache.`,
     });
-    // remove .part to make valid cache object
-    fs.renameSync(cachePath + ".part", cachePath);
     getCacheTable().then(({ totalSize }) => {
       if (totalSize >= getMaxCacheSize() * 1024 ** 2) {
         evictCache();

@@ -31,7 +31,7 @@ export async function getYtStream(
       discordPlayerCompatibility: true,
     });
     const clone = cloneable(ytStream.stream);
-    writeToCache(id, clone);
+    writeToCache(id, clone.clone());
     return { stream: clone, type: ytStream.type, fromCache: false };
   } else {
     // we know this cache stream exists because we checked the cache hit
