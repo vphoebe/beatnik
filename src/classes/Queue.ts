@@ -12,6 +12,7 @@ import {
   AudioPlayer,
   AudioPlayerStatus,
   createAudioPlayer,
+  NoSubscriberBehavior,
   PlayerSubscription,
 } from "@discordjs/voice";
 import { TextBasedChannel, VoiceBasedChannel } from "discord.js";
@@ -46,7 +47,11 @@ export class Queue {
   ) {
     this.tracks = [];
     this.currentIndex = 0;
-    this.audioPlayer = createAudioPlayer().on(AudioPlayerStatus.Idle, () => {
+    this.audioPlayer = createAudioPlayer({
+      behaviors: {
+        noSubscriber: NoSubscriberBehavior.Play,
+      },
+    }).on(AudioPlayerStatus.Idle, () => {
       if (this.tracks.length - 1 > this.currentIndex) {
         this.next();
       } else {
