@@ -12,7 +12,8 @@
     "dev": "nodemon src/beatnik.ts",
     "dev:deploy": "nodemon src/deploy-global-commands.ts",
     "format": "prettier --write .",
-    "start": "pm2-runtime ecosystem.config.cjs",
+    "deploy": "node build/deploy-global-commands.cjs",
+    "start": "npm run deploy && pm2-runtime ecosystem.config.cjs",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {

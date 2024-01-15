@@ -28,4 +28,4 @@ COPY ecosystem.config.cjs ./
 COPY package.json ./
 COPY --from=builder /builder/node_modules ./node_modules
 COPY --from=builder /builder/build ./build
-CMD ["pm2-runtime", "ecosystem.config.cjs"]
+CMD ["npm", "start"]
