@@ -25,7 +25,7 @@ export const execute: CommandExecuter = async (interaction) => {
   }
 
   let pageNumber = interaction.options.getInteger("page");
-  const { tracks, pages, currentIndex, nowPlaying } = queue;
+  const { tracks, pages, currentIndex, nowPlaying, playingFromCache } = queue;
   if (!pageNumber) {
     // get now playing track's page
     pageNumber = Math.ceil((currentIndex + 1) / 10);
@@ -44,7 +44,8 @@ export const execute: CommandExecuter = async (interaction) => {
     const nowPlayingEmbed = getNowPlayingEmbed(
       nowPlaying,
       currentIndex + 1,
-      tracks.length
+      tracks.length,
+      playingFromCache
     );
     const queueListEmbed = getQueueListEmbed(
       pagedTracks,

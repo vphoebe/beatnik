@@ -39,6 +39,7 @@ export class Queue {
   audioPlayer: AudioPlayer;
   currentIndex: number;
   isPlaying: boolean;
+  playingFromCache: boolean | null;
   subscription: PlayerSubscription | undefined;
 
   constructor(
@@ -63,6 +64,7 @@ export class Queue {
     this.isPlaying = false;
     this.voiceChannel = voiceChannel;
     this.textChannel = textChannel;
+    this.playingFromCache = null;
   }
 
   add(track: QueuedTrack, start: number) {
@@ -80,6 +82,7 @@ export class Queue {
         this.nowPlaying
       );
       this.audioPlayer.play(resource);
+      this.playingFromCache = fromCache;
       if (!this.subscription) {
         this.connection.subscribe(this.audioPlayer);
       }
@@ -88,7 +91,8 @@ export class Queue {
         const nowPlayingEmbed = getNowPlayingEmbed(
           this.nowPlaying,
           this.currentIndex + 1,
-          this.tracks.length
+          this.tracks.length,
+          this.playingFromCache
         );
         //@ts-ignore
         this.textChannel.send({ embeds: [nowPlayingEmbed] });
