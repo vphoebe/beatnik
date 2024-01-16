@@ -11,9 +11,7 @@ RUN pnpm build
 RUN pnpm prune --prod
 
 FROM node:18-alpine as prod
-ENV PM2_PUBLIC_KEY="" \
-  PM2_SECRET_KEY="" \
-  TOKEN="" \
+ENV TOKEN="" \
   CLIENT_ID="" \ 
   DATABASE_PATH="/usr/beatnik/beatnik.sqlite" \
   CACHE_PATH="/usr/beatnik/cache" \
@@ -23,9 +21,7 @@ WORKDIR /usr/beatnik
 RUN mkdir cache
 RUN touch beatnik.sqlite
 RUN apk add --no-cache ffmpeg
-RUN npm install --location=global pm2
-COPY ecosystem.config.cjs ./
 COPY package.json ./
 COPY --from=builder /builder/node_modules ./node_modules
 COPY --from=builder /builder/build ./build
-CMD ["npm", "start"]
+CMD node ./build/deploy-global-commands.cjs ; node ./build/beatnik.cjs

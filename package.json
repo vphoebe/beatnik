@@ -13,7 +13,6 @@
     "dev:deploy": "nodemon src/deploy-global-commands.ts",
     "format": "prettier --write .",
     "deploy": "node build/deploy-global-commands.cjs",
-    "start": "npm run deploy && pm2-runtime ecosystem.config.cjs",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
