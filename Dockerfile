@@ -16,6 +16,7 @@ ENV TOKEN="" \
   DATABASE_PATH="/usr/beatnik/beatnik.sqlite" \
   CACHE_PATH="/usr/beatnik/cache" \
   MAX_CACHE_SIZE_IN_MB="128" \
+  YTDL_NO_UPDATE=1 \
   NODE_ENV="production"
 WORKDIR /usr/beatnik
 RUN mkdir cache
