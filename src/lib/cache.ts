@@ -52,18 +52,32 @@ async function getCacheTable() {
   return { table, totalSize };
 }
 
-export function writeToCache(id: string, stream: Readable): void {
+export function writeToCache(
+  id: string,
+  cacheSource: Readable
+): fs.WriteStream | undefined {
   const cachePath = getCacheItemPath(id);
-  if (!cachePath) return;
+  if (!cachePath) return undefined;
 
   const partPath = cachePath + ".part";
   if (fs.existsSync(partPath)) {
     // remove in case the part never got renamed
     fs.unlinkSync(partPath);
   }
-  const fileStream = fs.createWriteStream(partPath);
-  stream.pipe(fileStream);
-  fileStream.on("error", (err) => {
+  const cacheStream = fs.createWriteStream(partPath);
+  cacheSource.pipe(cacheStream);
+
+  cacheStream.on("break", () => {
+    log({
+      type: "CACHE",
+      user: "BOT",
+      message: "Breaking cache stream and deleting in-progress file...",
+    });
+    fs.unlinkSync(partPath);
+    cacheStream.destroy();
+  });
+
+  cacheStream.on("error", (err) => {
     log({
       type: "ERROR",
       user: "BOT",
@@ -71,7 +85,8 @@ export function writeToCache(id: string, stream: Readable): void {
     });
     fs.unlinkSync(partPath);
   });
-  fileStream.on("finish", () => {
+
+  cacheStream.on("finish", () => {
     // remove .part to make valid cache object
     fs.renameSync(partPath, cachePath);
 
@@ -86,6 +101,8 @@ export function writeToCache(id: string, stream: Readable): void {
       }
     });
   });
+
+  return cacheStream;
 }
 
 export function readFromCache(id: string): Readable | undefined {
