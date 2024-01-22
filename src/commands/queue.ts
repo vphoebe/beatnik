@@ -41,20 +41,27 @@ export const execute: CommandExecuter = async (interaction) => {
       });
       return;
     }
-    const nowPlayingEmbed = getNowPlayingEmbed(
-      nowPlaying,
-      currentIndex + 1,
-      tracks.length,
-      playingFromCache
-    );
+    const nowPlayingEmbed =
+      nowPlaying &&
+      getNowPlayingEmbed(
+        nowPlaying,
+        currentIndex + 1,
+        tracks.length,
+        playingFromCache
+      );
     const queueListEmbed = getQueueListEmbed(
       pagedTracks,
       pageNumber,
       totalPages,
       currentIndex
     );
+
+    const sendEmbeds = [queueListEmbed];
+    if (nowPlayingEmbed) {
+      sendEmbeds.unshift(nowPlayingEmbed);
+    }
     await interaction.reply({
-      embeds: [nowPlayingEmbed, queueListEmbed],
+      embeds: sendEmbeds,
       ephemeral: true,
     });
     return;

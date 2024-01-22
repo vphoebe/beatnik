@@ -78,8 +78,13 @@ export class Queue {
 
   async play() {
     try {
+      // next/jump methods set currentIndex, which is used in nowPlaying getter
+      const trackToPlay = this.nowPlaying;
+      if (!trackToPlay) {
+        return this.stop();
+      }
       const { resource, fromCache, breakCurrentStreams } =
-        await createYoutubeTrackResource(this.nowPlaying);
+        await createYoutubeTrackResource(trackToPlay);
       this.breakCurrentStreams();
       this.breakCurrentStreams = breakCurrentStreams;
       this.audioPlayer.play(resource);
@@ -91,7 +96,7 @@ export class Queue {
       // send embed in the registered text channel
       if (this.textChannel) {
         const nowPlayingEmbed = getNowPlayingEmbed(
-          this.nowPlaying,
+          trackToPlay,
           this.currentIndex + 1,
           this.tracks.length,
           this.playingFromCache
@@ -103,7 +108,7 @@ export class Queue {
         type: "INFO",
         user: "BOT",
         guildId: this.guildId,
-        message: `Playing ${this.nowPlaying.id} ${
+        message: `Playing ${trackToPlay.id} ${
           fromCache ? "from cache" : "from URL"
         }`,
       });
@@ -118,7 +123,9 @@ export class Queue {
       console.error(err);
       //@ts-ignore
       this.textChannel.send(
-        `Unable to play ${this.nowPlaying.url}, skipping...`
+        `Unable to play ${
+          this.nowPlaying?.url ?? "[no track found]"
+        }, skipping...`
       );
       await this.next();
     }
@@ -174,7 +181,7 @@ export class Queue {
     return Math.ceil(this.tracks.length / 10);
   }
 
-  get nowPlaying() {
+  get nowPlaying(): QueuedTrack | undefined {
     return this.tracks[this.currentIndex];
   }
 
