@@ -1,6 +1,6 @@
 {
   "name": "beatnik",
-  "version": "3.4.1",
+  "version": "3.4.2",
   "description": "modern and simple Discord music bot with easy-to-use commands",
   "author": "vphoebe",
   "license": "MIT",
@@ -13,8 +13,8 @@
     "dev:deploy": "nodemon src/deploy-global-commands.ts",
     "format": "prettier --write .",
     "deploy": "node build/deploy-global-commands.cjs",
-    "start": "npm run deploy && pm2-runtime ecosystem.config.cjs",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "start": "pnpm build && node build/deploy-global-commands.cjs && nodemon build/beatnik.cjs"
   },
   "dependencies": {
     "@discordjs/opus": "^0.9.0",

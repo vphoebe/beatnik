@@ -19,43 +19,31 @@ Run your own modern and simple Discord music bot with easy-to-use native slash c
 ## Installation
 Beatnik is designed to be operated yourself, so there's a few things to set up first. Before you do anything though, you'll need to set up an application and bot on the [Discord developer portal](https://discord.com/developers/applications).  Make sure to have this page handy because you'll need some info soon.
 
-### Docker (recommended)
-If you are familiar at all with Docker, this is the fastest way to get Beatnik up and running. The [latest Docker image](https://hub.docker.com/r/nickseman/beatnik) is at `nickseman/beatnik:latest`
+### Docker
+If you are familiar at all with Docker, this is the fastest way to get Beatnik up and running. The [latest Docker image](https://hub.docker.com/r/nickseman/beatnik) is at `nickseman/beatnik:latest` - or you can build it yourself after checking out the code.
 
-Make sure to configure the Docker container's environment according to the [Environment](#Environment) section below. Then, bind the following paths outside your container to persist the data:
-- `/usr/beatnik/cache` 
-  - An empty directory on your host machine that can store the cached content. Not required if cache size is set to 0 in the environment.
-- `/usr/beatnik/beatnik.sqlite` 
-  - An empty `.sqlite` file on your host machine that can store saved URLs. Use `touch beatnik.sqlite` to create an empty file to bind to.
+Beatnik is able to run on [fly.io](https://fly.io/docs/about/pricing/#free-allowances) using resources available within their Free Allowances.
+
+Make sure to configure the Docker container's environment according to the [Environment](#Environment) section below, and ensure the paths for database and cache are properly bound to persistent storage.
 
 Skip down to [Invite](#Invite) to see what's next.
 
-### Local Node.js (via pm2)
+### Node.js
 1. Clone this repository somewhere locally. You'll need Node.js 18 or later installed along with `pnpm` ideally.
 2. Run `pnpm install` to install all the dependencies.
 3. Make sure ``ffmpeg`` is installed on your OS. The command above won't install it, and it's required for Beatnik to play audio.
-4. Run `pnpm build` to actually build the application.
-5. Set up your `.env` file by creating `.env` in the same directory, and filling out the fields as described below in [Environment](#Environment).
-6. It's best to run Beatnik with `pm2` so that the process is managed for you. Run `npm install -g pm2` to install `pm2` on your system.
-7. Run `pnpm start` and you're up and running. Skip down to [Invite](#Invite) to see what's next.
-
-If you don't want to use `pm2`, you can run `build/beatik.cjs` however you want to start the bot. Before you do so though, run `build/deploy-global-commands.cjs` or else you won't be able to install the commands to your guild. 
+4. Set up your `.env` file by creating `.env` in the same directory, and filling out the fields as described below in [Environment](#Environment).
+5. Run `pnpm start` and you're up and running. Skip down to [Invite](#Invite) to see what's next.
 
 ### Environment
 Whether you're using Docker or Node.js, you'll need to configure the environment variables with a few things from the bot application you created earlier on the Discord developer portal.
-| Variable | Value | Example |
+| Variable | Value | Example
 |--|--|--|
 | TOKEN | Your Discord bot's token. **Required.** | xxxxxxxxxxxx.yyyyyyyyy | 
 | CLIENT_ID | Your Discord bot's client ID. **Required.** | 00000000000 |
 | MAX_CACHE_SIZE_IN_MB | How much space in megabytes that the cache can expand to. Set this value to `0` to disable caching entirely. | `128`
-
-> **Note**
-> Only set the following if you're **not** using Docker. Otherwise, just leave the defaults from the Dockerfile and create bind mounts to the cache and database paths internal to the Docker container.
-
-| Variable | Value | Example |
-|--|--|--|
-| DATABASE_PATH | A valid path that Beatnik can use to create a SQLite file. In advanced, run `touch beatnik.sqlite` to make sure the file exists. | `/Users/You/Documents/beatnik.sqlite`
-| CACHE_PATH | A valid directory that Beatnik can use to save its cache. Not required if `MAX_CACHE_SIZE_IN_MB` is set to `0`. | `/Users/You/Documents/beatnik-cache`
+| DATABASE_PATH | A valid path that Beatnik can use to create a SQLite file. In advance, run `touch beatnik.sqlite` to make sure the file exists. If you're using Docker, bind this example path to your persistent storage, and don't change the ENV variable. | `/usr/beatnik/beatnik.sqlite`
+| CACHE_PATH | A valid directory that Beatnik can use to save its cache. If you're using Docker, bind this example path to your persistent storage, and don't change the ENV variable. Not required if `MAX_CACHE_SIZE_IN_MB` is set to `0`. | `/usr/beatnik/beatnik-cache`
 
 ### Invite
 Check out the Discord developer portal > OAuth2 > URL Generator to create an invite link. Make sure the `bot` and `application.commands` scopes are set, and `Connect` and `Speak` are enabled in the bot permissions under Voice. Also, once Beatnik is invited, ensure it gets assigned a role that lets it post messages in at least one text channel. Now Playing embeds and other messages are posted in the channel where the command was called.

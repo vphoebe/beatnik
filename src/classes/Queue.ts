@@ -40,6 +40,9 @@ export class Queue {
   isPlaying: boolean;
   playingFromCache: boolean | null;
   subscription: PlayerSubscription | undefined;
+  breakCurrentStreams = () => {
+    return;
+  };
 
   constructor(
     voiceChannel: VoiceBasedChannel,
@@ -60,6 +63,9 @@ export class Queue {
     this.voiceChannel = voiceChannel;
     this.textChannel = textChannel;
     this.playingFromCache = null;
+    this.breakCurrentStreams = () => {
+      return;
+    };
   }
 
   add(track: QueuedTrack, start: number) {
@@ -72,11 +78,17 @@ export class Queue {
 
   async play() {
     try {
-      this.isPlaying = true;
-      const { resource, fromCache } = await createYoutubeTrackResource(
-        this.nowPlaying
-      );
+      // next/jump methods set currentIndex, which is used in nowPlaying getter
+      const trackToPlay = this.nowPlaying;
+      if (!trackToPlay) {
+        return this.stop();
+      }
+      const { resource, fromCache, breakCurrentStreams } =
+        await createYoutubeTrackResource(trackToPlay);
+      this.breakCurrentStreams();
+      this.breakCurrentStreams = breakCurrentStreams;
       this.audioPlayer.play(resource);
+      this.isPlaying = true;
       this.playingFromCache = fromCache;
       if (!this.subscription) {
         this.connection.subscribe(this.audioPlayer);
@@ -84,7 +96,7 @@ export class Queue {
       // send embed in the registered text channel
       if (this.textChannel) {
         const nowPlayingEmbed = getNowPlayingEmbed(
-          this.nowPlaying,
+          trackToPlay,
           this.currentIndex + 1,
           this.tracks.length,
           this.playingFromCache
@@ -96,7 +108,7 @@ export class Queue {
         type: "INFO",
         user: "BOT",
         guildId: this.guildId,
-        message: `Playing ${this.nowPlaying.id} ${
+        message: `Playing ${trackToPlay.id} ${
           fromCache ? "from cache" : "from URL"
         }`,
       });
@@ -111,13 +123,16 @@ export class Queue {
       console.error(err);
       //@ts-ignore
       this.textChannel.send(
-        `Unable to play ${this.nowPlaying.url}, skipping...`
+        `Unable to play ${
+          this.nowPlaying?.url ?? "[no track found]"
+        }, skipping...`
       );
       await this.next();
     }
   }
 
   async stop() {
+    this.breakCurrentStreams();
     this.audioPlayer.stop();
     this.connection.destroy();
     this.subscription?.unsubscribe();
@@ -166,7 +181,7 @@ export class Queue {
     return Math.ceil(this.tracks.length / 10);
   }
 
-  get nowPlaying() {
+  get nowPlaying(): QueuedTrack | undefined {
     return this.tracks[this.currentIndex];
   }
 

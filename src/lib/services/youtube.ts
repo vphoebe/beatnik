@@ -7,6 +7,7 @@ import ytdl from "@distube/ytdl-core";
 import ytpl from "ytpl";
 import { stream as playDlStream } from "play-dl";
 import cloneable from "cloneable-readable";
+import { WriteStream } from "fs";
 
 type SimpleMetadata = {
   type: "video" | "playlist" | "unknown";
@@ -20,6 +21,7 @@ export async function getYtStream(
   url: string
 ): Promise<{
   stream: Readable;
+  cacheStream?: WriteStream;
   fromCache: boolean;
   type: StreamType;
 }> {
@@ -30,9 +32,15 @@ export async function getYtStream(
       quality: 2,
       discordPlayerCompatibility: true,
     });
-    const clone = cloneable(ytStream.stream);
-    writeToCache(id, clone.clone());
-    return { stream: clone, type: ytStream.type, fromCache: false };
+    const source = cloneable(ytStream.stream);
+    const cacheSource = source.clone();
+    const cacheStream = writeToCache(id, cacheSource);
+    return {
+      stream: source,
+      type: ytStream.type,
+      cacheStream,
+      fromCache: false,
+    };
   } else {
     // we know this cache stream exists because we checked the cache hit
     const cacheStream = readFromCache(id) as Readable;
@@ -108,17 +116,29 @@ export async function parsedQueryToYoutubeQueuedTracks(
 
 export async function createYoutubeTrackResource(track: QueuedTrack) {
   const {
-    stream: ytOrCacheStream,
+    stream: contentStream,
+    cacheStream,
     fromCache,
     type,
   } = await getYtStream(track.id, track.url);
 
-  const resource = createAudioResource(ytOrCacheStream, {
+  const resource = createAudioResource(contentStream, {
     inputType: type,
     metadata: {
       title: track.title,
     },
   });
 
-  return { resource, fromCache };
+  const breakCurrentStreams = cacheStream
+    ? () => {
+        if (!cacheStream.writableFinished) {
+          cacheStream?.emit("break");
+          contentStream.destroy();
+        }
+      }
+    : () => {
+        return;
+      };
+
+  return { resource, fromCache, breakCurrentStreams };
 }
