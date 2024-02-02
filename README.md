@@ -15,7 +15,7 @@ Run your own modern and simple Discord music bot with easy-to-use native slash c
 	- No service API keys required
 	- No database processes to maintain, just a single database file
 	- Run with Docker or natively with Node.js
-- Fully text-based two-player Othello gameplay, using Discord message embeds in any channel
+- [Fully text-based two-player Othello gameplay](https://github.com/vphoebe/othello), using Discord message embeds in any channel
 
 ## Installation
 Beatnik is designed to be operated yourself, so there's a few things to set up first. Before you do anything though, you'll need to set up an application and bot on the [Discord developer portal](https://discord.com/developers/applications).  Make sure to have this page handy because you'll need some info soon.
