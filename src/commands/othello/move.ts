@@ -23,7 +23,7 @@ const execute = async (interaction: ChatInputCommandInteraction) => {
   if (!game || !interaction.guildId) {
     await interaction.reply({
       ephemeral: true,
-      content: "Use /start to start a new game!",
+      content: "Use /othello-start to start a new game!",
     });
     return;
   }

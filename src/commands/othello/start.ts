@@ -8,7 +8,7 @@ import {
 } from "discord.js";
 
 const data = new SlashCommandBuilder()
-  .setName("start")
+  .setName("othello-start")
   .setDescription("[Othello] Start a game of Othello between two users.")
   .addUserOption((option) =>
     option.setName("black").setDescription("Player for Black").setRequired(true)

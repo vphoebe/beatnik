@@ -76,7 +76,7 @@ Beatnik includes a text-based version of Othello.
 
 | Command | Description |
 | -- | -- |
-| `/start [player 1] [player 2]` | Starts the game with the two users you specify. If any of the players are in an active game, it will be removed. |
+| `/othello-start [player 1] [player 2]` | Starts the game with the two users you specify. If any of the players are in an active game, it will be removed. |
 | `/move [coordinates]`| Makes your player's move using the grid coordinates. Example: `/move c4` |
 | `/pass` | Passes your turn to the next player. Used if there are no available moves. |
 | `/rules` | Shows basic rules and usage for commands. |

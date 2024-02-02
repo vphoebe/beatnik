@@ -19,7 +19,7 @@ const execute = async (interaction: ChatInputCommandInteraction) => {
       },
       {
         name: "Commands",
-        value: `Type \`/start\` to start a new game, and choose a player for black and white.\nType \`/move\` with your grid coordinates to place your piece.\nType \`/pass\` to pass your turn to the other player, if you have no moves.`,
+        value: `Type \`/othello-start\` to start a new game, and choose a player for black and white.\nType \`/move\` with your grid coordinates to place your piece.\nType \`/pass\` to pass your turn to the other player, if you have no moves.`,
       },
     ]);
 
