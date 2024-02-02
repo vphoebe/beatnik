@@ -15,6 +15,7 @@ Run your own modern and simple Discord music bot with easy-to-use native slash c
 	- No service API keys required
 	- No database processes to maintain, just a single database file
 	- Run with Docker or natively with Node.js
+- Fully text-based two-player Othello gameplay, using Discord message embeds in any channel
 
 ## Installation
 Beatnik is designed to be operated yourself, so there's a few things to set up first. Before you do anything though, you'll need to set up an application and bot on the [Discord developer portal](https://discord.com/developers/applications).  Make sure to have this page handy because you'll need some info soon.
@@ -69,4 +70,14 @@ Beatnik uses Discord slash commands. You can just type `/` in your text channel,
 | `/remove saved [name]` | Removes a saved URL with `name` from the guild. | |
 | `/install` | Installs Beatnik commmands to your guild. Admins only. |
 | `/uninstall` | Removes Beatnik commands from your guild. Admins only. |
+
+### Othello commands
+Beatnik includes a text-based version of Othello.
+
+| Command | Description |
+| -- | -- |
+| `/start [player 1] [player 2]` | Starts the game with the two users you specify. If any of the players are in an active game, it will be removed. |
+| `/move [coordinates]`| Makes your player's move using the grid coordinates. Example: `/move c4` |
+| `/pass` | Passes your turn to the next player. Used if there are no available moves. |
+| `/rules` | Shows basic rules and usage for commands. |
  
