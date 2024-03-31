@@ -1,5 +1,5 @@
 import { TrackService } from "../classes/Queue.js";
-import * as yt from "youtube-search-without-api-key";
+import ytsr from "@distube/ytsr";
 
 export type ParsedQuery = {
   url: string;
@@ -33,10 +33,10 @@ export async function parsePlayQuery(query: string): Promise<ParsedQuery> {
   const queryIsUrl = isValidUrl(query);
   if (!queryIsUrl) {
     // do search
-    const searchResults = await yt.search(query);
-    if (searchResults && searchResults[0].url) {
+    const searchResults = await ytsr(query, { limit: 1 });
+    if (searchResults && searchResults.results > 0) {
       return {
-        url: searchResults[0].url,
+        url: searchResults.items[0].url,
         service: TrackService.YouTube,
         type: "video",
       };
