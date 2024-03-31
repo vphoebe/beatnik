@@ -1,6 +1,6 @@
-import { QueuedTrack } from "../../classes/Queue.js";
-import { checkIdIsCached, readFromCache, writeToCache } from "../cache.js";
-import { ParsedQuery } from "../parsePlayQuery.js";
+import { QueuedTrack } from "../classes/Queue.js";
+import { checkIdIsCached, readFromCache, writeToCache } from "./cache.js";
+import { ParsedQuery } from "./parsePlayQuery.js";
 import { StreamType, createAudioResource, demuxProbe } from "@discordjs/voice";
 import { Readable } from "stream";
 import ytdl from "@distube/ytdl-core";

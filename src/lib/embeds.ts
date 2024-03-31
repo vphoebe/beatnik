@@ -1,7 +1,7 @@
 import { QueuedTrack } from "../classes/Queue.js";
 import { SavedUrl } from "./db.js";
 import { parsePlayQuery } from "./parsePlayQuery.js";
-import { parsedQueryToMetadata } from "./services/youtube.js";
+import { parsedQueryToMetadata } from "./yt.js";
 import { getDurationString } from "./util.js";
 import { bold, inlineCode, italic, userMention } from "discord.js";
 import { EmbedBuilder } from "discord.js";

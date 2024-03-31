@@ -6,7 +6,7 @@ import {
 import { getNowPlayingEmbed } from "../lib/embeds.js";
 import { log } from "../lib/logger.js";
 import { destroyQueue } from "../lib/queue.js";
-import { createYoutubeTrackResource } from "../lib/services/youtube.js";
+import { createYoutubeTrackResource } from "../lib/yt.js";
 import { shuffleArray } from "../lib/util.js";
 import {
   AudioPlayer,
