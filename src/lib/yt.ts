@@ -8,6 +8,7 @@ import ytpl from "@distube/ytpl";
 import { stream as playDlStream } from "play-dl";
 import cloneable from "cloneable-readable";
 import { WriteStream } from "fs";
+import { durationStringToSeconds } from "./util.js";
 
 type SimpleMetadata = {
   type: "video" | "playlist" | "unknown";
@@ -101,8 +102,8 @@ export async function parsedQueryToYoutubeQueuedTracks(
     const playlist = await ytpl(url, { limit: Infinity });
     return playlist.items.map((item) => ({
       title: item.title,
-      length: parseInt(item.duration ?? "0"),
-      url: item.url_simple,
+      length: durationStringToSeconds(item.duration ?? "0:00"),
+      url: item.url,
       id: item.id,
       service,
       channel: item.author?.name,

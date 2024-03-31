@@ -1,5 +1,7 @@
 import { TrackService } from "../classes/Queue.js";
 import ytsr from "@distube/ytsr";
+import ytpl from "@distube/ytpl";
+import ytdl from "@distube/ytdl-core";
 
 export type ParsedQuery = {
   url: string;
@@ -17,21 +19,10 @@ function isValidUrl(query: string): URL | null {
   }
 }
 
-function isValidYoutubeVideoUrl(url: string): boolean {
-  const regex =
-    /^(?:https?:\/\/)?(?:m\.|www\.)?(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))((\w|-){11})(?:\S+)?$/;
-  return regex.test(url);
-}
-
-function isValidYoutubePlaylistUrl(url: string): boolean {
-  const regex = /^(?!.*\?.*\bv=)https:\/\/www\.youtube\.com\/.*\?.*\blist=.*$/;
-  return regex.test(url);
-}
-
 export async function parsePlayQuery(query: string): Promise<ParsedQuery> {
   // return playable URL from play command query
-  const queryIsUrl = isValidUrl(query);
-  if (!queryIsUrl) {
+  const urlObject = isValidUrl(query);
+  if (!urlObject) {
     // do search
     const searchResults = await ytsr(query, { limit: 1 });
     if (searchResults && searchResults.results > 0) {
@@ -45,23 +36,22 @@ export async function parsePlayQuery(query: string): Promise<ParsedQuery> {
     }
   } else {
     // see if it's a valid service url
-    const url = queryIsUrl.toString();
-    const isSingleVideoUrl = isValidYoutubeVideoUrl(url);
-    const isPlaylistUrl = isValidYoutubePlaylistUrl(url);
-    if (isSingleVideoUrl) {
-      return {
-        url,
-        service: TrackService.YouTube,
-        type: "video",
-      };
-    } else if (isPlaylistUrl) {
+    const url = urlObject.toString();
+    if (url.includes("playlist") && ytpl.validateID(url)) {
+      // add .includes() check to prevent single videos from queuing a playlist
       return {
         url,
         service: TrackService.YouTube,
         type: "playlist",
       };
+    } else if (ytdl.validateURL(url)) {
+      return {
+        url,
+        service: TrackService.YouTube,
+        type: "video",
+      };
     } else {
-      throw new Error("Unsupported URL");
+      throw new Error(`Unsupported URL: ${url}`);
     }
   }
 }

@@ -10,6 +10,11 @@ export const getDurationString = (seconds: number | null) => {
   return "unknown";
 };
 
+export const durationStringToSeconds = (string: string) => {
+  const [minutes, seconds] = string.split(":");
+  return parseInt(minutes) * 60 + parseInt(seconds);
+};
+
 export const shuffleArray = <T>(array: Array<T>) => {
   const newArray = [...array];
   for (let i = newArray.length - 1; i > 0; i--) {
