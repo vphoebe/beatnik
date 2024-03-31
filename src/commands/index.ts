@@ -9,6 +9,10 @@ import save from "./save.js";
 import shuffle from "./shuffle.js";
 import skip from "./skip.js";
 import stop from "./stop.js";
+import move from "./othello/move.js";
+import pass from "./othello/pass.js";
+import start from "./othello/start.js";
+import rules from "./othello/rules.js";
 import { ChatInputCommandInteraction, SlashCommandBuilder } from "discord.js";
 
 export type Command = {
@@ -37,4 +41,8 @@ export const commandList: CommandList = {
   load,
   list,
   remove,
+  move,
+  pass,
+  rules,
+  start,
 };
