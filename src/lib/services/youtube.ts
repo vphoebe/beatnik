@@ -4,7 +4,7 @@ import { ParsedQuery } from "../parsePlayQuery.js";
 import { StreamType, createAudioResource, demuxProbe } from "@discordjs/voice";
 import { Readable } from "stream";
 import ytdl from "@distube/ytdl-core";
-import ytpl from "ytpl";
+import ytpl from "@distube/ytpl";
 import { stream as playDlStream } from "play-dl";
 import cloneable from "cloneable-readable";
 import { WriteStream } from "fs";
@@ -59,13 +59,13 @@ export async function parsedQueryToMetadata(
     const { title, author } = videoDetails;
     return { type, title, author: author.name, numberOfTracks: 1 };
   } else if (type === "playlist") {
-    const playlist = await ytpl(url, { limit: 9999, pages: 9999 });
-    const { title, author, estimatedItemCount } = playlist;
+    const playlist = await ytpl(url, { limit: Infinity });
+    const { title, author, total_items } = playlist;
     return {
       type,
       title,
-      author: author.name,
-      numberOfTracks: estimatedItemCount,
+      author: author?.name ?? "",
+      numberOfTracks: total_items,
     };
   } else {
     return {
@@ -98,15 +98,15 @@ export async function parsedQueryToYoutubeQueuedTracks(
     };
     return [track];
   } else if (type === "playlist") {
-    const playlist = await ytpl(url, { limit: 9999, pages: 9999 });
+    const playlist = await ytpl(url, { limit: Infinity });
     return playlist.items.map((item) => ({
       title: item.title,
-      length: item.durationSec ?? 0,
-      url: item.shortUrl,
+      length: parseInt(item.duration ?? "0"),
+      url: item.url_simple,
       id: item.id,
       service,
-      channel: item.author.name,
-      thumbnailImageUrl: item.bestThumbnail.url ?? undefined,
+      channel: item.author?.name,
+      thumbnailImageUrl: item.thumbnail ?? undefined,
       addedBy,
     }));
   } else {

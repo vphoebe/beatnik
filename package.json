@@ -20,6 +20,8 @@
     "@discordjs/opus": "^0.9.0",
     "@discordjs/voice": "^0.16.1",
     "@distube/ytdl-core": "^4.13.3",
+    "@distube/ytpl": "^1.2.1",
+    "@distube/ytsr": "^2.0.0",
     "@keyv/sqlite": "^3.5.2",
     "cloneable-readable": "^3.0.0",
     "discord.js": "^14.12.1",
@@ -27,9 +29,7 @@
     "keyv": "^4.3.0",
     "play-dl": "^1.9.7",
     "sodium-native": "^3.3.0",
-    "sqlite3": "^5.1.5",
-    "youtube-search-without-api-key": "^1.0.7",
-    "ytpl": "^2.3.0"
+    "sqlite3": "^5.1.5"
   },
   "devDependencies": {
     "@trivago/prettier-plugin-sort-imports": "^3.2.0",
