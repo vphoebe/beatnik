@@ -9,7 +9,7 @@
     "build": "esbuild src/beatnik.ts src/deploy-global-commands.ts --outdir=build --platform=node --target=node18 --bundle --packages=external --out-extension:.js=.cjs --minify",
     "build:docker": "pnpm build && docker build -t beatnik-dev .",
     "build:dockerx64": "pnpm build && docker buildx build --platform linux/amd64 -t beatnik-dev-x64 .",
-    "dev": "nodemon src/beatnik.ts",
+    "dev": "tsx watch src/beatnik.ts",
     "dev:deploy": "nodemon src/deploy-global-commands.ts",
     "format": "prettier --write .",
     "deploy": "node build/deploy-global-commands.cjs",
@@ -23,7 +23,6 @@
     "@distube/ytpl": "^1.2.1",
     "@distube/ytsr": "^2.0.0",
     "@keyv/sqlite": "^3.5.2",
-    "cloneable-readable": "^3.0.0",
     "discord.js": "^14.12.1",
     "dotenv": "^16.0.1",
     "keyv": "^4.3.0",
@@ -40,9 +39,8 @@
     "esbuild": "^0.17.18",
     "eslint": "^8.15.0",
     "eslint-plugin-require-extensions": "^0.1.3",
-    "nodemon": "^3.0.1",
     "prettier": "2.6.2",
-    "ts-node": "^10.9.1",
+    "tsx": "^4.10.0",
     "typescript": "^5.1.6"
   },
   "engines": {

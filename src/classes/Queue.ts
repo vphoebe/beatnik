@@ -40,9 +40,6 @@ export class Queue {
   isPlaying: boolean;
   playingFromCache: boolean | null;
   subscription: PlayerSubscription | undefined;
-  breakCurrentStreams = () => {
-    return;
-  };
 
   constructor(
     voiceChannel: VoiceBasedChannel,
@@ -63,9 +60,6 @@ export class Queue {
     this.voiceChannel = voiceChannel;
     this.textChannel = textChannel;
     this.playingFromCache = null;
-    this.breakCurrentStreams = () => {
-      return;
-    };
   }
 
   add(track: QueuedTrack, start: number) {
@@ -83,10 +77,9 @@ export class Queue {
       if (!trackToPlay) {
         return this.stop();
       }
-      const { resource, fromCache, breakCurrentStreams } =
-        await createYoutubeTrackResource(trackToPlay);
-      this.breakCurrentStreams();
-      this.breakCurrentStreams = breakCurrentStreams;
+      const { resource, fromCache } = await createYoutubeTrackResource(
+        trackToPlay
+      );
       this.audioPlayer.play(resource);
       this.isPlaying = true;
       this.playingFromCache = fromCache;
@@ -132,7 +125,6 @@ export class Queue {
   }
 
   async stop() {
-    this.breakCurrentStreams();
     this.audioPlayer.stop();
     this.connection.destroy();
     this.subscription?.unsubscribe();
