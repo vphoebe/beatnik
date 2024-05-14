@@ -1,5 +1,4 @@
 import { Command, CommandExecuter } from "./index.js";
-import { addToQueue } from "../lib/addToQueue.js";
 import { getAddedToQueueMessage } from "../lib/embeds.js";
 import { getOrCreateQueue } from "../lib/queue.js";
 import { SlashCommandBuilder } from "discord.js";
@@ -41,8 +40,7 @@ export const execute: CommandExecuter = async (interaction) => {
   }
 
   const queue = await getOrCreateQueue(interaction);
-  const numberAddedToQueue = await addToQueue(
-    queue,
+  const numberAddedToQueue = await queue.addByQuery(
     query,
     interaction.user.id,
     isShuffle,
