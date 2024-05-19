@@ -35,6 +35,7 @@ export type QueuedTrack = {
   thumbnailImageUrl?: string;
   length: number;
   channel?: string;
+  loudness?: number;
 };
 
 export const allGuildQueues = new Map<string, Queue>();

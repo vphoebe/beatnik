@@ -136,7 +136,7 @@ export async function parsedQueryToYoutubeQueuedTracks(
   const { url, service, type } = query;
   if (type === "video") {
     const info = await ytdl.getInfo(url);
-    const { videoDetails } = info;
+    const { videoDetails, player_response } = info;
     const { title, lengthSeconds, thumbnails, author, videoId } = videoDetails;
     const track = {
       title,
@@ -147,6 +147,7 @@ export async function parsedQueryToYoutubeQueuedTracks(
       channel: author.name,
       thumbnailImageUrl: thumbnails[0].url,
       addedBy,
+      loudness: player_response.playerConfig.audioConfig.loudnessDb,
     };
     return [track];
   } else if (type === "playlist") {
@@ -169,12 +170,23 @@ export async function parsedQueryToYoutubeQueuedTracks(
 export async function createYoutubeTrackResource(track: QueuedTrack) {
   const { stream, fromCache, type } = await getYtStream(track.id, track.url);
 
+  if (!track.loudness) {
+    // ytpl tracks can't retrieve this, so get it now
+    const info = await ytdl.getInfo(track.url);
+    track.loudness = info.player_response.playerConfig.audioConfig.loudnessDb;
+  }
+
   const resource = createAudioResource(stream, {
     inputType: type,
     metadata: {
       title: track.title,
     },
+    inlineVolume: !!track.loudness,
   });
+
+  console.log(Math.pow(10, -track.loudness / 20));
+
+  resource.volume?.setVolumeDecibels(-track.loudness);
 
   return { resource, fromCache };
 }
