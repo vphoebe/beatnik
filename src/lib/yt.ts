@@ -184,8 +184,6 @@ export async function createYoutubeTrackResource(track: QueuedTrack) {
     inlineVolume: !!track.loudness,
   });
 
-  console.log(Math.pow(10, -track.loudness / 20));
-
   resource.volume?.setVolumeDecibels(-track.loudness);
 
   return { resource, fromCache };
