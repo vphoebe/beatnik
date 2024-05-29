@@ -208,11 +208,11 @@ class Queue {
     await this.play();
   }
 
-  async shuffle() {
-    const shuffledTracks = shuffleArray(this.tracks);
-    this.tracks = shuffledTracks;
-    this.currentIndex = 0;
-    await this.play(); // play new shuffled queue starting from 0
+  shuffle() {
+    const before = this.tracks.slice(0, this.currentIndex + 1);
+    const after = this.tracks.slice(this.currentIndex + 2);
+    const shuffled = shuffleArray(after);
+    this.tracks = [...before, ...shuffled];
   }
 
   getPage(pageNumber: number) {

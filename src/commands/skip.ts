@@ -20,13 +20,14 @@ export const execute: CommandExecuter = async (interaction) => {
   const skipIndex = interaction.options.getInteger("track", false);
   if (!guildId) return;
   const queue = await getExistingQueue(interaction);
+  const currentSongTitle = queue?.nowPlaying?.title ?? "unknown";
   if (!queue) {
     await interaction.reply(noQueueReply);
     return;
   }
   if (skipIndex) {
     if (skipIndex - 1 < queue.tracks.length) {
-      await queue.jump(skipIndex - 1);
+      queue.jump(skipIndex - 1);
     } else {
       await interaction.reply({
         content: "Invalid track number.",
@@ -35,11 +36,11 @@ export const execute: CommandExecuter = async (interaction) => {
       return;
     }
   } else {
-    await queue.next();
+    queue.next();
   }
   await interaction.reply({
-    content: "Skipping this track!",
-    ephemeral: true,
+    content: `Skipping \`${currentSongTitle}\`...`,
+    ephemeral: false,
   });
 };
 
