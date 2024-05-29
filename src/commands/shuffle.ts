@@ -5,9 +5,7 @@ import { SlashCommandBuilder } from "discord.js";
 
 export const builder = new SlashCommandBuilder()
   .setName("shuffle")
-  .setDescription(
-    "Shuffles the current queue and starts playback from the top."
-  );
+  .setDescription("Shuffles the queue after the current song.");
 
 export const execute: CommandExecuter = async (interaction) => {
   const guildId = interaction.guildId;
@@ -17,7 +15,7 @@ export const execute: CommandExecuter = async (interaction) => {
     await interaction.reply(noQueueReply);
     return;
   }
-  await queue.shuffle();
+  queue.shuffle();
   await interaction.reply({
     content: "Shuffled the queue!",
     ephemeral: true,
