@@ -30,11 +30,11 @@ Make sure to configure the Docker container's environment according to the [Envi
 Skip down to [Invite](#Invite) to see what's next.
 
 ### Node.js
-1. Clone this repository somewhere locally. You'll need Node.js 18 or later installed along with `pnpm` ideally.
-2. Run `pnpm install` to install all the dependencies.
+1. Clone this repository somewhere locally. You'll need Node.js 18 or later installed along with `npm` ideally.
+2. Run `npm install` to install all the dependencies.
 3. Make sure ``ffmpeg`` is installed on your OS. The command above won't install it, and it's required for Beatnik to play audio.
 4. Set up your `.env` file by creating `.env` in the same directory, and filling out the fields as described below in [Environment](#Environment).
-5. Run `pnpm start` and you're up and running. Skip down to [Invite](#Invite) to see what's next.
+5. Run `npm start` and you're up and running. Skip down to [Invite](#Invite) to see what's next.
 
 ### Environment
 Whether you're using Docker or Node.js, you'll need to configure the environment variables with a few things from the bot application you created earlier on the Discord developer portal.

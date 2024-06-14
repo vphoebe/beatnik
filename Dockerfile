@@ -1,16 +1,15 @@
-FROM node:18-alpine as builder
+FROM node:20-alpine as builder
 WORKDIR /builder
-COPY pnpm-lock.yaml ./
+COPY package-lock.json ./
 COPY package.json ./
 COPY tsconfig.json ./
-RUN npm install --location=global pnpm
 RUN apk add --no-cache python3 build-base
-RUN pnpm install --frozen-lockfile true
+RUN npm ci
 COPY ./src ./src
-RUN pnpm build
-RUN pnpm prune --prod
+RUN npm run build
+RUN npm prune --omit=dev
 
-FROM node:18-alpine as prod
+FROM node:20-alpine as prod
 ENV TOKEN="" \
   CLIENT_ID="" \ 
   DATABASE_PATH="/usr/beatnik/beatnik.sqlite" \
