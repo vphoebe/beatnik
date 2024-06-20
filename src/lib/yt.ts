@@ -1,12 +1,11 @@
-import { QueuedTrack, TrackService } from "./queue.js";
 import { checkIdIsCached, readFromCache, writeToCache } from "./cache.js";
+import { QueuedTrack, TrackService } from "./queue.js";
+import { durationStringToSeconds } from "./util.js";
 import { StreamType, createAudioResource, demuxProbe } from "@discordjs/voice";
-import { Readable } from "stream";
 import ytdl from "@distube/ytdl-core";
 import ytpl from "@distube/ytpl";
 import ytsr from "@distube/ytsr";
-import { stream as playDlStream } from "play-dl";
-import { durationStringToSeconds } from "./util.js";
+import { Readable } from "stream";
 
 type SimpleMetadata = {
   type: "video" | "playlist" | "unknown";
@@ -42,18 +41,19 @@ export async function getYtStream(
   const cacheHit = checkIdIsCached(id);
   if (!cacheHit) {
     // play live url, and update cache
-    const ytStream = await playDlStream(url, {
-      quality: 2,
-      discordPlayerCompatibility: true,
+    const ytStream = ytdl(url, {
+      filter: "audioonly",
+      quality: "highestaudio",
     });
-    const cacheSource = await playDlStream(url, {
-      quality: 2,
-      discordPlayerCompatibility: true,
+    const cacheSource = ytdl(url, {
+      filter: "audioonly",
+      quality: "highestaudio",
     });
-    writeToCache(id, cacheSource.stream);
+    writeToCache(id, cacheSource);
+    const { type } = await demuxProbe(ytStream);
     return {
-      stream: ytStream.stream,
-      type: ytStream.type,
+      stream: ytStream,
+      type,
       fromCache: false,
     };
   } else {
