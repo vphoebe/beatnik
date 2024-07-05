@@ -50,7 +50,7 @@ function getVoiceChannelFromInteraction(interaction: CommandInteraction) {
 }
 
 export async function getOrCreateQueue(
-  interaction: CommandInteraction
+  interaction: CommandInteraction,
 ): Promise<Queue> {
   const guildId = interaction.guildId;
   if (!guildId) {
@@ -72,7 +72,7 @@ export async function getOrCreateQueue(
 }
 
 export async function getExistingQueue(
-  interaction: CommandInteraction
+  interaction: CommandInteraction,
 ): Promise<Queue | undefined> {
   const guildId = interaction.guildId;
   if (!guildId) {
@@ -97,7 +97,7 @@ class Queue {
 
   constructor(
     voiceChannel: VoiceBasedChannel,
-    textChannel: TextBasedChannel | null
+    textChannel: TextBasedChannel | null,
   ) {
     this.tracks = [];
     this.currentIndex = 0;
@@ -123,7 +123,7 @@ class Queue {
     query: string,
     userId: string,
     shuffle = false,
-    end = false
+    end = false,
   ) {
     const parsedQuery = await parsePlayQuery(query);
     let tracks = await parsedQueryToYoutubeQueuedTracks(parsedQuery, userId);
@@ -146,9 +146,8 @@ class Queue {
       if (!trackToPlay) {
         return this.stop();
       }
-      const { resource, fromCache } = await createYoutubeTrackResource(
-        trackToPlay
-      );
+      const { resource, fromCache } =
+        await createYoutubeTrackResource(trackToPlay);
       this.audioPlayer.play(resource);
       this.isPlaying = true;
       this.playingFromCache = fromCache;
@@ -161,7 +160,7 @@ class Queue {
           trackToPlay,
           this.currentIndex + 1,
           this.tracks.length,
-          this.playingFromCache
+          this.playingFromCache,
         );
         this.textChannel.send({ embeds: [nowPlayingEmbed] });
       }
@@ -184,8 +183,8 @@ class Queue {
       console.error(err);
       this.textChannel?.send(
         `Unable to play ${
-          this.nowPlaying?.url ?? "[no track found]"
-        }, skipping...`
+          this.nowPlaying?.id ?? "[no track found]"
+        }, skipping...`,
       );
       await this.next();
     }
@@ -223,7 +222,7 @@ class Queue {
     }
     const pagedTracks = [...this.tracks].slice(
       zeroIndexPageNumber * 10,
-      zeroIndexPageNumber * 10 + 10
+      zeroIndexPageNumber * 10 + 10,
     );
     return pagedTracks;
   }
