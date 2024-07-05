@@ -6,6 +6,7 @@ import ytdl from "@distube/ytdl-core";
 import ytpl from "@distube/ytpl";
 import ytsr from "@distube/ytsr";
 import { Readable } from "stream";
+import { getCookieHeaders } from "./environment.js";
 
 type SimpleMetadata = {
   type: "video" | "playlist" | "unknown";
@@ -32,7 +33,7 @@ function isValidUrl(query: string): URL | null {
 
 export async function getYtStream(
   id: string,
-  url: string
+  url: string,
 ): Promise<{
   stream: Readable;
   fromCache: boolean;
@@ -43,11 +44,13 @@ export async function getYtStream(
     // play live url, and update cache
     const ytStream = ytdl(url, {
       filter: "audioonly",
-      quality: "highestaudio",
+      quality: "lowestaudio",
+      ...getCookieHeaders,
     });
     const cacheSource = ytdl(url, {
       filter: "audioonly",
       quality: "highestaudio",
+      ...getCookieHeaders,
     });
     writeToCache(id, cacheSource);
     const { type } = await demuxProbe(ytStream);
@@ -102,7 +105,7 @@ export async function parsePlayQuery(query: string): Promise<ParsedQuery> {
 }
 
 export async function parsedQueryToMetadata(
-  query: ParsedQuery
+  query: ParsedQuery,
 ): Promise<SimpleMetadata> {
   const { url, type } = query;
   if (type === "video") {
@@ -131,7 +134,7 @@ export async function parsedQueryToMetadata(
 
 export async function parsedQueryToYoutubeQueuedTracks(
   query: ParsedQuery,
-  addedBy: string
+  addedBy: string,
 ): Promise<QueuedTrack[]> {
   const { url, service, type } = query;
   if (type === "video") {

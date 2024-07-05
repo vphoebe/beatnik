@@ -47,3 +47,18 @@ export function getMaxCacheSize() {
   const maxSize = process.env.MAX_CACHE_SIZE_IN_MB;
   return maxSize ? parseInt(maxSize) : 128;
 }
+
+export function getCookieHeaders() {
+  const envCookie = process.env.YT_COOKIE;
+  if (!envCookie) {
+    return {};
+  } else {
+    return {
+      requestOptions: {
+        headers: {
+          cookie: envCookie,
+        },
+      },
+    };
+  }
+}

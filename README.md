@@ -45,6 +45,7 @@ Whether you're using Docker or Node.js, you'll need to configure the environment
 | MAX_CACHE_SIZE_IN_MB | How much space in megabytes that the cache can expand to. Set this value to `0` to disable caching entirely. | `128`
 | DATABASE_PATH | A valid path that Beatnik can use to create a SQLite file. In advance, run `touch beatnik.sqlite` to make sure the file exists. If you're using Docker, bind this example path to your persistent storage, and don't change the ENV variable. | `/usr/beatnik/beatnik.sqlite`
 | CACHE_PATH | A valid directory that Beatnik can use to save its cache. If you're using Docker, bind this example path to your persistent storage, and don't change the ENV variable. Not required if `MAX_CACHE_SIZE_IN_MB` is set to `0`. | `/usr/beatnik/beatnik-cache`
+| YT_COOKIE | (Optional) YouTube cookie for ytdl. Not used if left blank. | "HSID=xxxxxx...."
 
 ### Invite
 Check out the Discord developer portal > OAuth2 > URL Generator to create an invite link. Make sure the `bot` and `application.commands` scopes are set, and `Connect` and `Speak` are enabled in the bot permissions under Voice. Also, once Beatnik is invited, ensure it gets assigned a role that lets it post messages in at least one text channel. Now Playing embeds and other messages are posted in the channel where the command was called.
