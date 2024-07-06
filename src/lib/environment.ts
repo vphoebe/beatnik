@@ -1,5 +1,6 @@
 import "dotenv/config";
-import { existsSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
+import path from "node:path";
 
 export function getToken() {
   const token = process.env.TOKEN;
@@ -62,17 +63,8 @@ export function getMaxCacheSize() {
   return maxSize ? parseInt(maxSize) : 128;
 }
 
-export function getCookieHeaders() {
-  const envCookie = process.env.YT_COOKIE;
-  if (!envCookie) {
-    return {};
-  } else {
-    return {
-      requestOptions: {
-        headers: {
-          cookie: envCookie,
-        },
-      },
-    };
-  }
+export function getCookiesArray() {
+  const filepath = process.env.YT_COOKIE_JSON;
+  if (!filepath) return {};
+  return JSON.parse(readFileSync(path.resolve(filepath), "utf-8"));
 }

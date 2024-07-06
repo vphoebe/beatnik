@@ -13,7 +13,7 @@ import {
   Client,
   GatewayIntentBits,
 } from "discord.js";
-import { testLibrary } from "./lib/library.js";
+import { testLibrary } from "./lib/library/cache.js";
 
 const token = getToken();
 const clientId = getClientId();

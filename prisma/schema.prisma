@@ -11,15 +11,22 @@ datasource db {
 }
 
 model Playlist {
-  id         String  @id @unique
-  authorName String
-  tracks     Track[]
+  int_id      Int     @id @default(autoincrement())
+  id          String
+  url         String
+  title       String
+  authorName  String
+  tracks      Track[]
+  lastUpdated DateTime
 }
 
 model Track {
-  id           String    @id @unique
-  playlist     Playlist? @relation(fields: [playlistId], references: [id])
-  playlistId   String?
+  int_id       Int     @id @default(autoincrement())
+  id           String 
+  url          String    
+  playlist     Playlist? @relation(fields: [playlistId], references: [int_id])
+  playlistId   Int?
+  playlistIdx  Int?
   title        String
   thumbnailUrl String?
   length       Int

@@ -2,6 +2,8 @@ import ytdl from "@distube/ytdl-core";
 import ytpl from "@distube/ytpl";
 import ytsr from "@distube/ytsr";
 import { durationStringToSeconds } from "../util.js";
+import { getPlaylistWithTracks, getTrackByUrl } from "../library/db.js";
+import { agent } from "./agent.js";
 
 interface Query {
   query: string;
@@ -10,16 +12,19 @@ interface Query {
 
 export interface Track {
   id: string;
+  url: string;
   title: string;
-  thumbnailUrl?: string;
-  channelName?: string;
+  thumbnailUrl: string | null;
+  channelName: string | null;
   length: number;
-  loudness: number;
-  playlistId?: string;
+  loudness: number | null;
+  playlistIdx: number | null;
 }
 
 export interface Playlist {
   id: string;
+  url: string;
+  title: string;
   authorName: string;
   tracks: Track[];
 }
@@ -60,53 +65,80 @@ function getQueryType(query: string): Query | null {
   }
 }
 
-export async function getTracksFromQuery(
-  query: string,
-): Promise<Partial<Playlist> & { tracks: Track[] }> {
-  async function getTrackInfo(url: string): Promise<Track> {
-    const info = await ytdl.getInfo(url);
-    const { videoDetails, player_response } = info;
-    const { title, lengthSeconds, thumbnails, author, videoId } = videoDetails;
-    return {
-      title,
-      length: parseInt(lengthSeconds),
-      id: videoId,
-      channelName: author.name,
-      thumbnailUrl: thumbnails[0].url,
-      loudness: player_response.playerConfig.audioConfig.loudnessDb,
-    };
+async function getTrackInfo(url: string, useLibrary: boolean): Promise<Track> {
+  const existingTrack = await getTrackByUrl(url);
+  if (existingTrack && useLibrary) {
+    return existingTrack;
   }
+  const info = await ytdl.getInfo(url, { agent });
+  const { videoDetails, player_response } = info;
+  const { title, lengthSeconds, thumbnails, author, videoId, video_url } =
+    videoDetails;
+  return {
+    title,
+    url: video_url,
+    length: parseInt(lengthSeconds),
+    id: videoId,
+    channelName: author.name,
+    thumbnailUrl: thumbnails[0].url,
+    loudness: player_response.playerConfig.audioConfig.loudnessDb,
+    playlistIdx: null,
+  };
+}
 
+async function getPlaylistInfo(
+  idOrUrl: string,
+  useLibrary: boolean,
+): Promise<Playlist> {
+  const existingPlaylist = await getPlaylistWithTracks(idOrUrl);
+  if (existingPlaylist && useLibrary) {
+    return existingPlaylist;
+  }
+  const playlistInfo = await ytpl(idOrUrl, { limit: Infinity });
+  const tracks: Track[] = playlistInfo.items.map((item, idx) => ({
+    title: item.title,
+    url: item.url,
+    length: durationStringToSeconds(item.duration ?? "0:00"),
+    id: item.id,
+    channelName: item.author?.name ?? null,
+    thumbnailUrl: item.thumbnail,
+    loudness: 0, //TODO: GET REAL LOUDNESS VALUE
+    playlistIdx: idx,
+  }));
+  return {
+    tracks,
+    title: playlistInfo.title,
+    url: playlistInfo.url,
+    id: playlistInfo.id,
+    authorName: playlistInfo.author?.name ?? "Unknown",
+  };
+}
+
+export async function getMetadataFromQuery(query: string, useLibrary = true) {
   const parsedQuery = getQueryType(query);
 
   if (!parsedQuery) {
-    return { tracks: [] };
+    return undefined;
   }
 
   switch (parsedQuery.type) {
     case "track": {
-      const track = await getTrackInfo(parsedQuery.query);
-      return { tracks: [track] };
+      return {
+        track: await getTrackInfo(parsedQuery.query, useLibrary),
+        type: "track ",
+      };
     }
     case "query": {
       const searchResults = await ytsr(parsedQuery.query, { limit: 1 });
-      const track = await getTrackInfo(searchResults.items[0].url);
-      return { tracks: [track] };
+      return {
+        track: await getTrackInfo(searchResults.items[0].url, useLibrary),
+        type: "track",
+      };
     }
     case "playlist": {
-      const playlistInfo = await ytpl(parsedQuery.query, { limit: Infinity });
-      const tracks: Track[] = playlistInfo.items.map((item) => ({
-        title: item.title,
-        length: durationStringToSeconds(item.duration ?? "0:00"),
-        id: item.id,
-        channelName: item.author?.name,
-        thumbnailUrl: item.thumbnail,
-        loudness: 0, //TODO: GET REAL LOUDNESS VALUE
-      }));
       return {
-        tracks,
-        id: playlistInfo.id,
-        authorName: playlistInfo.author?.name,
+        playlist: await getPlaylistInfo(parsedQuery.query, useLibrary),
+        type: "playlist",
       };
     }
   }

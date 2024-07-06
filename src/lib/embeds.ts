@@ -32,7 +32,7 @@ export function getNowPlayingEmbed(
         fromCache ? ":floppy_disk:" : ":globe_with_meridians:"
       }`,
     )
-    .setURL(`https://www.youtube.com/watch?v=${track.id}`);
+    .setURL(track.url);
 }
 
 export function getQueueListEmbed(

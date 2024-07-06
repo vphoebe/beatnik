@@ -1,9 +1,7 @@
 import { Command, CommandExecuter } from "./index.js";
-import { log } from "../lib/logger.js";
-import { hideLinkEmbed, inlineCode, SlashCommandBuilder } from "discord.js";
-import { getTracksFromQuery } from "../lib/youtube/metadata.js";
-import { saveTrack } from "../lib/db.js";
-import { addTrack } from "../lib/library.js";
+import { SlashCommandBuilder } from "discord.js";
+import { getMetadataFromQuery } from "../lib/youtube/metadata.js";
+import { AddOperation, addPlaylist, addTrack } from "../lib/library/cache.js";
 
 export const builder = new SlashCommandBuilder()
   .setName("add")
@@ -26,16 +24,32 @@ export const execute: CommandExecuter = async (interaction) => {
   const query = interaction.options.getString("query", true);
   await interaction.deferReply();
 
-  const tracks = await getTracksFromQuery(query);
+  const queryResult = await getMetadataFromQuery(query, false);
+  const count = queryResult?.playlist ? queryResult.playlist.tracks.length : 1;
+  await interaction.editReply(
+    `Adding and downloading ${count} track(s)... Please wait.`,
+  );
 
-  const testTrack = tracks.tracks[0];
-
-  const addOp = await addTrack(testTrack);
-
-  if (!addOp.added) {
-    await interaction.editReply("Didn't add anything");
+  let operation: AddOperation | null;
+  if (queryResult?.playlist) {
+    operation = await addPlaylist(queryResult.playlist);
+  } else if (queryResult?.track) {
+    operation = await addTrack(queryResult?.track);
   } else {
-    await interaction.editReply("Done");
+    operation = null;
+  }
+
+  if (!operation) {
+    await interaction.editReply(`Something went wrong.`);
+  } else if (operation.error === "EXISTS") {
+    await interaction.editReply(
+      `${queryResult?.track?.title} was already added.`,
+    );
+  } else {
+    const title = queryResult?.track?.title || queryResult?.playlist?.title;
+    await interaction.editReply(
+      `${operation.updated ? "Updated" : "Added"} and downloaded "${title ?? "unknown"}" to the library!`,
+    );
   }
 };
 

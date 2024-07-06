@@ -16,7 +16,7 @@ import {
 import { getNowPlayingEmbed } from "../lib/embeds.js";
 import { log } from "../lib/logger.js";
 import { shuffleArray } from "../lib/util.js";
-import { getTracksFromQuery, Track } from "./youtube/metadata.js";
+import { getMetadataFromQuery, Track } from "./youtube/metadata.js";
 import { createResource } from "./youtube/stream.js";
 
 export interface QueuedTrack extends Track {
@@ -110,8 +110,12 @@ class Queue {
     shuffle = false,
     end = false,
   ) {
-    const data = await getTracksFromQuery(query);
-    let tracks = data.tracks;
+    const data = await getMetadataFromQuery(query);
+    let tracks = data?.playlist
+      ? data.playlist.tracks
+      : data?.track
+        ? [data.track]
+        : [];
     if (shuffle) {
       tracks = shuffleArray(tracks);
     }

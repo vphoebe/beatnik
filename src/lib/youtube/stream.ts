@@ -1,10 +1,10 @@
 import ytdl from "@distube/ytdl-core";
-import { getDownloadedIdStream } from "../library.js";
+import { getDownloadedIdStream } from "../library/cache.js";
 import { QueuedTrack } from "../queue.js";
-import { getCookieHeaders } from "../environment.js";
 import { ReadStream } from "fs";
 import { Readable } from "node:stream";
 import { createAudioResource, demuxProbe } from "@discordjs/voice";
+import { agent } from "./agent.js";
 
 export async function createResource(track: QueuedTrack) {
   // return resource either from stream or cache
@@ -17,7 +17,7 @@ export async function createResource(track: QueuedTrack) {
     stream = ytdl(track.id, {
       filter: "audioonly",
       quality: "lowestaudio",
-      ...getCookieHeaders,
+      agent,
     });
     fromCache = false;
   }
@@ -30,8 +30,9 @@ export async function createResource(track: QueuedTrack) {
     },
     inlineVolume: !!track.loudness,
   });
-
-  resource.volume?.setVolumeDecibels(-track.loudness);
+  if (track.loudness) {
+    resource.volume?.setVolumeDecibels(-track.loudness);
+  }
 
   return { resource, fromCache };
 }
