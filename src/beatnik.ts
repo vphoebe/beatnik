@@ -13,6 +13,7 @@ import {
   Client,
   GatewayIntentBits,
 } from "discord.js";
+import { testLibrary } from "./lib/library.js";
 
 const token = getToken();
 const clientId = getClientId();
@@ -25,8 +26,7 @@ welcome to beatnik
 version ${BEATNIK_VERSION}`);
 console.log(generateDependencyReport());
 
-checkCacheValidity(BEATNIK_VERSION ?? "");
-cleanUpParts();
+testLibrary();
 
 // Create a new client instance
 export const client = new Client({
@@ -60,7 +60,7 @@ client.on("interactionCreate", async (interaction) => {
     console.error(err);
     if (interaction.deferred) {
       await interaction.editReply(
-        errorReply(err, interaction.ephemeral ?? false)
+        errorReply(err, interaction.ephemeral ?? false),
       );
     } else {
       await interaction.reply(errorReply(err, interaction.ephemeral ?? false));

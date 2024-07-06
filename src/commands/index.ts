@@ -1,11 +1,8 @@
 import install from "./global/install.js";
 import uninstall from "./global/uninstall.js";
-import list from "./list.js";
-import load from "./load.js";
 import play from "./play.js";
 import queue from "./queue.js";
-import remove from "./remove.js";
-import save from "./save.js";
+import add from "./add.js";
 import shuffle from "./shuffle.js";
 import skip from "./skip.js";
 import stop from "./stop.js";
@@ -22,7 +19,7 @@ export type Command = {
 };
 
 export type CommandExecuter = (
-  interaction: ChatInputCommandInteraction
+  interaction: ChatInputCommandInteraction,
 ) => Promise<void>;
 
 export type CommandList = {
@@ -37,10 +34,7 @@ export const commandList: CommandList = {
   stop,
   skip,
   shuffle,
-  save,
-  load,
-  list,
-  remove,
+  add,
   move,
   pass,
   rules,

@@ -47,14 +47,14 @@ async function getCacheTable() {
   }
   const totalSize = table.reduce(
     (accumulator, { size }) => accumulator + size,
-    0
+    0,
   );
   return { table, totalSize };
 }
 
 export function writeToCache(
   id: string,
-  cacheSource: Readable
+  cacheSource: Readable,
 ): fs.WriteStream | undefined {
   const cachePath = getCacheItemPath(id);
   if (!cachePath) return undefined;
@@ -142,7 +142,7 @@ export async function evictCache(evictAll?: boolean) {
     const legacyCacheFiles = await getAllLegacyCacheFiles();
     const partFiles = await getAllCacheParts();
     const rmPromises = [...cacheFiles, ...legacyCacheFiles, ...partFiles].map(
-      (file) => rm(path.join(cacheDir, file))
+      (file) => rm(path.join(cacheDir, file)),
     );
     await Promise.all(rmPromises);
     log({

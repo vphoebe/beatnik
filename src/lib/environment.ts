@@ -43,6 +43,20 @@ export function getCacheDir() {
   return cachePath;
 }
 
+export function getLibraryDir() {
+  const libraryPath = process.env.LIBRARY_PATH;
+  if (!libraryPath) {
+    console.error("No LIBRARY_PATH found in .env!");
+    process.exit();
+  } else {
+    if (!existsSync(libraryPath)) {
+      console.error(`LIBRARY_PATH ${libraryPath} does not exist!`);
+      process.exit();
+    }
+  }
+  return libraryPath;
+}
+
 export function getMaxCacheSize() {
   const maxSize = process.env.MAX_CACHE_SIZE_IN_MB;
   return maxSize ? parseInt(maxSize) : 128;

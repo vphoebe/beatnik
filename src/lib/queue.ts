@@ -16,27 +16,12 @@ import {
 import { getNowPlayingEmbed } from "../lib/embeds.js";
 import { log } from "../lib/logger.js";
 import { shuffleArray } from "../lib/util.js";
-import {
-  createYoutubeTrackResource,
-  parsedQueryToYoutubeQueuedTracks,
-} from "../lib/yt.js";
-import { parsePlayQuery } from "../lib/yt.js";
+import { getTracksFromQuery, Track } from "./youtube/metadata.js";
+import { createResource } from "./youtube/stream.js";
 
-export enum TrackService {
-  YouTube = "yt",
-}
-
-export type QueuedTrack = {
-  url: string;
-  id: string;
-  title: string;
+export interface QueuedTrack extends Track {
   addedBy: string;
-  service: TrackService;
-  thumbnailImageUrl?: string;
-  length: number;
-  channel?: string;
-  loudness?: number;
-};
+}
 
 export const allGuildQueues = new Map<string, Queue>();
 
@@ -125,13 +110,15 @@ class Queue {
     shuffle = false,
     end = false,
   ) {
-    const parsedQuery = await parsePlayQuery(query);
-    let tracks = await parsedQueryToYoutubeQueuedTracks(parsedQuery, userId);
+    const data = await getTracksFromQuery(query);
+    let tracks = data.tracks;
     if (shuffle) {
       tracks = shuffleArray(tracks);
     }
     const basis = end ? this.tracks.length : this.currentIndex + 1;
-    tracks.forEach((t, idx) => this.add(t, basis + idx));
+    tracks.forEach((t, idx) =>
+      this.add({ ...t, addedBy: userId }, basis + idx),
+    );
     return tracks.length;
   }
 
@@ -146,8 +133,7 @@ class Queue {
       if (!trackToPlay) {
         return this.stop();
       }
-      const { resource, fromCache } =
-        await createYoutubeTrackResource(trackToPlay);
+      const { resource, fromCache } = await createResource(trackToPlay);
       this.audioPlayer.play(resource);
       this.isPlaying = true;
       this.playingFromCache = fromCache;
