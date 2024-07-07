@@ -24,8 +24,12 @@ export const execute: CommandExecuter = async (interaction) => {
   const query = interaction.options.getString("query", true);
   await interaction.deferReply();
 
+  await interaction.editReply(
+    `Finding metadata for your query... Please wait.`,
+  );
   const queryResult = await getMetadataFromQuery(query, false);
   const count = queryResult?.playlist ? queryResult.playlist.tracks.length : 1;
+
   await interaction.editReply(
     `Adding and downloading ${count} track(s)... Please wait.`,
   );
