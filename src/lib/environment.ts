@@ -20,30 +20,6 @@ export function getClientId() {
   return clientId;
 }
 
-export function getDatabasePath() {
-  const databasePath = process.env.DATABASE_PATH;
-  if (!databasePath) {
-    console.error("No DATABASE_PATH found in .env, exiting!");
-    process.exit();
-  }
-  return databasePath;
-}
-
-export function getCacheDir() {
-  const cachePath = process.env.CACHE_PATH;
-  const maxCacheSize = getMaxCacheSize();
-  if (maxCacheSize === 0) return undefined;
-  if (!cachePath) {
-    console.error("No CACHE_PATH found in .env!");
-  } else {
-    if (!existsSync(cachePath)) {
-      console.error(`CACHE_PATH ${cachePath} does not exist!`);
-      return undefined;
-    }
-  }
-  return cachePath;
-}
-
 export function getLibraryDir() {
   const libraryPath = process.env.LIBRARY_PATH;
   if (!libraryPath) {
@@ -56,11 +32,6 @@ export function getLibraryDir() {
     }
   }
   return libraryPath;
-}
-
-export function getMaxCacheSize() {
-  const maxSize = process.env.MAX_CACHE_SIZE_IN_MB;
-  return maxSize ? parseInt(maxSize) : 128;
 }
 
 export function getCookiesArray() {
