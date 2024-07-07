@@ -17,6 +17,7 @@ import {
   ChatInputCommandInteraction,
   SlashCommandBuilder,
 } from "discord.js";
+import update from "./update.js";
 
 export type Command = {
   builder: SlashCommandBuilder;
@@ -42,6 +43,7 @@ export const commandList: CommandList = {
   uninstall,
   play,
   load,
+  update,
   queue,
   stop,
   skip,

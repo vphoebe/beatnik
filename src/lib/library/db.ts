@@ -25,6 +25,10 @@ export async function getPlaylist(int_id: number) {
   return prisma.playlist.findUnique({ where: { int_id } });
 }
 
+export async function doesPlaylistExist(id: string) {
+  return !!prisma.playlist.findFirst({ where: { id } });
+}
+
 export async function getPlaylists() {
   return prisma.playlist.findMany({
     select: {
@@ -76,16 +80,19 @@ export async function savePlaylist(playlistData: Playlist) {
   });
 }
 
-export async function updateSavedPlaylist(playlist: Playlist) {
+export async function updateSavedPlaylist(playlistData: Playlist) {
   const existingPlaylist = await prisma.playlist.findFirst({
-    where: { id: playlist.id },
+    where: { id: playlistData.id },
   });
   if (!existingPlaylist) {
     return null;
   }
-  return prisma.$transaction([
+
+  return await prisma.$transaction([
     prisma.track.deleteMany({
-      where: { playlistId: existingPlaylist?.int_id },
+      where: {
+        playlistId: existingPlaylist.int_id,
+      },
     }),
     prisma.playlist.update({
       where: {
@@ -93,7 +100,7 @@ export async function updateSavedPlaylist(playlist: Playlist) {
       },
       data: {
         tracks: {
-          createMany: { data: playlist.tracks },
+          createMany: { data: playlistData.tracks },
         },
       },
     }),
@@ -127,13 +134,7 @@ export async function deleteSavedPlaylist(
   const rmPromises = trackRecords.map((t) => removeDownload(t.id));
   await Promise.all(rmPromises);
 
-  const deleteTracks = prisma.track.deleteMany({
-    where: { playlistId: int_id },
-  });
-
-  const deletePlaylist = prisma.playlist.delete({
+  return prisma.playlist.delete({
     where: { int_id },
   });
-
-  return prisma.$transaction([deleteTracks, deletePlaylist]);
 }

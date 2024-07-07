@@ -92,9 +92,8 @@ export const execute: CommandExecuter = async (interaction) => {
     const int_id = interaction.options.getInteger("playlist-name", true);
     const operation = await deleteSavedPlaylist(undefined, int_id);
     if (operation) {
-      const [tracks, playlist] = operation;
       await interaction.reply({
-        content: `${inlineCode(playlist.title)} was removed alongside ${tracks.count} tracks.`,
+        content: `${inlineCode(operation.title)} was removed.`,
       });
     } else {
       await interaction.reply("Something went wrong.");

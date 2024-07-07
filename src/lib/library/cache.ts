@@ -1,5 +1,6 @@
 import path from "node:path";
 import {
+  doesPlaylistExist,
   getPlaylistWithTracks,
   getTrackByYtId,
   savePlaylist,
@@ -49,17 +50,19 @@ export async function addTrack(track: Track): Promise<AddOperation> {
   };
 }
 
-export async function addPlaylist(playlist: Playlist): Promise<AddOperation> {
-  const existingPlaylist = await getPlaylistWithTracks(playlist.id);
-  if (existingPlaylist) {
-    await updateSavedPlaylist(playlist);
+export async function addPlaylist(
+  playlistData: Playlist,
+): Promise<AddOperation> {
+  const playlistExists = await doesPlaylistExist(playlistData.id);
+  if (playlistExists) {
+    await updateSavedPlaylist(playlistData);
   } else {
-    await savePlaylist(playlist);
+    await savePlaylist(playlistData);
   }
-  await downloadPlaylist(playlist.tracks, playlist.id);
+  await downloadPlaylist(playlistData.tracks, playlistData.id);
   return {
-    added: !existingPlaylist,
-    updated: !!existingPlaylist,
+    added: !playlistExists,
+    updated: playlistExists,
   };
 }
 
