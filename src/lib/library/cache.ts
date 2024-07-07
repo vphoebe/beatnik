@@ -1,7 +1,7 @@
 import path from "node:path";
 import {
   getPlaylistWithTracks,
-  getTrack,
+  getTrackByYtId,
   savePlaylist,
   saveTrack,
   updateSavedPlaylist,
@@ -33,7 +33,7 @@ function getItemPath(id: string) {
 
 export async function addTrack(track: Track): Promise<AddOperation> {
   // add track to db and save file
-  const existingTrack = await getTrack(track.id);
+  const existingTrack = await getTrackByYtId(track.id);
   if (existingTrack) {
     return {
       added: false,

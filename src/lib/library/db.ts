@@ -5,8 +5,12 @@ import { removeDownload } from "./cache.js";
 
 const prisma = new PrismaClient();
 
-export async function getTrack(trackId: string) {
-  return prisma.track.findFirst({ where: { id: trackId } });
+export async function getTrackByYtId(ytId: string) {
+  return prisma.track.findFirst({ where: { id: ytId } });
+}
+
+export async function getTrackByIntId(int_id: number) {
+  return prisma.track.findUnique({ where: { int_id } });
 }
 
 export async function getTrackByUrl(url: string) {
@@ -28,6 +32,10 @@ export async function getPlaylists() {
       int_id: true,
     },
   });
+}
+
+export async function getAllTracks() {
+  return prisma.track.findMany({ select: { title: true, int_id: true } });
 }
 
 export async function getIsolatedTracks() {

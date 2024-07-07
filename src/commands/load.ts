@@ -2,77 +2,137 @@ import { AutocompleteHandler, Command, CommandExecuter } from "./index.js";
 import { getAddedToQueueMessage } from "../lib/embeds.js";
 import { getOrCreateQueue } from "../lib/queue.js";
 import { SlashCommandBuilder } from "discord.js";
-import { getPlaylist, getPlaylists } from "../lib/library/db.js";
+import {
+  getAllTracks,
+  getPlaylist,
+  getPlaylists,
+  getTrackByIntId,
+} from "../lib/library/db.js";
 
 export const builder = new SlashCommandBuilder()
   .setName("load")
-  .setDescription("Load a saved playlist by title, and start playing.")
-  .addIntegerOption((option) =>
-    option
+  .setDescription("Load music from your library.")
+  .addSubcommand((sc) =>
+    sc
       .setName("playlist")
-      .setDescription("The saved playlist.")
-      .setRequired(true)
-      .setAutocomplete(true),
+      .setDescription("Load a saved playlist.")
+      .addIntegerOption((option) =>
+        option
+          .setName("playlist")
+          .setDescription("The saved playlist.")
+          .setRequired(true)
+          .setAutocomplete(true),
+      )
+      .addBooleanOption((option) =>
+        option
+          .setName("end")
+          .setDescription("Add to the end of the queue, instead of next.")
+          .setRequired(false),
+      )
+      .addBooleanOption((option) =>
+        option
+          .setName("shuffle")
+          .setDescription("Shuffle the playlist before adding to the queue.")
+          .setRequired(false),
+      ),
   )
-  .addBooleanOption((option) =>
-    option
-      .setName("end")
-      .setDescription("Add to the end of the queue, instead of next.")
-      .setRequired(false),
-  )
-  .addBooleanOption((option) =>
-    option
-      .setName("shuffle")
-      .setDescription("Shuffle the playlist before adding to the queue.")
-      .setRequired(false),
+  .addSubcommand((sc) =>
+    sc
+      .setName("track")
+      .setDescription("Load a saved track.")
+      .addIntegerOption((option) =>
+        option
+          .setName("track")
+          .setDescription("The saved track.")
+          .setRequired(true)
+          .setAutocomplete(true),
+      ),
   );
 
 export const autocomplete: AutocompleteHandler = async (interaction) => {
-  const savedPlaylists = await getPlaylists();
-  const focusedValue = interaction.options.getFocused();
-  const choices = savedPlaylists.map((sp) => ({
-    name: sp.title,
-    value: sp.int_id,
-  }));
-  await interaction.respond(
-    choices.filter((c) => c.name.startsWith(focusedValue)),
-  );
+  const focusedValue = interaction.options.getFocused(true);
+  if (focusedValue.name === "playlist") {
+    const savedPlaylists = await getPlaylists();
+    const choices = savedPlaylists.map((sp) => ({
+      name: sp.title,
+      value: sp.int_id,
+    }));
+    await interaction.respond(
+      choices
+        .filter((c) =>
+          c.name
+            .toLocaleUpperCase()
+            .includes(focusedValue.value.toLocaleUpperCase()),
+        )
+        .slice(0, 25),
+    );
+  } else if (focusedValue.name === "track") {
+    const tracks = await getAllTracks();
+    const choices = tracks.map((t) => ({ name: t.title, value: t.int_id }));
+    await interaction.respond(
+      choices
+        .filter((c) =>
+          c.name
+            .toLocaleUpperCase()
+            .includes(focusedValue.value.toLocaleUpperCase()),
+        )
+        .slice(0, 25),
+    );
+  }
 };
 
 export const execute: CommandExecuter = async (interaction) => {
   const guildId = interaction.guildId;
   if (!guildId) return;
-
   await interaction.deferReply();
-  const playlistIntId = interaction.options.getInteger("playlist", true);
+
+  const subcommand = interaction.options.getSubcommand();
+  const queue = await getOrCreateQueue(interaction);
   const isEnd = interaction.options.getBoolean("end") ?? false;
   const isShuffle = interaction.options.getBoolean("shuffle") ?? false;
 
-  const queue = await getOrCreateQueue(interaction);
-  const playlist = await getPlaylist(playlistIntId);
+  let queryUrl = "";
 
-  if (!playlist) {
-    await interaction.editReply("No playlist found.");
-  } else {
-    const numberAddedToQueue = await queue.addByQuery(
-      playlist.url,
-      interaction.user.id,
-      isShuffle,
-      isEnd,
-    );
-    await interaction.editReply({
-      content: getAddedToQueueMessage(
-        numberAddedToQueue,
-        queue.isPlaying,
-        isEnd,
-        isShuffle,
-      ),
-    });
-    if (!queue.isPlaying) {
-      await queue.play();
+  if (subcommand === "playlist") {
+    const playlistIntId = interaction.options.getInteger("playlist", true);
+    const playlist = await getPlaylist(playlistIntId);
+
+    if (!playlist) {
+      await interaction.editReply("No playlist found.");
+      return;
     }
-    return;
+
+    queryUrl = playlist.url;
   }
+
+  if (subcommand === "track") {
+    const trackIntId = interaction.options.getInteger("track", true);
+    const track = await getTrackByIntId(trackIntId);
+    if (!track) {
+      await interaction.editReply("No track found.");
+      return;
+    }
+    queryUrl = track.url;
+  }
+
+  const numberAddedToQueue = await queue.addByQuery(
+    queryUrl,
+    interaction.user.id,
+    isShuffle,
+    isEnd,
+  );
+  await interaction.editReply({
+    content: getAddedToQueueMessage(
+      numberAddedToQueue,
+      queue.isPlaying,
+      isEnd,
+      isShuffle,
+    ),
+  });
+  if (!queue.isPlaying) {
+    await queue.play();
+  }
+  return;
 };
 
 export default { builder, execute, autocomplete, global: false } as Command;

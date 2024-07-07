@@ -103,9 +103,9 @@ export const execute: CommandExecuter = async (interaction) => {
     return;
   } else if (subcommand === "saved-track") {
     const int_id = interaction.options.getInteger("track-name", true);
-    const wasRemoved = await deleteSavedTrack(int_id);
+    const removedTrack = await deleteSavedTrack(int_id);
     await interaction.reply({
-      content: `${inlineCode(wasRemoved.title)} was removed.`,
+      content: `${inlineCode(removedTrack?.title ?? "")} was removed.`,
     });
   } else {
     throw new Error("Unknown subcommand");
