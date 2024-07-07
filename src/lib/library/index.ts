@@ -1,4 +1,6 @@
 // tracks
+import { ChatInputCommandInteraction } from "discord.js";
+
 import { getLibraryDir } from "../environment.js";
 import { log } from "../logger.js";
 import { getMetadataFromQuery, YtApiPlaylist, YtApiTrack } from "../youtube/metadata.js";
@@ -81,21 +83,27 @@ export async function addPlaylistToLibrary(
   };
 }
 
-export async function updatePlaylistInLibrary(playlistIntId: number) {
-  const playlistData = await getPlaylist(playlistIntId);
-  if (!playlistData) {
+export async function updatePlaylistInLibrary(
+  playlistIntId: number,
+  interaction: ChatInputCommandInteraction,
+) {
+  const existingPlaylistData = await getPlaylist(playlistIntId);
+  if (!existingPlaylistData) {
     return;
   }
-  const queryResult = await getMetadataFromQuery(playlistData.url, {
+  const queryResult = await getMetadataFromQuery(existingPlaylistData.url, {
     useLibrary: false, // fetch fresh playlist data for update
   });
   const freshPlaylist = queryResult?.playlist;
   if (!freshPlaylist) {
     return;
   }
+  interaction.editReply(
+    `Found ${freshPlaylist.tracks.length} tracks in playlist, updating and downloading any new tracks...`,
+  );
   return {
     operation: await addPlaylistToLibrary(freshPlaylist),
-    playlistData,
+    playlistData: existingPlaylistData,
   };
 }
 

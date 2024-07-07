@@ -8,7 +8,7 @@ export async function getPlaylist(int_id: number) {
 }
 
 export async function doesPlaylistExist(id: string) {
-  return !!prisma.playlist.findFirst({ where: { id } });
+  return (await prisma.playlist.findMany({ where: { id } })).length !== 0;
 }
 
 export async function getPlaylists() {

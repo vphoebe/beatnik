@@ -36,7 +36,7 @@ export const execute: CommandExecuter = async (interaction) => {
   await interaction.deferReply();
   await interaction.editReply("Finding new playlist metadata...");
   const playlistIntId = interaction.options.getInteger("playlist", true);
-  const update = await updatePlaylistInLibrary(playlistIntId);
+  const update = await updatePlaylistInLibrary(playlistIntId, interaction);
   if (!update || !update.operation) {
     await interaction.editReply("Something went wrong.");
   } else {

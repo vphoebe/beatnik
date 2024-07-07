@@ -25,11 +25,13 @@ export const execute: CommandExecuter = async (interaction) => {
   const query = interaction.options.getString("query", true);
   await interaction.deferReply();
 
-  await interaction.editReply(`Finding metadata for your query... Please wait.`);
+  await interaction.editReply(
+    `Finding metadata for your query... please wait (this can take a while).`,
+  );
   const queryResult = await getMetadataFromQuery(query, { useLibrary: false }); // always add fresh data
   const count = queryResult?.playlist ? queryResult.playlist.tracks.length : 1;
 
-  await interaction.editReply(`Adding and downloading ${count} track(s)... Please wait.`);
+  await interaction.editReply(`Adding and downloading ${count} track(s)... please wait.`);
 
   let operation: LibraryOperationResult | null;
 
