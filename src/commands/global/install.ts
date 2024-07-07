@@ -28,17 +28,16 @@ export async function execute(interaction: CommandInteraction) {
   const rest = new REST().setToken(token);
 
   try {
-    const data = await rest.put(
-      Routes.applicationGuildCommands(clientId, guildId),
-      { body: guildCommands },
-    );
+    await rest.put(Routes.applicationGuildCommands(clientId, guildId), {
+      body: guildCommands,
+    });
     log({
       type: "INFO",
       guildId,
       user: "BOT",
       message: "Registered guild commands",
     });
-    await interaction.reply(`${data.length} Beatnik commands installed!`);
+    await interaction.reply("Beatnik commands installed!");
   } catch (err) {
     console.error(err);
     await interaction.reply("Error adding Beatnik commands.");
