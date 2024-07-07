@@ -35,7 +35,9 @@ export async function getPlaylists() {
 }
 
 export async function getAllTracks() {
-  return prisma.track.findMany({ select: { title: true, int_id: true } });
+  return prisma.track.findMany({
+    select: { title: true, channelName: true, int_id: true },
+  });
 }
 
 export async function getIsolatedTracks() {

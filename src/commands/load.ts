@@ -68,7 +68,10 @@ export const autocomplete: AutocompleteHandler = async (interaction) => {
     );
   } else if (focusedValue.name === "track") {
     const tracks = await getAllTracks();
-    const choices = tracks.map((t) => ({ name: t.title, value: t.int_id }));
+    const choices = tracks.map((t) => ({
+      name: `${t.title} (${t.channelName})`.slice(0, 100),
+      value: t.int_id,
+    }));
     await interaction.respond(
       choices
         .filter((c) =>
