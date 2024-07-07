@@ -1,7 +1,6 @@
 import ytdl from "@distube/ytdl-core";
 import ytpl from "@distube/ytpl";
 import ytsr from "@distube/ytsr";
-import { durationStringToSeconds } from "../util.js";
 import { getPlaylistWithTracks, getTrackByUrl } from "../library/db.js";
 import { agent } from "./agent.js";
 
@@ -65,25 +64,33 @@ function getQueryType(query: string): Query | null {
   }
 }
 
-async function getTrackInfo(url: string, useLibrary: boolean): Promise<Track> {
+async function getTrackInfo(
+  url: string,
+  useLibrary: boolean,
+): Promise<Track | undefined> {
   const existingTrack = await getTrackByUrl(url);
   if (existingTrack && useLibrary) {
     return existingTrack;
   }
-  const info = await ytdl.getInfo(url, { agent });
-  const { videoDetails, player_response } = info;
-  const { title, lengthSeconds, thumbnails, author, videoId, video_url } =
-    videoDetails;
-  return {
-    title,
-    url: video_url,
-    length: parseInt(lengthSeconds),
-    id: videoId,
-    channelName: author.name,
-    thumbnailUrl: thumbnails[0].url,
-    loudness: player_response.playerConfig.audioConfig.loudnessDb,
-    playlistIdx: null,
-  };
+  try {
+    const info = await ytdl.getInfo(url, { agent });
+    const { videoDetails, player_response } = info;
+    const { title, lengthSeconds, thumbnails, author, videoId, video_url } =
+      videoDetails;
+    return {
+      title,
+      url: video_url,
+      length: parseInt(lengthSeconds),
+      id: videoId,
+      channelName: author.name,
+      thumbnailUrl: thumbnails[0].url,
+      loudness: player_response.playerConfig.audioConfig.loudnessDb,
+      playlistIdx: null,
+    };
+  } catch (err) {
+    console.error(`Error for ${url}`);
+    console.error(err);
+  }
 }
 
 async function getPlaylistInfo(
@@ -95,22 +102,20 @@ async function getPlaylistInfo(
     return existingPlaylist;
   }
   const playlistInfo = await ytpl(idOrUrl, { limit: Infinity });
-  const tracks: Track[] = playlistInfo.items.map((item, idx) => ({
-    title: item.title,
-    url: item.url,
-    length: durationStringToSeconds(item.duration ?? "0:00"),
-    id: item.id,
-    channelName: item.author?.name ?? null,
-    thumbnailUrl: item.thumbnail,
-    loudness: 0, //TODO: GET REAL LOUDNESS VALUE
-    playlistIdx: idx,
-  }));
+  const infoPromises = playlistInfo.items.map((t) =>
+    getTrackInfo(t.url, false),
+  );
+  const data = await Promise.all(infoPromises);
+  const tracks = data
+    .filter((t) => t !== undefined)
+    .map((track, idx) => ({ ...track, playlistIdx: idx }));
+
   return {
     tracks,
     title: playlistInfo.title,
     url: playlistInfo.url,
     id: playlistInfo.id,
-    authorName: playlistInfo.author?.name ?? "Unknown",
+    authorName: playlistInfo.author?.user ?? "Unknown",
   };
 }
 

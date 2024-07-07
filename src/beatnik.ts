@@ -1,7 +1,6 @@
 import path from "node:path";
 import fs from "node:fs";
 import { commandList } from "./commands/index.js";
-import { checkCacheValidity, cleanUpParts } from "./lib/cache.js";
 import { getClientId, getToken } from "./lib/environment.js";
 import { log } from "./lib/logger.js";
 import { startPresenceLifecycle } from "./lib/presence.js";
@@ -9,8 +8,10 @@ import { allGuildQueues } from "./lib/queue.js";
 import { errorReply } from "./lib/replies.js";
 import { generateDependencyReport } from "@discordjs/voice";
 import {
+  AutocompleteInteraction,
   ChatInputCommandInteraction,
   Client,
+  Events,
   GatewayIntentBits,
 } from "discord.js";
 import { testLibrary } from "./lib/library/cache.js";
@@ -34,7 +35,7 @@ export const client = new Client({
 });
 
 // When the client is ready, run this code (only once)
-client.once("ready", async () => {
+client.on(Events.ClientReady, async () => {
   log({
     type: "INFO",
     user: "BOT",
@@ -44,31 +45,44 @@ client.once("ready", async () => {
   startPresenceLifecycle(client);
 });
 
-client.on("interactionCreate", async (interaction) => {
-  if (!interaction.isCommand()) return;
-  log({
-    type: "CMD",
-    user: interaction.user.username,
-    guildId: interaction.guildId ?? "N/A",
-    message: `Ran ${interaction.commandName}`,
-  });
-  const runCommand = commandList[interaction.commandName];
-  if (!runCommand) return;
-  try {
-    await runCommand.execute(interaction as ChatInputCommandInteraction);
-  } catch (err) {
-    console.error(err);
-    if (interaction.deferred) {
-      await interaction.editReply(
-        errorReply(err, interaction.ephemeral ?? false),
-      );
-    } else {
-      await interaction.reply(errorReply(err, interaction.ephemeral ?? false));
+client.on(Events.InteractionCreate, async (interaction) => {
+  if (interaction.isAutocomplete()) {
+    const runCommand = commandList[interaction.commandName];
+    if (!runCommand || !runCommand.autocomplete) return;
+    try {
+      await runCommand.autocomplete(interaction as AutocompleteInteraction);
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  if (interaction.isChatInputCommand()) {
+    const runCommand = commandList[interaction.commandName];
+    if (!runCommand) return;
+    log({
+      type: "CMD",
+      user: interaction.user.username,
+      guildId: interaction.guildId ?? "N/A",
+      message: `Ran ${interaction.commandName}`,
+    });
+    try {
+      await runCommand.execute(interaction as ChatInputCommandInteraction);
+    } catch (err) {
+      console.error(err);
+      if (interaction.deferred) {
+        await interaction.editReply(
+          errorReply(err, interaction.ephemeral ?? false),
+        );
+      } else {
+        await interaction.reply(
+          errorReply(err, interaction.ephemeral ?? false),
+        );
+      }
     }
   }
 });
 
-client.on("voiceStateUpdate", async (oldState) => {
+client.on(Events.VoiceStateUpdate, async (oldState) => {
   const totalMembers = oldState.channel?.members.size;
   if (totalMembers === 1) {
     // just the bot remains, leave the channel

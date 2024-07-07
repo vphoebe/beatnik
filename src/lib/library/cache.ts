@@ -12,6 +12,7 @@ import ytdl from "@distube/ytdl-core";
 import { createReadStream, createWriteStream, existsSync } from "node:fs";
 import { finished } from "node:stream/promises";
 import { agent } from "../youtube/agent.js";
+import { rm } from "node:fs/promises";
 
 export interface AddOperation {
   added: boolean;
@@ -65,12 +66,12 @@ export async function addPlaylist(playlist: Playlist): Promise<AddOperation> {
 async function downloadId(id: string) {
   // download single video ID to cache dir
   try {
-    console.log(`Downloading ${id}...`);
     const targetPath = getItemPath(id);
     if (targetPath.exists) {
-      console.log(`${id} already downloaded, skipping.`);
       return;
     }
+    console.log(`Downloading ${id}...`);
+
     const stream = ytdl(id, {
       filter: "audioonly",
       quality: "highestaudio",
@@ -83,6 +84,16 @@ async function downloadId(id: string) {
   } catch (err) {
     console.error(err);
   }
+}
+
+export async function removeDownload(id: string) {
+  const targetPath = getItemPath(id);
+  if (!targetPath.exists) {
+    return;
+  }
+  console.log(`Deleting ${id} from disk.`);
+
+  return rm(targetPath.path);
 }
 
 async function downloadPlaylist(tracks: Track[], playlistId: string) {
