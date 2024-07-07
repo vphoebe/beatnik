@@ -4,15 +4,9 @@ import {
   createAudioPlayer,
   PlayerSubscription,
 } from "@discordjs/voice";
-import {
-  CommandInteraction,
-  TextBasedChannel,
-  VoiceBasedChannel,
-} from "discord.js";
-import {
-  getExistingVoiceConnection,
-  createVoiceConnection,
-} from "../lib/connection.js";
+import { CommandInteraction, TextBasedChannel, VoiceBasedChannel } from "discord.js";
+
+import { getExistingVoiceConnection, createVoiceConnection } from "../lib/connection.js";
 import { getNowPlayingEmbed } from "../lib/embeds.js";
 import { log } from "../lib/logger.js";
 import { shuffleArray } from "../lib/util.js";
@@ -27,16 +21,12 @@ export const allGuildQueues = new Map<string, Queue>();
 
 function getVoiceChannelFromInteraction(interaction: CommandInteraction) {
   const requestingUserId = interaction.user.id;
-  const requestingMember =
-    interaction.guild?.members.cache.get(requestingUserId);
-  if (!requestingMember)
-    throw new Error("No guild member found for this user.");
+  const requestingMember = interaction.guild?.members.cache.get(requestingUserId);
+  if (!requestingMember) throw new Error("No guild member found for this user.");
   return requestingMember.voice.channel;
 }
 
-export async function getOrCreateQueue(
-  interaction: CommandInteraction,
-): Promise<Queue> {
+export async function getOrCreateQueue(interaction: CommandInteraction): Promise<Queue> {
   const guildId = interaction.guildId;
   if (!guildId) {
     throw new Error("Unable to find your guild ID. Are you in a server?");
@@ -80,10 +70,7 @@ class Queue {
   playingFromCache: boolean | null;
   subscription: PlayerSubscription | undefined;
 
-  constructor(
-    voiceChannel: VoiceBasedChannel,
-    textChannel: TextBasedChannel | null,
-  ) {
+  constructor(voiceChannel: VoiceBasedChannel, textChannel: TextBasedChannel | null) {
     this.tracks = [];
     this.currentIndex = 0;
     this.audioPlayer = createAudioPlayer().on(AudioPlayerStatus.Idle, () => {
@@ -102,18 +89,12 @@ class Queue {
 
   async enqueue(query: string, userId: string, shuffle = false, end = false) {
     const data = await getMetadataFromQuery(query, { useLibrary: true });
-    let tracks = data?.playlist
-      ? data.playlist.tracks
-      : data?.track
-        ? [data.track]
-        : [];
+    let tracks = data?.playlist ? data.playlist.tracks : data?.track ? [data.track] : [];
     if (shuffle) {
       tracks = shuffleArray(tracks);
     }
     const basis = end ? this.tracks.length : this.currentIndex + 1;
-    tracks.forEach((t, idx) =>
-      this.insert({ ...t, addedBy: userId }, basis + idx),
-    );
+    tracks.forEach((t, idx) => this.insert({ ...t, addedBy: userId }, basis + idx));
     return tracks.length;
   }
 
@@ -144,9 +125,7 @@ class Queue {
       log({
         type: "INFO",
         user: "BOT",
-        message: `Playing ${trackToPlay.id} ${
-          fromCache ? "from cache" : "from URL"
-        }`,
+        message: `Playing ${trackToPlay.id} ${fromCache ? "from cache" : "from URL"}`,
       });
       return this.nowPlaying;
     } catch (err) {
@@ -157,9 +136,7 @@ class Queue {
       });
       console.error(err);
       this.textChannel?.send(
-        `Unable to play ${
-          this.nowPlaying?.id ?? "[no track found]"
-        }, skipping...`,
+        `Unable to play ${this.nowPlaying?.id ?? "[no track found]"}, skipping...`,
       );
       await this.next();
     }

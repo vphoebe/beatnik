@@ -1,8 +1,9 @@
-import { Command, CommandExecuter } from "./index.js";
+import { SlashCommandBuilder } from "discord.js";
+
 import { getNowPlayingEmbed, getQueueListEmbed } from "../lib/embeds.js";
 import { getExistingQueue } from "../lib/queue.js";
 import { noQueueReply } from "../lib/replies.js";
-import { SlashCommandBuilder } from "discord.js";
+import { Command, CommandExecuter } from "./index.js";
 
 export const builder = new SlashCommandBuilder()
   .setName("queue")
@@ -11,7 +12,7 @@ export const builder = new SlashCommandBuilder()
     option
       .setName("page")
       .setDescription("Specify the page number of the queue to view")
-      .setRequired(false)
+      .setRequired(false),
   );
 
 export const execute: CommandExecuter = async (interaction) => {
@@ -43,18 +44,8 @@ export const execute: CommandExecuter = async (interaction) => {
     }
     const nowPlayingEmbed =
       nowPlaying &&
-      getNowPlayingEmbed(
-        nowPlaying,
-        currentIndex + 1,
-        tracks.length,
-        playingFromCache
-      );
-    const queueListEmbed = getQueueListEmbed(
-      pagedTracks,
-      pageNumber,
-      totalPages,
-      currentIndex
-    );
+      getNowPlayingEmbed(nowPlaying, currentIndex + 1, tracks.length, playingFromCache);
+    const queueListEmbed = getQueueListEmbed(pagedTracks, pageNumber, totalPages, currentIndex);
 
     const sendEmbeds = [queueListEmbed];
     if (nowPlayingEmbed) {

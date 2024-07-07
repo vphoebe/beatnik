@@ -1,13 +1,11 @@
-import { QueuedTrack } from "./queue.js";
-import { getDurationString } from "./util.js";
 import { bold, italic, userMention } from "discord.js";
 import { EmbedBuilder } from "discord.js";
 
+import { QueuedTrack } from "./queue.js";
+import { getDurationString } from "./util.js";
+
 const baseEmbed = () =>
-  new EmbedBuilder()
-    .setColor("#F6921E")
-    .setTimestamp()
-    .setFooter({ text: "sent by Beatnik" });
+  new EmbedBuilder().setColor("#F6921E").setTimestamp().setFooter({ text: "sent by Beatnik" });
 
 export function getNowPlayingEmbed(
   track: QueuedTrack,
@@ -22,13 +20,9 @@ export function getNowPlayingEmbed(
     .setTitle(track.title)
     .setThumbnail(track.thumbnailUrl ?? "")
     .setDescription(
-      `:cinema: ${italic(
-        track.channelName ?? "unknown",
-      )} :hourglass: ${getDurationString(
+      `:cinema: ${italic(track.channelName ?? "unknown")} :hourglass: ${getDurationString(
         track.length,
-      )} \n:technologist: ${userMention(
-        track.addedBy,
-      )} :cd: ${currentIndex} of ${totalQueued} ${
+      )} \n:technologist: ${userMention(track.addedBy)} :cd: ${currentIndex} of ${totalQueued} ${
         fromCache ? ":floppy_disk:" : ":globe_with_meridians:"
       }`,
     )
@@ -43,8 +37,7 @@ export function getQueueListEmbed(
 ) {
   const trackStrings = tracks.map((t, relativeIndex) => {
     const indexOffset = 1 + 10 * (pageNumber - 1);
-    const shortTitle: string =
-      t.title.length > 50 ? `${t.title.substring(0, 45)}...` : t.title;
+    const shortTitle: string = t.title.length > 50 ? `${t.title.substring(0, 45)}...` : t.title;
     const absoluteIndex = relativeIndex + indexOffset;
     const isNowPlaying = currentIndex + 1 === absoluteIndex;
     return `${isNowPlaying ? ":sound: " : ""}[${absoluteIndex}]: ${
@@ -55,9 +48,7 @@ export function getQueueListEmbed(
       )}  :hourglass: ${getDurationString(t.length)}`;
   });
   const fieldText =
-    trackStrings.length > 0
-      ? trackStrings.join("\n\n")
-      : "Nothing is after this track.";
+    trackStrings.length > 0 ? trackStrings.join("\n\n") : "Nothing is after this track.";
   return baseEmbed()
     .setAuthor({ name: "Current queue for Beatnik" })
     .addFields({

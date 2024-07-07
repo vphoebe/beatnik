@@ -1,7 +1,8 @@
-import { Command, CommandExecuter } from "./index.js";
+import { SlashCommandBuilder } from "discord.js";
+
 import { getExistingQueue } from "../lib/queue.js";
 import { noQueueReply } from "../lib/replies.js";
-import { SlashCommandBuilder } from "discord.js";
+import { Command, CommandExecuter } from "./index.js";
 
 export const builder = new SlashCommandBuilder()
   .setName("skip")
@@ -10,9 +11,9 @@ export const builder = new SlashCommandBuilder()
     option
       .setName("track")
       .setDescription(
-        "Skip to a specific song in the queue by track number (seen in /queue command.)"
+        "Skip to a specific song in the queue by track number (seen in /queue command.)",
       )
-      .setRequired(false)
+      .setRequired(false),
   );
 
 export const execute: CommandExecuter = async (interaction) => {

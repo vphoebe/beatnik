@@ -1,4 +1,5 @@
 import { User } from "discord.js";
+
 import { Game } from "./game.js";
 
 class StateManager {
@@ -20,9 +21,7 @@ class StateManager {
   delete(guildId: string, user: User) {
     const guildGames = this.guilds.get(guildId);
     if (guildGames) {
-      const game = guildGames?.findIndex(
-        (game) => game.getPlayerPiece(user) !== null
-      );
+      const game = guildGames?.findIndex((game) => game.getPlayerPiece(user) !== null);
       if (game !== -1) {
         const withRemoved = [...guildGames];
         withRemoved.splice(game, 1);

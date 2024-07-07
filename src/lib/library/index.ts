@@ -1,11 +1,8 @@
 // tracks
-
+import { getLibraryDir } from "../environment.js";
+import { log } from "../logger.js";
+import { getMetadataFromQuery, YtApiPlaylist, YtApiTrack } from "../youtube/metadata.js";
 import { downloadId, downloadPlaylist, removeDownload } from "./cache.js";
-import {
-  getMetadataFromQuery,
-  YtApiPlaylist,
-  YtApiTrack,
-} from "../youtube/metadata.js";
 import { prisma } from "./db/client.js";
 import {
   doesPlaylistExist,
@@ -13,14 +10,7 @@ import {
   savePlaylist,
   getPlaylist,
 } from "./db/playlist.js";
-import {
-  getTrackByYtId,
-  createTrack,
-  getTrackByIntId,
-  deleteTrack,
-} from "./db/track.js";
-import { getLibraryDir } from "../environment.js";
-import { log } from "../logger.js";
+import { getTrackByYtId, createTrack, getTrackByIntId, deleteTrack } from "./db/track.js";
 
 export interface LibraryOperationResult {
   added: boolean;
@@ -48,9 +38,7 @@ export async function testLibraryConnection() {
   }
 }
 
-export async function addTrackToLibrary(
-  track: YtApiTrack,
-): Promise<LibraryOperationResult> {
+export async function addTrackToLibrary(track: YtApiTrack): Promise<LibraryOperationResult> {
   // add track to db and save file
   const existingTrack = await getTrackByYtId(track.id);
   if (existingTrack) {
@@ -111,10 +99,7 @@ export async function updatePlaylistInLibrary(playlistIntId: number) {
   };
 }
 
-export async function deletePlaylistFromLibrary(
-  playlistId?: string,
-  int_id?: number,
-) {
+export async function deletePlaylistFromLibrary(playlistId?: string, int_id?: number) {
   if (!int_id) {
     const existingPlaylist = await prisma.playlist.findFirst({
       where: { id: playlistId },

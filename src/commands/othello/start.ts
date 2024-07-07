@@ -1,20 +1,17 @@
+import { ChatInputCommandInteraction, SlashCommandBuilder, User } from "discord.js";
+
 import { Game } from "../../lib/othello/game.js";
 import { state } from "../../lib/othello/state.js";
 import { Command } from "../index.js";
-import {
-  ChatInputCommandInteraction,
-  SlashCommandBuilder,
-  User,
-} from "discord.js";
 
 const data = new SlashCommandBuilder()
   .setName("othello-start")
   .setDescription("[Othello] Start a game of Othello between two users.")
   .addUserOption((option) =>
-    option.setName("black").setDescription("Player for Black").setRequired(true)
+    option.setName("black").setDescription("Player for Black").setRequired(true),
   )
   .addUserOption((option) =>
-    option.setName("white").setDescription("Player for White").setRequired(true)
+    option.setName("white").setDescription("Player for White").setRequired(true),
   );
 
 const execute = async (interaction: ChatInputCommandInteraction) => {

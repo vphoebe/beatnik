@@ -1,5 +1,6 @@
-import { state } from "../../lib/othello/state.js";
 import { ChatInputCommandInteraction, SlashCommandBuilder } from "discord.js";
+
+import { state } from "../../lib/othello/state.js";
 import { Command } from "../index.js";
 
 const data = new SlashCommandBuilder()
@@ -7,9 +8,7 @@ const data = new SlashCommandBuilder()
   .setDescription("[Othello] Pass your turn to the other player.");
 
 const execute = async (interaction: ChatInputCommandInteraction) => {
-  const game = interaction.guildId
-    ? state.get(interaction.guildId, interaction.user)
-    : undefined;
+  const game = interaction.guildId ? state.get(interaction.guildId, interaction.user) : undefined;
 
   if (!game) {
     await interaction.reply({

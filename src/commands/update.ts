@@ -1,7 +1,8 @@
-import { AutocompleteHandler, Command, CommandExecuter } from "./index.js";
 import { SlashCommandBuilder } from "discord.js";
-import { updatePlaylistInLibrary } from "../lib/library/index.js";
+
 import { getPlaylists } from "../lib/library/db/playlist.js";
+import { updatePlaylistInLibrary } from "../lib/library/index.js";
+import { AutocompleteHandler, Command, CommandExecuter } from "./index.js";
 
 export const builder = new SlashCommandBuilder()
   .setName("update")
@@ -23,9 +24,7 @@ export const autocomplete: AutocompleteHandler = async (interaction) => {
   }));
   await interaction.respond(
     choices
-      .filter((c) =>
-        c.name.toLocaleUpperCase().includes(focusedValue.toLocaleUpperCase()),
-      )
+      .filter((c) => c.name.toLocaleUpperCase().includes(focusedValue.toLocaleUpperCase()))
       .slice(0, 25),
   );
 };

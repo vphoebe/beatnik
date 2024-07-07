@@ -1,6 +1,7 @@
+import { codeBlock } from "discord.js";
+
 import { Coords } from "./coordinates.js";
 import { Theme } from "./themes.js";
-import { codeBlock } from "discord.js";
 
 export enum Square {
   Dark = 1,
@@ -20,9 +21,7 @@ export class Board {
 
   constructor() {
     // 2D array, idx 0-7 on both axes
-    const board: Square[][] = new Array(8)
-      .fill(null)
-      .map(() => new Array(8).fill(Square.Empty));
+    const board: Square[][] = new Array(8).fill(null).map(() => new Array(8).fill(Square.Empty));
 
     this.data = board;
   }
@@ -99,17 +98,12 @@ export class Board {
 
   draw(theme: Theme): string {
     // take board data and return embeddable string
-    const rowAlignedBoard = this.data[0].map((_val, y) =>
-      this.data.map((row) => row[y])
-    );
+    const rowAlignedBoard = this.data[0].map((_val, y) => this.data.map((row) => row[y]));
     // eslint-disable-next-line no-irregular-whitespace
     const boardString =
       theme.colHeading +
       rowAlignedBoard
-        .map(
-          (row, idx) =>
-            `${idx + 1} ${row.map((char) => theme.squares[char]).join(" ")}`
-        )
+        .map((row, idx) => `${idx + 1} ${row.map((char) => theme.squares[char]).join(" ")}`)
         .join("\n");
 
     return codeBlock(boardString);

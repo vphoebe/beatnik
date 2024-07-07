@@ -1,16 +1,15 @@
+import { createAudioResource, demuxProbe } from "@discordjs/voice";
 import ytdl from "@distube/ytdl-core";
-import { getDownloadedIdStream } from "../library/cache.js";
-import { QueuedTrack } from "../queue.js";
 import { ReadStream } from "fs";
 import { Readable } from "node:stream";
-import { createAudioResource, demuxProbe } from "@discordjs/voice";
+
+import { getDownloadedIdStream } from "../library/cache.js";
+import { QueuedTrack } from "../queue.js";
 import { agent } from "./agent.js";
 
 export async function createResource(track: QueuedTrack) {
   // return resource either from stream or cache
-  let stream: Readable | ReadStream | undefined = getDownloadedIdStream(
-    track.id,
-  );
+  let stream: Readable | ReadStream | undefined = getDownloadedIdStream(track.id);
   let fromCache = true;
   if (!stream) {
     // grab api stream from youtube

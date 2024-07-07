@@ -1,7 +1,8 @@
+import { REST, Routes } from "discord.js";
+
 import { commandList } from "./commands/index.js";
 import { getClientId, getToken } from "./lib/environment.js";
 import { log } from "./lib/logger.js";
-import { REST, Routes } from "discord.js";
 
 const globalCommands = Object.keys(commandList)
   .filter((key) => commandList[key].global)

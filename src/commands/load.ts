@@ -1,9 +1,10 @@
-import { AutocompleteHandler, Command, CommandExecuter } from "./index.js";
-import { getAddedToQueueMessage } from "../lib/embeds.js";
-import { getOrCreateQueue } from "../lib/queue.js";
 import { SlashCommandBuilder } from "discord.js";
+
+import { getAddedToQueueMessage } from "../lib/embeds.js";
 import { getPlaylists, getPlaylist } from "../lib/library/db/playlist.js";
 import { getAllTracks, getTrackByIntId } from "../lib/library/db/track.js";
+import { getOrCreateQueue } from "../lib/queue.js";
+import { AutocompleteHandler, Command, CommandExecuter } from "./index.js";
 
 export const builder = new SlashCommandBuilder()
   .setName("load")
@@ -55,11 +56,7 @@ export const autocomplete: AutocompleteHandler = async (interaction) => {
     }));
     await interaction.respond(
       choices
-        .filter((c) =>
-          c.name
-            .toLocaleUpperCase()
-            .includes(focusedValue.value.toLocaleUpperCase()),
-        )
+        .filter((c) => c.name.toLocaleUpperCase().includes(focusedValue.value.toLocaleUpperCase()))
         .slice(0, 25),
     );
   } else if (focusedValue.name === "track") {
@@ -70,11 +67,7 @@ export const autocomplete: AutocompleteHandler = async (interaction) => {
     }));
     await interaction.respond(
       choices
-        .filter((c) =>
-          c.name
-            .toLocaleUpperCase()
-            .includes(focusedValue.value.toLocaleUpperCase()),
-        )
+        .filter((c) => c.name.toLocaleUpperCase().includes(focusedValue.value.toLocaleUpperCase()))
         .slice(0, 25),
     );
   }
@@ -114,19 +107,9 @@ export const execute: CommandExecuter = async (interaction) => {
     queryUrl = track.url;
   }
 
-  const numberAddedToQueue = await queue.enqueue(
-    queryUrl,
-    interaction.user.id,
-    isShuffle,
-    isEnd,
-  );
+  const numberAddedToQueue = await queue.enqueue(queryUrl, interaction.user.id, isShuffle, isEnd);
   await interaction.editReply({
-    content: getAddedToQueueMessage(
-      numberAddedToQueue,
-      queue.isPlaying,
-      isEnd,
-      isShuffle,
-    ),
+    content: getAddedToQueueMessage(numberAddedToQueue, queue.isPlaying, isEnd, isShuffle),
   });
   if (!queue.isPlaying) {
     await queue.play();

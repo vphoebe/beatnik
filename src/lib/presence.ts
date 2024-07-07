@@ -1,10 +1,6 @@
+import { ActivitiesOptions, ActivityType, Client, PresenceStatusData } from "discord.js";
+
 import { getBeatTimeString } from "./util.js";
-import {
-  ActivitiesOptions,
-  ActivityType,
-  Client,
-  PresenceStatusData,
-} from "discord.js";
 
 export function getIdleActivity() {
   const activity: ActivitiesOptions = {
@@ -17,7 +13,7 @@ export function getIdleActivity() {
 export function updatePresence(
   client: Client,
   status: PresenceStatusData,
-  activity: ActivitiesOptions
+  activity: ActivitiesOptions,
 ): void {
   client.user?.setPresence({ status, activities: [activity] });
   return;

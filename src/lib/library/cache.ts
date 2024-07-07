@@ -1,12 +1,13 @@
-import path from "node:path";
-import { YtApiTrack } from "../youtube/metadata.js";
-import { getLibraryDir } from "../environment.js";
 import ytdl from "@distube/ytdl-core";
 import { createReadStream, createWriteStream, existsSync } from "node:fs";
-import { finished } from "node:stream/promises";
-import { agent } from "../youtube/agent.js";
 import { rm } from "node:fs/promises";
+import path from "node:path";
+import { finished } from "node:stream/promises";
+
+import { getLibraryDir } from "../environment.js";
 import { log } from "../logger.js";
+import { agent } from "../youtube/agent.js";
+import { YtApiTrack } from "../youtube/metadata.js";
 
 function getItemPath(id: string) {
   const libDir = getLibraryDir();
@@ -53,10 +54,7 @@ export async function removeDownload(id: string) {
   return rm(targetPath.path);
 }
 
-export async function downloadPlaylist(
-  tracks: YtApiTrack[],
-  playlistId: string,
-) {
+export async function downloadPlaylist(tracks: YtApiTrack[], playlistId: string) {
   log({
     type: "CACHE",
     user: "BOT",

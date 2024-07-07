@@ -1,11 +1,3 @@
-import path from "node:path";
-import fs from "node:fs";
-import { commandList } from "./commands/index.js";
-import { getToken } from "./lib/environment.js";
-import { log } from "./lib/logger.js";
-import { startPresenceLifecycle } from "./lib/presence.js";
-import { allGuildQueues } from "./lib/queue.js";
-import { errorReply } from "./lib/replies.js";
 import { generateDependencyReport } from "@discordjs/voice";
 import {
   AutocompleteInteraction,
@@ -14,7 +6,16 @@ import {
   Events,
   GatewayIntentBits,
 } from "discord.js";
+import fs from "node:fs";
+import path from "node:path";
+
+import { commandList } from "./commands/index.js";
+import { getToken } from "./lib/environment.js";
 import { testLibraryConnection } from "./lib/library/index.js";
+import { log } from "./lib/logger.js";
+import { startPresenceLifecycle } from "./lib/presence.js";
+import { allGuildQueues } from "./lib/queue.js";
+import { errorReply } from "./lib/replies.js";
 
 const token = getToken();
 
@@ -66,13 +67,9 @@ client.on(Events.InteractionCreate, async (interaction) => {
     } catch (err) {
       console.error(err);
       if (interaction.deferred) {
-        await interaction.editReply(
-          errorReply(err, interaction.ephemeral ?? false),
-        );
+        await interaction.editReply(errorReply(err, interaction.ephemeral ?? false));
       } else {
-        await interaction.reply(
-          errorReply(err, interaction.ephemeral ?? false),
-        );
+        await interaction.reply(errorReply(err, interaction.ephemeral ?? false));
       }
     }
   }

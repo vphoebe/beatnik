@@ -1,6 +1,7 @@
 import ytpl from "@distube/ytpl";
-import { prisma } from "./client.js";
+
 import { YtApiPlaylist } from "../../youtube/metadata.js";
+import { prisma } from "./client.js";
 
 export async function getPlaylist(int_id: number) {
   return prisma.playlist.findUnique({ where: { int_id } });

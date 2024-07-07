@@ -1,10 +1,11 @@
 import ytdl from "@distube/ytdl-core";
 import ytpl from "@distube/ytpl";
 import ytsr from "@distube/ytsr";
-import { agent } from "./agent.js";
+
 import { getPlaylistWithTracks } from "../library/db/playlist.js";
 import { getAllTracks, getTrackByUrl } from "../library/db/track.js";
 import { durationStringToSeconds } from "../util.js";
+import { agent } from "./agent.js";
 
 interface Query {
   query: string;
@@ -66,10 +67,7 @@ function getQueryType(query: string): Query | null {
   }
 }
 
-async function getTrackInfo(
-  url: string,
-  useLibrary: boolean,
-): Promise<YtApiTrack | undefined> {
+async function getTrackInfo(url: string, useLibrary: boolean): Promise<YtApiTrack | undefined> {
   const existingTrack = await getTrackByUrl(url);
   if (existingTrack && useLibrary) {
     return existingTrack;
@@ -77,8 +75,7 @@ async function getTrackInfo(
   try {
     const info = await ytdl.getInfo(url, { agent });
     const { videoDetails, player_response } = info;
-    const { title, lengthSeconds, thumbnails, author, videoId, video_url } =
-      videoDetails;
+    const { title, lengthSeconds, thumbnails, author, videoId, video_url } = videoDetails;
     return {
       title,
       url: video_url,
@@ -95,18 +92,15 @@ async function getTrackInfo(
   }
 }
 
-async function getPlaylistInfo(
-  idOrUrl: string,
-  useLibrary: boolean,
-): Promise<YtApiPlaylist> {
+async function getPlaylistInfo(idOrUrl: string, useLibrary: boolean): Promise<YtApiPlaylist> {
   const existingPlaylist = await getPlaylistWithTracks(idOrUrl);
   if (existingPlaylist && useLibrary) {
     return existingPlaylist;
   }
   const playlistInfo = await ytpl(idOrUrl, { limit: Infinity });
 
-  const tracksWithoutLoudness: Omit<YtApiTrack, "loudness">[] =
-    playlistInfo.items.map((item, idx) => ({
+  const tracksWithoutLoudness: Omit<YtApiTrack, "loudness">[] = playlistInfo.items.map(
+    (item, idx) => ({
       title: item.title,
       length: durationStringToSeconds(item.duration ?? "0:00"),
       url: item.url,
@@ -114,7 +108,8 @@ async function getPlaylistInfo(
       channelName: item.author?.name ?? "Unknown",
       thumbnailUrl: item.thumbnail ?? "",
       playlistIdx: idx,
-    }));
+    }),
+  );
 
   // use existing loudness data if possible
   const loudnessData = (await getAllTracks()).map((t) => ({
@@ -146,10 +141,7 @@ async function getPlaylistInfo(
   };
 }
 
-export async function getMetadataFromQuery(
-  query: string,
-  options: { useLibrary: boolean },
-) {
+export async function getMetadataFromQuery(query: string, options: { useLibrary: boolean }) {
   const { useLibrary } = options;
   const parsedQuery = getQueryType(query);
 

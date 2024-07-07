@@ -1,7 +1,8 @@
+import { EmbedBuilder, User, userMention } from "discord.js";
+
 import { Board, Square, Piece, opposite } from "./board.js";
 import { MoveDefinition, compass } from "./coordinates.js";
 import { Theme, themes } from "./themes.js";
-import { EmbedBuilder, User, userMention } from "discord.js";
 
 interface Player {
   user: User;
@@ -61,9 +62,7 @@ export class Game {
   getPlayerPiece(user: User): Piece | null {
     // return the user's player's piece, or null if not found
     // if user is both players, return the active player
-    const entries = Object.entries(this.players).filter(
-      ([, player]) => player.user === user
-    );
+    const entries = Object.entries(this.players).filter(([, player]) => player.user === user);
     if (entries.length > 1) return this.activePlayer;
     else if (entries.length === 1) {
       const record = entries[0];
@@ -95,9 +94,7 @@ export class Game {
   move(x: number, y: number, playerPiece: Piece): boolean {
     // returns `true` if valid move, returns `false` if invalid
     const playerMoves = this.players[playerPiece].moves;
-    const validMoves = playerMoves.filter(
-      (move) => move.x === x && move.y === y
-    );
+    const validMoves = playerMoves.filter((move) => move.x === x && move.y === y);
     if (!validMoves.length) return false;
 
     // valid move(s)
@@ -108,9 +105,7 @@ export class Game {
     this.pass();
     // re-evaluate and store next possible moves
     this.players[playerPiece].moves = this.getValidMoves(playerPiece);
-    this.players[opposite(playerPiece)].moves = this.getValidMoves(
-      opposite(playerPiece)
-    );
+    this.players[opposite(playerPiece)].moves = this.getValidMoves(opposite(playerPiece));
     return true;
   }
 
@@ -125,7 +120,7 @@ export class Game {
         return "";
       };
       return `\`${this.theme.squares[playerPiece]}\` ${userMention(
-        this.players[playerPiece].user.id
+        this.players[playerPiece].user.id,
       )} ${badge()}`;
     };
 

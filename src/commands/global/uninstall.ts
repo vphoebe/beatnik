@@ -1,13 +1,9 @@
-import { Command } from "../index.js";
+import { REST, Routes, PermissionFlagsBits, SlashCommandBuilder } from "discord.js";
+import { CommandInteraction } from "discord.js";
+
 import { getClientId, getToken } from "../../lib/environment.js";
 import { log } from "../../lib/logger.js";
-import {
-  REST,
-  Routes,
-  PermissionFlagsBits,
-  SlashCommandBuilder,
-} from "discord.js";
-import { CommandInteraction } from "discord.js";
+import { Command } from "../index.js";
 
 export const builder = new SlashCommandBuilder()
   .setName("uninstall")

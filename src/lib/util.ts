@@ -28,9 +28,7 @@ export const shuffleArray = <T>(array: Array<T>) => {
 
 export const getBeatTimeString = (date = new Date()): string => {
   const value =
-    ((((date.getUTCHours() + 1) % 24) +
-      date.getUTCMinutes() / 60 +
-      date.getUTCSeconds() / 3600) *
+    ((((date.getUTCHours() + 1) % 24) + date.getUTCMinutes() / 60 + date.getUTCSeconds() / 3600) *
       1000) /
     24;
   return value < 100

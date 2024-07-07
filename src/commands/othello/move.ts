@@ -1,6 +1,7 @@
+import { ChatInputCommandInteraction, SlashCommandBuilder } from "discord.js";
+
 import { gridToCoords } from "../../lib/othello/coordinates.js";
 import { state } from "../../lib/othello/state.js";
-import { ChatInputCommandInteraction, SlashCommandBuilder } from "discord.js";
 import { Command } from "../index.js";
 
 const data = new SlashCommandBuilder()
@@ -12,13 +13,11 @@ const data = new SlashCommandBuilder()
       .setDescription("Enter grid coordinates (eg. C4)")
       .setRequired(true)
       .setMinLength(2)
-      .setMaxLength(2)
+      .setMaxLength(2),
   );
 
 const execute = async (interaction: ChatInputCommandInteraction) => {
-  const game = interaction.guildId
-    ? state.get(interaction.guildId, interaction.user)
-    : undefined;
+  const game = interaction.guildId ? state.get(interaction.guildId, interaction.user) : undefined;
 
   if (!game || !interaction.guildId) {
     await interaction.reply({
@@ -43,9 +42,7 @@ const execute = async (interaction: ChatInputCommandInteraction) => {
     return;
   }
 
-  const input = interaction.options
-    .getString("coordinates")
-    ?.toLocaleUpperCase() as string; // required
+  const input = interaction.options.getString("coordinates")?.toLocaleUpperCase() as string; // required
   const coords = gridToCoords(input);
   if (!coords) {
     await interaction.reply({ ephemeral: true, content: "Invalid move." });

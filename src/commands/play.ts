@@ -1,16 +1,14 @@
-import { Command, CommandExecuter } from "./index.js";
+import { SlashCommandBuilder } from "discord.js";
+
 import { getAddedToQueueMessage } from "../lib/embeds.js";
 import { getOrCreateQueue } from "../lib/queue.js";
-import { SlashCommandBuilder } from "discord.js";
+import { Command, CommandExecuter } from "./index.js";
 
 export const builder = new SlashCommandBuilder()
   .setName("play")
   .setDescription("Play/queue a track from a URL or search term.")
   .addStringOption((option) =>
-    option
-      .setName("query")
-      .setDescription("A valid URL or search term to play.")
-      .setRequired(true),
+    option.setName("query").setDescription("A valid URL or search term to play.").setRequired(true),
   )
   .addBooleanOption((option) =>
     option
@@ -40,19 +38,9 @@ export const execute: CommandExecuter = async (interaction) => {
   }
 
   const queue = await getOrCreateQueue(interaction);
-  const numberAddedToQueue = await queue.enqueue(
-    query,
-    interaction.user.id,
-    isShuffle,
-    isEnd,
-  );
+  const numberAddedToQueue = await queue.enqueue(query, interaction.user.id, isShuffle, isEnd);
   await interaction.editReply({
-    content: getAddedToQueueMessage(
-      numberAddedToQueue,
-      queue.isPlaying,
-      isEnd,
-      isShuffle,
-    ),
+    content: getAddedToQueueMessage(numberAddedToQueue, queue.isPlaying, isEnd, isShuffle),
   });
   if (!queue.isPlaying) {
     await queue.play();
