@@ -18,7 +18,6 @@ rest
     log({
       type: "INFO",
       user: "BOT",
-      guildId: clientId,
       message: "Registered global commands.",
     });
     process.exit(0);

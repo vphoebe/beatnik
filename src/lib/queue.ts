@@ -16,10 +16,10 @@ import {
 import { getNowPlayingEmbed } from "../lib/embeds.js";
 import { log } from "../lib/logger.js";
 import { shuffleArray } from "../lib/util.js";
-import { getMetadataFromQuery, Track } from "./youtube/metadata.js";
+import { getMetadataFromQuery, YtApiTrack } from "./youtube/metadata.js";
 import { createResource } from "./youtube/stream.js";
 
-export interface QueuedTrack extends Track {
+export interface QueuedTrack extends YtApiTrack {
   addedBy: string;
 }
 
@@ -100,17 +100,8 @@ class Queue {
     this.playingFromCache = null;
   }
 
-  add(track: QueuedTrack, start: number) {
-    this.tracks.splice(start, 0, track);
-  }
-
-  async addByQuery(
-    query: string,
-    userId: string,
-    shuffle = false,
-    end = false,
-  ) {
-    const data = await getMetadataFromQuery(query);
+  async enqueue(query: string, userId: string, shuffle = false, end = false) {
+    const data = await getMetadataFromQuery(query, { useLibrary: true });
     let tracks = data?.playlist
       ? data.playlist.tracks
       : data?.track
@@ -121,13 +112,9 @@ class Queue {
     }
     const basis = end ? this.tracks.length : this.currentIndex + 1;
     tracks.forEach((t, idx) =>
-      this.add({ ...t, addedBy: userId }, basis + idx),
+      this.insert({ ...t, addedBy: userId }, basis + idx),
     );
     return tracks.length;
-  }
-
-  remove(idx: number) {
-    return this.tracks.splice(idx, 1);
   }
 
   async play() {
@@ -157,7 +144,6 @@ class Queue {
       log({
         type: "INFO",
         user: "BOT",
-        guildId: this.guildId,
         message: `Playing ${trackToPlay.id} ${
           fromCache ? "from cache" : "from URL"
         }`,
@@ -167,7 +153,6 @@ class Queue {
       log({
         type: "ERROR",
         user: "BOT",
-        guildId: this.guildId,
         message: `Error playing! Error was:`,
       });
       console.error(err);
@@ -195,6 +180,14 @@ class Queue {
   async jump(idx: number) {
     this.currentIndex = idx;
     await this.play();
+  }
+
+  insert(track: QueuedTrack, start: number) {
+    this.tracks.splice(start, 0, track);
+  }
+
+  remove(idx: number) {
+    return this.tracks.splice(idx, 1);
   }
 
   shuffle() {

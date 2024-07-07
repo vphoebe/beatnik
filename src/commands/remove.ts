@@ -2,12 +2,12 @@ import { AutocompleteHandler, Command, CommandExecuter } from "./index.js";
 import { getExistingQueue } from "../lib/queue.js";
 import { noQueueReply } from "../lib/replies.js";
 import { inlineCode, SlashCommandBuilder } from "discord.js";
+import { getPlaylists } from "../lib/library/db/playlist.js";
+import { getIsolatedTracks } from "../lib/library/db/track.js";
 import {
-  deleteSavedPlaylist,
-  deleteSavedTrack,
-  getIsolatedTracks,
-  getPlaylists,
-} from "../lib/library/db.js";
+  deletePlaylistFromLibrary,
+  deleteTrackFromLibrary,
+} from "../lib/library/index.js";
 
 export const builder = new SlashCommandBuilder()
   .setName("remove")
@@ -90,7 +90,7 @@ export const execute: CommandExecuter = async (interaction) => {
     return;
   } else if (subcommand === "playlist") {
     const int_id = interaction.options.getInteger("playlist-name", true);
-    const operation = await deleteSavedPlaylist(undefined, int_id);
+    const operation = await deletePlaylistFromLibrary(undefined, int_id);
     if (operation) {
       await interaction.reply({
         content: `${inlineCode(operation.title)} was removed.`,
@@ -102,7 +102,7 @@ export const execute: CommandExecuter = async (interaction) => {
     return;
   } else if (subcommand === "saved-track") {
     const int_id = interaction.options.getInteger("track-name", true);
-    const removedTrack = await deleteSavedTrack(int_id);
+    const removedTrack = await deleteTrackFromLibrary(int_id);
     await interaction.reply({
       content: `${inlineCode(removedTrack?.title ?? "")} was removed.`,
     });

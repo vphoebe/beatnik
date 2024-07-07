@@ -24,12 +24,12 @@ model Track {
   int_id       Int     @id @default(autoincrement())
   id           String 
   url          String    
+  title        String
+  thumbnailUrl String
+  length       Int
+  channelName  String
+  loudness     Int
   playlist     Playlist? @relation(fields: [playlistId], references: [int_id], onDelete: Cascade, onUpdate: Cascade)
   playlistId   Int?
   playlistIdx  Int?
-  title        String
-  thumbnailUrl String?
-  length       Int
-  channelName  String?
-  loudness     Int?
 }

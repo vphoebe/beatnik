@@ -1,8 +1,7 @@
 import { AutocompleteHandler, Command, CommandExecuter } from "./index.js";
 import { SlashCommandBuilder } from "discord.js";
-import { addPlaylist } from "../lib/library/cache.js";
-import { getPlaylists, getPlaylist } from "../lib/library/db.js";
-import { getMetadataFromQuery } from "../lib/youtube/metadata.js";
+import { updatePlaylistInLibrary } from "../lib/library/index.js";
+import { getPlaylists } from "../lib/library/db/playlist.js";
 
 export const builder = new SlashCommandBuilder()
   .setName("update")
@@ -38,24 +37,12 @@ export const execute: CommandExecuter = async (interaction) => {
   await interaction.deferReply();
   await interaction.editReply("Finding new playlist metadata...");
   const playlistIntId = interaction.options.getInteger("playlist", true);
-  const playlistData = await getPlaylist(playlistIntId);
-  if (!playlistData) {
+  const update = await updatePlaylistInLibrary(playlistIntId);
+  if (!update || !update.operation) {
     await interaction.editReply("Something went wrong.");
-    return;
+  } else {
+    await interaction.editReply(`Updated "${update.playlistData.title}"!`);
   }
-  const queryResult = await getMetadataFromQuery(playlistData.url, false);
-  const freshPlaylist = queryResult?.playlist;
-  if (!freshPlaylist) {
-    await interaction.editReply("Something went wrong.");
-    return;
-  }
-  await interaction.editReply(
-    `Playlist has ${freshPlaylist.tracks.length} tracks, updating and downloading...`,
-  );
-  await addPlaylist(freshPlaylist);
-  await interaction.editReply(
-    `Updated and downloaded "${freshPlaylist.title}"!`,
-  );
 };
 
 export default { builder, execute, autocomplete, global: false } as Command;

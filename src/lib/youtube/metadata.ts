@@ -1,31 +1,33 @@
 import ytdl from "@distube/ytdl-core";
 import ytpl from "@distube/ytpl";
 import ytsr from "@distube/ytsr";
-import { getPlaylistWithTracks, getTrackByUrl } from "../library/db.js";
 import { agent } from "./agent.js";
+import { getPlaylistWithTracks } from "../library/db/playlist.js";
+import { getAllTracks, getTrackByUrl } from "../library/db/track.js";
+import { durationStringToSeconds } from "../util.js";
 
 interface Query {
   query: string;
   type: "playlist" | "track" | "query";
 }
 
-export interface Track {
+export interface YtApiTrack {
   id: string;
   url: string;
   title: string;
-  thumbnailUrl: string | null;
-  channelName: string | null;
+  thumbnailUrl: string;
+  channelName: string;
   length: number;
-  loudness: number | null;
+  loudness: number;
   playlistIdx: number | null;
 }
 
-export interface Playlist {
+export interface YtApiPlaylist {
   id: string;
   url: string;
   title: string;
   authorName: string;
-  tracks: Track[];
+  tracks: YtApiTrack[];
 }
 
 function isValidUrl(query: string): URL | null {
@@ -67,7 +69,7 @@ function getQueryType(query: string): Query | null {
 async function getTrackInfo(
   url: string,
   useLibrary: boolean,
-): Promise<Track | undefined> {
+): Promise<YtApiTrack | undefined> {
   const existingTrack = await getTrackByUrl(url);
   if (existingTrack && useLibrary) {
     return existingTrack;
@@ -96,19 +98,44 @@ async function getTrackInfo(
 async function getPlaylistInfo(
   idOrUrl: string,
   useLibrary: boolean,
-): Promise<Playlist> {
+): Promise<YtApiPlaylist> {
   const existingPlaylist = await getPlaylistWithTracks(idOrUrl);
   if (existingPlaylist && useLibrary) {
     return existingPlaylist;
   }
   const playlistInfo = await ytpl(idOrUrl, { limit: Infinity });
-  const infoPromises = playlistInfo.items.map((t) =>
-    getTrackInfo(t.url, false),
-  );
-  const data = await Promise.all(infoPromises);
-  const tracks = data
-    .filter((t) => t !== undefined)
-    .map((track, idx) => ({ ...track, playlistIdx: idx }));
+
+  const tracksWithoutLoudness: Omit<YtApiTrack, "loudness">[] =
+    playlistInfo.items.map((item, idx) => ({
+      title: item.title,
+      length: durationStringToSeconds(item.duration ?? "0:00"),
+      url: item.url,
+      id: item.id,
+      channelName: item.author?.name ?? "Unknown",
+      thumbnailUrl: item.thumbnail ?? "",
+      playlistIdx: idx,
+    }));
+
+  // use existing loudness data if possible
+  const loudnessData = (await getAllTracks()).map((t) => ({
+    id: t.id,
+    loudness: t.loudness,
+  }));
+
+  const tracks: YtApiTrack[] = [];
+
+  for (const track of tracksWithoutLoudness) {
+    const match = loudnessData.find((t) => t.id === track.id);
+    if (match) {
+      tracks.push({ ...track, loudness: match.loudness });
+    } else {
+      const info = await ytdl.getInfo(track.url, { agent });
+      tracks.push({
+        ...track,
+        loudness: info.player_response.playerConfig.audioConfig.loudnessDb,
+      });
+    }
+  }
 
   return {
     tracks,
@@ -119,7 +146,11 @@ async function getPlaylistInfo(
   };
 }
 
-export async function getMetadataFromQuery(query: string, useLibrary = true) {
+export async function getMetadataFromQuery(
+  query: string,
+  options: { useLibrary: boolean },
+) {
+  const { useLibrary } = options;
   const parsedQuery = getQueryType(query);
 
   if (!parsedQuery) {

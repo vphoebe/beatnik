@@ -10,19 +10,19 @@ export const builder = new SlashCommandBuilder()
     option
       .setName("query")
       .setDescription("A valid URL or search term to play.")
-      .setRequired(true)
+      .setRequired(true),
   )
   .addBooleanOption((option) =>
     option
       .setName("end")
       .setDescription("Add to the end of the queue, instead of next.")
-      .setRequired(false)
+      .setRequired(false),
   )
   .addBooleanOption((option) =>
     option
       .setName("shuffle")
       .setDescription("Shuffle the playlist before adding to the queue.")
-      .setRequired(false)
+      .setRequired(false),
   );
 
 export const execute: CommandExecuter = async (interaction) => {
@@ -40,18 +40,18 @@ export const execute: CommandExecuter = async (interaction) => {
   }
 
   const queue = await getOrCreateQueue(interaction);
-  const numberAddedToQueue = await queue.addByQuery(
+  const numberAddedToQueue = await queue.enqueue(
     query,
     interaction.user.id,
     isShuffle,
-    isEnd
+    isEnd,
   );
   await interaction.editReply({
     content: getAddedToQueueMessage(
       numberAddedToQueue,
       queue.isPlaying,
       isEnd,
-      isShuffle
+      isShuffle,
     ),
   });
   if (!queue.isPlaying) {

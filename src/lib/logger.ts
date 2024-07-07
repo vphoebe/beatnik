@@ -6,11 +6,9 @@ export type LoggerOptions = {
 };
 
 export function log(options: LoggerOptions) {
-  const { type, guildId, user, message } = options;
+  const { type, user, message } = options;
   const method = type === "ERROR" ? console.error : console.info;
   return method(
-    `${new Date().toLocaleDateString('en-us', { timeZone: 'PST' })} ${new Date().toLocaleTimeString('en-us', { timeZone: 'PST' })} [${type}] [${user}${
-      guildId ? `@${guildId}` : ""
-    }]: ${message}`
+    `${new Date().toLocaleDateString("en-us", { timeZone: "PST" })} ${new Date().toLocaleTimeString("en-us", { timeZone: "PST" })} [${type}] [${user}]: ${message}`,
   );
 }

@@ -1,29 +1,12 @@
 import path from "node:path";
-import {
-  doesPlaylistExist,
-  getPlaylistWithTracks,
-  getTrackByYtId,
-  savePlaylist,
-  saveTrack,
-  updateSavedPlaylist,
-} from "./db.js";
-import { Playlist, Track } from "../youtube/metadata.js";
+import { YtApiTrack } from "../youtube/metadata.js";
 import { getLibraryDir } from "../environment.js";
 import ytdl from "@distube/ytdl-core";
 import { createReadStream, createWriteStream, existsSync } from "node:fs";
 import { finished } from "node:stream/promises";
 import { agent } from "../youtube/agent.js";
 import { rm } from "node:fs/promises";
-
-export interface AddOperation {
-  added: boolean;
-  updated: boolean;
-  error?: "EXISTS";
-}
-
-export function testLibrary() {
-  getLibraryDir();
-}
+import { log } from "../logger.js";
 
 function getItemPath(id: string) {
   const libDir = getLibraryDir();
@@ -32,60 +15,27 @@ function getItemPath(id: string) {
   return { path: itemPath, exists };
 }
 
-export async function addTrack(track: Track): Promise<AddOperation> {
-  // add track to db and save file
-  const existingTrack = await getTrackByYtId(track.id);
-  if (existingTrack) {
-    return {
-      added: false,
-      updated: false,
-      error: "EXISTS",
-    };
-  }
-  await saveTrack(track);
-  await downloadId(track.id);
-  return {
-    added: true,
-    updated: false,
-  };
-}
-
-export async function addPlaylist(
-  playlistData: Playlist,
-): Promise<AddOperation> {
-  const playlistExists = await doesPlaylistExist(playlistData.id);
-  if (playlistExists) {
-    await updateSavedPlaylist(playlistData);
-  } else {
-    await savePlaylist(playlistData);
-  }
-  await downloadPlaylist(playlistData.tracks, playlistData.id);
-  return {
-    added: !playlistExists,
-    updated: playlistExists,
-  };
-}
-
-async function downloadId(id: string) {
+export async function downloadId(id: string) {
   // download single video ID to cache dir
   try {
     const targetPath = getItemPath(id);
     if (targetPath.exists) {
-      return;
+      return false;
     }
-    console.log(`Downloading ${id}...`);
+    log({ type: "CACHE", user: "BOT", message: `Downloading ${id}...` });
 
-    const stream = ytdl(id, {
+    const ytStream = ytdl(id, {
       filter: "audioonly",
       quality: "highestaudio",
       agent,
     });
 
-    const diskStream = createWriteStream(targetPath.path);
-    await finished(stream.pipe(diskStream));
-    console.log(`Finished downloading ${id}`);
+    await finished(ytStream.pipe(createWriteStream(targetPath.path)));
+    log({ type: "CACHE", user: "BOT", message: `Finished downloading ${id}` });
+    return true;
   } catch (err) {
     console.error(err);
+    return false;
   }
 }
 
@@ -94,17 +44,27 @@ export async function removeDownload(id: string) {
   if (!targetPath.exists) {
     return;
   }
-  console.log(`Deleting ${id} from disk.`);
+  log({ type: "CACHE", user: "BOT", message: `Deleting ${id} from disk.` });
 
   return rm(targetPath.path);
 }
 
-async function downloadPlaylist(tracks: Track[], playlistId: string) {
-  console.log(
-    `Downloading playlist ${playlistId} with ${tracks.length} tracks.`,
-  );
-  await Promise.allSettled(tracks.map((t) => downloadId(t.id)));
-  console.log(`Downloaded playlist ${playlistId}`);
+export async function downloadPlaylist(
+  tracks: YtApiTrack[],
+  playlistId: string,
+) {
+  log({
+    type: "CACHE",
+    user: "BOT",
+    message: `Downloading playlist ${playlistId} with ${tracks.length} tracks.`,
+  });
+  const results = await Promise.all(tracks.map((t) => downloadId(t.id)));
+  const downloadedFileCount = results.filter((r) => r === true).length;
+  log({
+    type: "CACHE",
+    user: "BOT",
+    message: `Downloaded ${downloadedFileCount} new tracks for playlist ${playlistId}.`,
+  });
 }
 
 export function getDownloadedIdStream(id: string) {

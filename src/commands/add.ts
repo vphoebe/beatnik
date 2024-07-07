@@ -1,7 +1,11 @@
 import { Command, CommandExecuter } from "./index.js";
 import { SlashCommandBuilder } from "discord.js";
 import { getMetadataFromQuery } from "../lib/youtube/metadata.js";
-import { AddOperation, addPlaylist, addTrack } from "../lib/library/cache.js";
+import {
+  addPlaylistToLibrary,
+  addTrackToLibrary,
+  LibraryOperationResult,
+} from "../lib/library/index.js";
 
 export const builder = new SlashCommandBuilder()
   .setName("add")
@@ -27,18 +31,19 @@ export const execute: CommandExecuter = async (interaction) => {
   await interaction.editReply(
     `Finding metadata for your query... Please wait.`,
   );
-  const queryResult = await getMetadataFromQuery(query, false);
+  const queryResult = await getMetadataFromQuery(query, { useLibrary: false }); // always add fresh data
   const count = queryResult?.playlist ? queryResult.playlist.tracks.length : 1;
 
   await interaction.editReply(
     `Adding and downloading ${count} track(s)... Please wait.`,
   );
 
-  let operation: AddOperation | null;
+  let operation: LibraryOperationResult | null;
+
   if (queryResult?.playlist) {
-    operation = await addPlaylist(queryResult.playlist);
+    operation = await addPlaylistToLibrary(queryResult.playlist);
   } else if (queryResult?.track) {
-    operation = await addTrack(queryResult?.track);
+    operation = await addTrackToLibrary(queryResult.track);
   } else {
     operation = null;
   }

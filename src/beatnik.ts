@@ -1,7 +1,7 @@
 import path from "node:path";
 import fs from "node:fs";
 import { commandList } from "./commands/index.js";
-import { getClientId, getToken } from "./lib/environment.js";
+import { getToken } from "./lib/environment.js";
 import { log } from "./lib/logger.js";
 import { startPresenceLifecycle } from "./lib/presence.js";
 import { allGuildQueues } from "./lib/queue.js";
@@ -14,10 +14,9 @@ import {
   Events,
   GatewayIntentBits,
 } from "discord.js";
-import { testLibrary } from "./lib/library/cache.js";
+import { testLibraryConnection } from "./lib/library/index.js";
 
 const token = getToken();
-const clientId = getClientId();
 
 const pkgjson = fs.readFileSync(path.join(".", "package.json"), "utf-8");
 export const BEATNIK_VERSION = JSON.parse(pkgjson).version;
@@ -27,8 +26,6 @@ welcome to beatnik
 version ${BEATNIK_VERSION}`);
 console.log(generateDependencyReport());
 
-testLibrary();
-
 // Create a new client instance
 export const client = new Client({
   intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildVoiceStates],
@@ -36,10 +33,10 @@ export const client = new Client({
 
 // When the client is ready, run this code (only once)
 client.on(Events.ClientReady, async () => {
+  await testLibraryConnection();
   log({
     type: "INFO",
     user: "BOT",
-    guildId: clientId,
     message: "Beatnik is ready to go!",
   });
   startPresenceLifecycle(client);
@@ -62,7 +59,6 @@ client.on(Events.InteractionCreate, async (interaction) => {
     log({
       type: "CMD",
       user: interaction.user.username,
-      guildId: interaction.guildId ?? "N/A",
       message: `Ran ${interaction.commandName}`,
     });
     try {
