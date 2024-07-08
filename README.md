@@ -32,14 +32,14 @@ services:
     volumes:
       - "/path/on/your/computer/library.db:/library.db"
       - "/path/on/your/computer/library:/library"
-      - "/path/on/your/computer/cookies.json:/cookies.json"
+      # - "/path/on/your/computer/cookies.json:/cookies.json"
     environment:
       - TOKEN=xxxxxxxxxx
       - CLIENT_ID=00000000
     restart: always
 ```
 
-Change `/path/on/your/computer` to a directory where Beatnik's files can live, such as `/Users/me/Documents/Beatnik`. Create the `library` directory there, and then `touch` two empty files for `library.db` and `cookies.json`. Then, update the two environment variables in your Docker compose file:
+Change `/path/on/your/computer` to a directory where Beatnik's files can live, such as `/Users/me/Documents/Beatnik`. Create a new folder called `library` inside there. Then, update the two environment variables in your Docker compose file:
 
 | Variable  |  Where to find |
 | ------------ | ------------ |
@@ -47,7 +47,7 @@ Change `/path/on/your/computer` to a directory where Beatnik's files can live, s
 | `CLIENT_ID` | Discord developer portal > Applications > [your app] > OAuth2 > Client ID  |
 
 ### YouTube cookies (optional)
-This isn't required for Beatnik to work, but some YouTube videos require a cookie (signed in user) to play, like age-restricted or private videos. [Follow the steps here](https://github.com/distubejs/ytdl-core?tab=readme-ov-file#how-to-get-cookies "Follow the steps here") to create `cookies.json` in the Beatnik folder you created above if you require this setup.
+This isn't required for Beatnik to work, but some YouTube videos require a cookie (signed in user) to play, like age-restricted or private videos. [Follow the steps here](https://github.com/distubejs/ytdl-core?tab=readme-ov-file#how-to-get-cookies "Follow the steps here") to create `cookies.json` in the Beatnik folder you created above if you require this setup. Make sure to comment out the line with `cookies.json` in your Docker compose and set the path to your file.
 
 
 ## 🎵 Usage
