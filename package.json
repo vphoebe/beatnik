@@ -6,19 +6,17 @@
   "license": "MIT",
   "type": "module",
   "scripts": {
-    "build": "esbuild src/beatnik.ts src/deploy-global-commands.ts --outdir=build --platform=node --target=node20 --bundle --packages=external --out-extension:.js=.cjs --minify",
+    "build": "esbuild src/beatnik.ts src/deploy-commands.ts --outdir=build --platform=node --target=node20 --bundle --packages=external --out-extension:.js=.cjs --minify",
     "build:docker": "npm run build && docker build -t beatnik-dev .",
     "build:dockerx64": "npm run build && docker buildx build --platform linux/amd64 -t beatnik-dev-x64 .",
     "dev": "tsx watch src/beatnik.ts",
-    "dev:commands": "nodemon src/deploy-global-commands.ts",
+    "commands": "tsx src/deploy-commands.ts",
     "format": "prettier --write .",
-    "commands": "node build/deploy-global-commands.cjs",
     "typecheck": "tsc --noEmit",
-    "start": "npm run build && node build/deploy-global-commands.cjs && nodemon build/beatnik.cjs",
-    "deploy": "fly deploy",
     "db:generate": "prisma generate",
     "db:migrate": "prisma migrate dev",
-    "db:migratedeploy": "prisma migrate deploy"
+    "db:migratedeploy": "prisma migrate deploy",
+    "start": "npm run db:migratedeploy && node ./dist/deploy-commands.cjs && node ./dist/beatnik.cjs"
   },
   "dependencies": {
     "@discordjs/opus": "^0.9.0",

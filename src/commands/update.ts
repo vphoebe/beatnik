@@ -44,4 +44,4 @@ export const execute: CommandExecuter = async (interaction) => {
   }
 };
 
-export default { builder, execute, autocomplete, global: false } as Command;
+export default { builder, execute, autocomplete } as Command;

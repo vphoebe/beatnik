@@ -44,7 +44,6 @@ const execute = async (interaction: ChatInputCommandInteraction) => {
 const definition: Command = {
   builder: data as SlashCommandBuilder,
   execute,
-  global: false,
 };
 
 export default definition;

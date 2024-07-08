@@ -23,4 +23,4 @@ export const execute: CommandExecuter = async (interaction) => {
   });
 };
 
-export default { builder, execute, global: false } as Command;
+export default { builder, execute } as Command;

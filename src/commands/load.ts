@@ -117,4 +117,4 @@ export const execute: CommandExecuter = async (interaction) => {
   return;
 };
 
-export default { builder, execute, autocomplete, global: false } as Command;
+export default { builder, execute, autocomplete } as Command;

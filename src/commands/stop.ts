@@ -21,4 +21,4 @@ export const execute: CommandExecuter = async (interaction) => {
   await interaction.reply("Stopping and removing queue.");
 };
 
-export default { builder, execute, global: false } as Command;
+export default { builder, execute } as Command;

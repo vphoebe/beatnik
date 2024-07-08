@@ -48,4 +48,4 @@ export const execute: CommandExecuter = async (interaction) => {
   return;
 };
 
-export default { builder, execute, global: false } as Command;
+export default { builder, execute } as Command;
