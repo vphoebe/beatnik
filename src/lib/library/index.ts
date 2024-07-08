@@ -1,18 +1,24 @@
 // tracks
 import { ChatInputCommandInteraction } from "discord.js";
 
-import { getLibraryDir } from "../environment.js";
 import { log } from "../logger.js";
 import { getMetadataFromQuery, YtApiPlaylist, YtApiTrack } from "../youtube/metadata.js";
-import { downloadId, downloadPlaylist, removeDownload } from "./cache.js";
-import { prisma } from "./db/client.js";
+import { downloadId, downloadPlaylist, removeDownload, testCache } from "./cache.js";
+import { testDb } from "./db/client.js";
 import {
   doesPlaylistExist,
   updateSavedPlaylist,
   savePlaylist,
   getPlaylist,
+  deleteSavedPlaylist,
 } from "./db/playlist.js";
-import { getTrackByYtId, createTrack, getTrackByIntId, deleteTrack } from "./db/track.js";
+import {
+  getTrackByYtId,
+  createTrack,
+  getTrackByIntId,
+  deleteTrack,
+  getTracksByPlaylist,
+} from "./db/track.js";
 
 export interface LibraryOperationResult {
   added: boolean;
@@ -22,13 +28,13 @@ export interface LibraryOperationResult {
 
 export async function testLibraryConnection() {
   try {
-    getLibraryDir();
+    testCache();
     log({
       type: "CACHE",
       user: "BOT",
       message: "Connected to library cache directory!",
     });
-    await prisma.$connect();
+    await testDb();
     log({
       type: "DB",
       user: "BOT",
@@ -107,24 +113,10 @@ export async function updatePlaylistInLibrary(
   };
 }
 
-export async function deletePlaylistFromLibrary(playlistId?: string, int_id?: number) {
-  if (!int_id) {
-    const existingPlaylist = await prisma.playlist.findFirst({
-      where: { id: playlistId },
-    });
-    if (!existingPlaylist) {
-      return null;
-    }
-    int_id = existingPlaylist.int_id;
-  }
-
-  const trackRecords = await prisma.track.findMany({
-    where: { playlistId: int_id },
-  });
+export async function deletePlaylistFromLibrary(int_id: number) {
+  const trackRecords = await getTracksByPlaylist(int_id);
   const rmPromises = trackRecords.map((t) => removeDownload(t.id));
   await Promise.all(rmPromises);
 
-  return prisma.playlist.delete({
-    where: { int_id },
-  });
+  return deleteSavedPlaylist(int_id);
 }

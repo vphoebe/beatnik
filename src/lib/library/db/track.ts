@@ -34,6 +34,12 @@ export async function getAllTracks() {
   });
 }
 
+export async function getTracksByPlaylist(int_id: number) {
+  return prisma.track.findMany({
+    where: { playlistId: int_id },
+  });
+}
+
 export async function getIsolatedTracks() {
   // return tracks that aren't in a playlist
   return prisma.track.findMany({

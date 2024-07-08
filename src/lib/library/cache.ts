@@ -16,6 +16,10 @@ function getItemPath(id: string) {
   return { path: itemPath, exists };
 }
 
+export function testCache() {
+  return getLibraryDir();
+}
+
 export async function downloadId(id: string) {
   // download single video ID to cache dir
   try {

@@ -2,7 +2,7 @@ import ytdl from "@distube/ytdl-core";
 import ytpl from "@distube/ytpl";
 import ytsr from "@distube/ytsr";
 
-import { getPlaylistWithTracks } from "../library/db/playlist.js";
+import { getSavedPlaylistByUrl } from "../library/db/playlist.js";
 import { getAllTracks, getTrackByUrl } from "../library/db/track.js";
 import { durationStringToSeconds } from "../util.js";
 import { agent } from "./agent.js";
@@ -92,12 +92,12 @@ async function getTrackInfo(url: string, useLibrary: boolean): Promise<YtApiTrac
   }
 }
 
-async function getPlaylistInfo(idOrUrl: string, useLibrary: boolean): Promise<YtApiPlaylist> {
-  const existingPlaylist = await getPlaylistWithTracks(idOrUrl);
+async function getPlaylistInfo(url: string, useLibrary: boolean): Promise<YtApiPlaylist> {
+  const existingPlaylist = await getSavedPlaylistByUrl(url);
   if (existingPlaylist && useLibrary) {
     return existingPlaylist;
   }
-  const playlistInfo = await ytpl(idOrUrl, { limit: Infinity });
+  const playlistInfo = await ytpl(url, { limit: Infinity });
 
   const tracksWithoutLoudness: Omit<YtApiTrack, "loudness">[] = playlistInfo.items.map(
     (item, idx) => ({

@@ -1,5 +1,3 @@
-import ytpl from "@distube/ytpl";
-
 import { YtApiPlaylist } from "../../youtube/metadata.js";
 import { prisma } from "./client.js";
 
@@ -20,10 +18,9 @@ export async function getPlaylists() {
   });
 }
 
-export async function getPlaylistWithTracks(playlistIdOrUrl: string) {
-  const id = await ytpl.getPlaylistID(playlistIdOrUrl);
+export async function getSavedPlaylistByUrl(url: string) {
   return prisma.playlist.findFirst({
-    where: { id },
+    where: { url },
     include: { tracks: true },
   });
 }
@@ -68,4 +65,10 @@ export async function updateSavedPlaylist(playlistData: YtApiPlaylist) {
       },
     }),
   ]);
+}
+
+export async function deleteSavedPlaylist(int_id: number) {
+  return prisma.playlist.delete({
+    where: { int_id },
+  });
 }

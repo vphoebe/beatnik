@@ -88,7 +88,7 @@ export const execute: CommandExecuter = async (interaction) => {
     return;
   } else if (subcommand === "playlist") {
     const int_id = interaction.options.getInteger("playlist-name", true);
-    const operation = await deletePlaylistFromLibrary(undefined, int_id);
+    const operation = await deletePlaylistFromLibrary(int_id);
     if (operation) {
       await interaction.reply({
         content: `${inlineCode(operation.title)} was removed.`,
