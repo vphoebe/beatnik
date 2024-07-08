@@ -35,4 +35,4 @@ COPY --from=builder /builder/prisma ./prisma
 COPY --from=builder /builder/node_modules ./node_modules
 COPY --from=builder /builder/build ./dist
 # start beatnik
-CMD npm start
+CMD npx prisma migrate deploy ; node ./dist/deploy-commands.cjs ; node ./dist/beatnik.cjs
