@@ -1,76 +1,70 @@
-# Beatnik: a Discord music bot
+# beatnik - a music bot for Discord
 
-Run your own modern and simple Discord music bot with easy-to-use native slash commands.
+A modern music bot for your Discord server that you can host yourself! No subscription fees, service API keys, or advanced knowledge required.
 
-## Features
-- Fully utilizes simple to understand Discord slash commands
-- Robust music queue management (add, remove, skip, shuffle, etc.)
-- Save URLs so you can queue them easily later
-- Configurable cache to improve performance of frequently queued content
-- Status updates with current Swatch Internet Time so you can sync up your raids
-- Prioritizes Opus-encoded streams from services to increase performance
-- Supported music sources:
-	- YouTube
-- Easy setup
-	- No service API keys required
-	- No database processes to maintain, just a single database file
-	- Run with Docker or natively with Node.js
-- [Fully text-based two-player Othello gameplay](https://github.com/vphoebe/othello), using Discord message embeds in any channel
+## 🥁 Features
+- Use easy to understand slash commands to play audio from YouTube videos in your server's voice channels
+- Save YouTube playlists and videos to your library for fast, local playback
+  - Adding to your library downloads the audio and metadata locally, so future plays don't require the API
+- Text-based Othello which can be played with other users in any text channel
+- Get up and running using Docker in minutes
+- No fees, service tokens, or privacy concerns - everything is operated by you locally
 
-## Installation
-Beatnik is designed to be operated yourself, so there's a few things to set up first. Before you do anything though, you'll need to set up an application and bot on the [Discord developer portal](https://discord.com/developers/applications).  Make sure to have this page handy because you'll need some info soon.
+## 🚀 Get started
+
+### Discord application setup
+1. Sign into the [Discord developer portal](https://discord.com/developers/applications "Discord developer portal") and create a new application. You can call it whatever you'd like and set a profile picture for it. You'll return here later to grab your token and client ID.
+2. Once created, navigate to **OAuth2** on the left sidebar. Scroll down to **OAuth2 URL Generator** and make the following changes:
+	- Under *Scopes*, check `applications.commands` and `bot`.
+	- Under *Bot Permissions*, check `Send Messages`, `Connect`, and `Speak`.
+3. Copy the generated URL, paste into your web browser, and select a Discord server to add Beatnik to.
 
 ### Docker
-If you are familiar at all with Docker, this is the fastest way to get Beatnik up and running. The [latest Docker image](https://hub.docker.com/r/nickseman/beatnik) is at `nickseman/beatnik:latest` - or you can build it yourself after checking out the code.
 
-Beatnik is able to run on [fly.io](https://fly.io/docs/about/pricing/#free-allowances) using resources available within their Free Allowances.
+You can use this example Docker compose file to get Beatnik up and running.
 
-Make sure to configure the Docker container's environment according to the [Environment](#Environment) section below, and ensure the paths for database and cache are properly bound to persistent storage.
+```yaml
+version: "3.9"
+services:
+  beatnik:
+    container_name: "beatnik"
+    image: "nickseman/beatnik:latest"
+    volumes:
+      - "/path/on/your/computer/library.db:/library.db"
+      - "/path/on/your/computer/library:/library"
+      - "/path/on/your/computer/cookies.json:/cookies.json"
+    environment:
+      - TOKEN=xxxxxxxxxx
+      - CLIENT_ID=00000000
+    restart: always
+```
 
-Skip down to [Invite](#Invite) to see what's next.
+Change `/path/on/your/computer` to a directory where Beatnik's files can live, such as `/Users/me/Documents/Beatnik`. Create the `library` directory there, and then `touch` two empty files for `library.db` and `cookies.json`. Then, update the two environment variables in your Docker compose file:
 
-### Node.js
-1. Clone this repository somewhere locally. You'll need Node.js 18 or later installed along with `npm` ideally.
-2. Run `npm install` to install all the dependencies.
-3. Make sure ``ffmpeg`` is installed on your OS. The command above won't install it, and it's required for Beatnik to play audio.
-4. Set up your `.env` file by creating `.env` in the same directory, and filling out the fields as described below in [Environment](#Environment).
-5. Run `npm start` and you're up and running. Skip down to [Invite](#Invite) to see what's next.
+| Variable  |  Where to find |
+| ------------ | ------------ |
+| `TOKEN`  | Discord developer portal > Applications > [your app] > Bot > Token  |
+| `CLIENT_ID` | Discord developer portal > Applications > [your app] > OAuth2 > Client ID  |
 
-### Environment
-Whether you're using Docker or Node.js, you'll need to configure the environment variables with a few things from the bot application you created earlier on the Discord developer portal.
-| Variable | Value | Example
-|--|--|--|
-| TOKEN | Your Discord bot's token. **Required.** | xxxxxxxxxxxx.yyyyyyyyy | 
-| CLIENT_ID | Your Discord bot's client ID. **Required.** | 00000000000 |
-| MAX_CACHE_SIZE_IN_MB | How much space in megabytes that the cache can expand to. Set this value to `0` to disable caching entirely. | `128`
-| DATABASE_PATH | A valid path that Beatnik can use to create a SQLite file. In advance, run `touch beatnik.sqlite` to make sure the file exists. If you're using Docker, bind this example path to your persistent storage, and don't change the ENV variable. | `/usr/beatnik/beatnik.sqlite`
-| CACHE_PATH | A valid directory that Beatnik can use to save its cache. If you're using Docker, bind this example path to your persistent storage, and don't change the ENV variable. Not required if `MAX_CACHE_SIZE_IN_MB` is set to `0`. | `/usr/beatnik/beatnik-cache`
-| YT_COOKIE | (Optional) YouTube cookie for ytdl. Not used if left blank. | "HSID=xxxxxx...."
+### YouTube cookies (optional)
+This isn't required for Beatnik to work, but some YouTube videos require a cookie (signed in user) to play, like age-restricted or private videos. [Follow the steps here](https://github.com/distubejs/ytdl-core?tab=readme-ov-file#how-to-get-cookies "Follow the steps here") to create `cookies.json` in the Beatnik folder you created above if you require this setup.
 
-### Invite
-Check out the Discord developer portal > OAuth2 > URL Generator to create an invite link. Make sure the `bot` and `application.commands` scopes are set, and `Connect` and `Speak` are enabled in the bot permissions under Voice. Also, once Beatnik is invited, ensure it gets assigned a role that lets it post messages in at least one text channel. Now Playing embeds and other messages are posted in the channel where the command was called.
 
-### Install
-You need to be a server administrator to install Beatnik. Type `/install` in any text channel the bot can see, and the commands will now be available.
-
-## Usage and commands
-
-Beatnik uses Discord slash commands. You can just type `/` in your text channel, and then click the Beatnik icon to see all the commands. Or you can read this.
+## 🎵 Usage
+Beatnik uses Discord slash commands. You can type `/` in any text channel, and then click the Beatnik icon to see all the commands with descriptions.
 
 |Command| Description | Options |
 |--|--|--|
-| `/play [query]` | Plays a URL, or searches for a text query and plays the first result. `end` will add the track to the end of the queue, instead of the beginning. `shuffle` will shuffle a playlist link as it gets added. | end, shuffle
+| `/play [query]` | Plays a video or playlist URL, or searches for a text query and plays the first result. | `end`: Adds to end of the queue, instead of next.<br> `shuffle`: Shuffles a playlist. |
+| `/load (playlist \| track) [item]` | Loads a playlist or track from your library. | `end`: Adds to end of the queue, instead of next.<br> `shuffle`: Shuffles a playlist. |
+| `/add [query]` | Adds a YouTube URL to your library (playlist or track) and downloads the tracks locally. |
+| `/update [playlist]` | Updates a playlist in your library (eg. when new tracks are added.) | |
 | `/stop`  | Stops music, clears the queue, and removes Beatnik from the voice channel.  |  |
-| `/skip [track?]`  | Skips the current playing track in the queue. Use the `track` option to skip to a specific track. | |
+| `/skip`  | Skips the current playing track in the queue. | `track`: Skip to a specific track in queue. |
 | `/shuffle` | Shuffles tracks in the queue after the currently playing song. | |
-| `/queue [page?]` | Lists the current queue and currently playing track. Specify a page to see the rest of the queue. | |
-| `/save [name] [url]` | Gives a `name` to a URL so you can load it into the queue easily later. | |
-| `/load [name]` | Loads a saved URL with `name` into the queue. The same options as `/play` apply here. | end, shuffle
-| `/list` | Lists all saved URLs in the guild. | |
-| `/remove queue [track]` | Removes a track from the queue. | |
-| `/remove saved [name]` | Removes a saved URL with `name` from the guild. | |
-| `/install` | Installs Beatnik commmands to your guild. Admins only. |
-| `/uninstall` | Removes Beatnik commands from your guild. Admins only. |
+| `/queue` | Lists the current queue and currently playing track. | `page`: View another page of the queue, if necessary. |
+| `/remove queue [track]` | Removes a track from the queue. | | |
+| `/remove (playlist \| saved-track) [item]` | Removes an item from your library. | |
 
 ### Othello commands
 Beatnik includes a text-based version of Othello.
