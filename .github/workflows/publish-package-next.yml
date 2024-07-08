@@ -26,5 +26,5 @@ jobs:
         with:
           push: true
           tags: nickseman/beatnik:next
-          cache-from: type=registry,ref=nickseman/beatnik:buildcache
-          cache-to: type=registry,ref=nickseman/beatnik:buildcache,mode=max
+          cache-from: type=registry,ref=nickseman/beatnik:buildcachenext
+          cache-to: type=registry,ref=nickseman/beatnik:buildcachenext,mode=max
