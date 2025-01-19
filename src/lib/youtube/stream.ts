@@ -17,6 +17,7 @@ export async function createResource(track: QueuedTrack) {
       filter: "audioonly",
       quality: "lowestaudio",
       agent,
+      playerClients: ["IOS", "WEB_CREATOR"],
     });
     fromCache = false;
   }
