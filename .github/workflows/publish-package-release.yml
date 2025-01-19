@@ -5,7 +5,7 @@ on:
 
 jobs:
   push_to_registry:
-    name: (next) Push Docker image to Docker Hub
+    name: (RELEASE) Push Docker image to Docker Hub
     runs-on: ubuntu-latest
     steps:
       - name: Checkout

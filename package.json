@@ -6,6 +6,7 @@
   "license": "MIT",
   "type": "module",
   "scripts": {
+    "preinstall": "npx only-allow npm",
     "build": "esbuild src/beatnik.ts src/deploy-commands.ts --outdir=build --platform=node --target=node20 --bundle --packages=external --out-extension:.js=.cjs --minify",
     "build:docker": "npm run build && docker build -t beatnik-dev .",
     "build:dockerx64": "npm run build && docker buildx build --platform linux/amd64 -t beatnik-dev-x64 .",
@@ -21,7 +22,7 @@
   "dependencies": {
     "@discordjs/opus": "^0.9.0",
     "@discordjs/voice": "^0.18.0",
-    "@distube/ytdl-core": "4.15.8",
+    "@distube/ytdl-core": "4.15.6",
     "@distube/ytpl": "^1.2.1",
     "@distube/ytsr": "^2.0.4",
     "@keyv/sqlite": "^3.6.7",
@@ -46,7 +47,7 @@
     "typescript": "^5.5.2"
   },
   "engines": {
-    "node": ">=22"
+    "node": ">=20.0.0 <21.0.0"
   },
   "prettier": {
     "semi": true,
