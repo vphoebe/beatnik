@@ -33,7 +33,7 @@ export async function downloadId(id: string) {
       filter: "audioonly",
       quality: "highestaudio",
       agent,
-      playerClients: ["IOS", "WEB_CREATOR"],
+      playerClients: ["IOS", "ANDROID"],
     }).on("error", (err) => {
       throw new Error(`YTDL error: `, err);
     });

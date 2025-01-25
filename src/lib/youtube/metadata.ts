@@ -73,7 +73,7 @@ async function getTrackInfo(url: string, useLibrary: boolean): Promise<YtApiTrac
     return existingTrack;
   }
   try {
-    const info = await ytdl.getInfo(url, { agent, playerClients: ["IOS", "WEB_CREATOR"] });
+    const info = await ytdl.getInfo(url, { agent, playerClients: ["WEB"] });
     const { videoDetails, player_response } = info;
     const { title, lengthSeconds, thumbnails, author, videoId, video_url } = videoDetails;
     return {
@@ -124,7 +124,10 @@ async function getPlaylistInfo(url: string, useLibrary: boolean): Promise<YtApiP
     if (match) {
       tracks.push({ ...track, loudness: match.loudness });
     } else {
-      const info = await ytdl.getInfo(track.url, { agent, playerClients: ["IOS", "WEB_CREATOR"] });
+      const info = await ytdl.getInfo(track.url, {
+        agent,
+        playerClients: ["WEB"],
+      });
       tracks.push({
         ...track,
         loudness: info.player_response.playerConfig.audioConfig.loudnessDb,
