@@ -1,6 +1,6 @@
 {
   "name": "beatnik",
-  "version": "4.0.2",
+  "version": "4.0.3",
   "description": "modern and simple Discord music bot with easy-to-use commands",
   "author": "vphoebe",
   "license": "MIT",
@@ -22,7 +22,7 @@
   "dependencies": {
     "@discordjs/opus": "^0.9.0",
     "@discordjs/voice": "^0.18.0",
-    "@distube/ytdl-core": "4.15.9",
+    "@distube/ytdl-core": "^4.16.0",
     "@distube/ytpl": "^1.2.1",
     "@distube/ytsr": "^2.0.4",
     "@keyv/sqlite": "^3.6.7",
