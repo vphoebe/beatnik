@@ -126,7 +126,7 @@ async function getPlaylistInfo(url: string, useLibrary: boolean): Promise<YtApiP
     } else {
       const info = await ytdl.getInfo(track.url, {
         agent,
-        playerClients: ["WEB"],
+        playerClients: ["WEB_EMBEDDED"],
       });
       tracks.push({
         ...track,
