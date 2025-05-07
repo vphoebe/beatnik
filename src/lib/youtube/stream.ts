@@ -1,7 +1,6 @@
 import { createAudioResource, demuxProbe } from "@discordjs/voice";
 import { ReadStream } from "fs";
-import { Readable } from "node:stream";
-import { ReadableWebToNodeStream } from "readable-web-to-node-stream";
+import { Readable, Stream } from "node:stream";
 import { Innertube, UniversalCache } from "youtubei.js";
 
 import { getDownloadedIdStream } from "../library/cache.js";
@@ -23,7 +22,7 @@ export async function createResource(track: QueuedTrack, retries = 0) {
         client: "WEB",
       });
 
-      stream = new ReadableWebToNodeStream(innertubeStream);
+      stream = Stream.Readable.fromWeb(innertubeStream);
       fromCache = false;
     }
     const { type } = await demuxProbe(stream);

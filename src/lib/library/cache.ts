@@ -1,8 +1,8 @@
 import { createReadStream, createWriteStream, existsSync } from "node:fs";
 import { rm } from "node:fs/promises";
 import path from "node:path";
+import { Stream } from "node:stream";
 import { finished } from "node:stream/promises";
-import { ReadableWebToNodeStream } from "readable-web-to-node-stream";
 import { Innertube, UniversalCache } from "youtubei.js";
 
 import { getLibraryDir } from "../environment.js";
@@ -39,8 +39,7 @@ export async function downloadId(id: string) {
       client: "WEB",
     });
 
-    const ytStream = new ReadableWebToNodeStream(innertubeStream);
-
+    const ytStream = Stream.Readable.fromWeb(innertubeStream);
     const diskStream = createWriteStream(targetPath.path);
 
     // TODO: this works and I'm leaving the ts error to resolve

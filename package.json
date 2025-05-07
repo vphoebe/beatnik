@@ -1,6 +1,6 @@
 {
   "name": "beatnik",
-  "version": "4.0.4",
+  "version": "4.0.5",
   "description": "modern and simple Discord music bot with easy-to-use commands",
   "author": "vphoebe",
   "license": "MIT",
@@ -30,7 +30,6 @@
     "discord.js": "^14.15.3",
     "dotenv": "^16.4.5",
     "keyv": "^4.5.4",
-    "readable-web-to-node-stream": "^5.0.0",
     "sodium-native": "^4.1.1",
     "sqlite3": "^5.1.7",
     "youtubei.js": "^13.4.0"
