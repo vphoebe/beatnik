@@ -1,12 +1,12 @@
-import ytdl from "@distube/ytdl-core";
 import { createReadStream, createWriteStream, existsSync } from "node:fs";
 import { rm } from "node:fs/promises";
 import path from "node:path";
 import { finished } from "node:stream/promises";
+import { ReadableWebToNodeStream } from "readable-web-to-node-stream";
+import { Innertube, UniversalCache } from "youtubei.js";
 
 import { getLibraryDir } from "../environment.js";
 import { log } from "../logger.js";
-import { agent } from "../youtube/agent.js";
 import { YtApiTrack } from "../youtube/metadata.js";
 
 function getItemPath(id: string) {
@@ -29,14 +29,17 @@ export async function downloadId(id: string) {
     }
     log({ type: "CACHE", user: "BOT", message: `Downloading ${id}...` });
 
-    const ytStream = ytdl(id, {
-      filter: "audioonly",
-      quality: "highestaudio",
-      agent,
-      playerClients: ["WEB_EMBEDDED"],
-    }).on("error", (err) => {
-      throw new Error(`YTDL error: `, err);
+    const yt = await Innertube.create({
+      cache: new UniversalCache(false),
+      generate_session_locally: true,
     });
+
+    const innertubeStream = await yt.download(id as string, {
+      type: "audio", // audio, video or video+audio
+      client: "WEB",
+    });
+
+    const ytStream = new ReadableWebToNodeStream(innertubeStream);
 
     const diskStream = createWriteStream(targetPath.path);
 

@@ -1,25 +1,29 @@
 import { createAudioResource, demuxProbe } from "@discordjs/voice";
-import ytdl from "@distube/ytdl-core";
 import { ReadStream } from "fs";
 import { Readable } from "node:stream";
+import { ReadableWebToNodeStream } from "readable-web-to-node-stream";
+import { Innertube, UniversalCache } from "youtubei.js";
 
 import { getDownloadedIdStream } from "../library/cache.js";
 import { QueuedTrack } from "../queue.js";
-import { agent } from "./agent.js";
 
 export async function createResource(track: QueuedTrack, retries = 0) {
   // return resource either from stream or cache
   try {
+    const yt = await Innertube.create({
+      cache: new UniversalCache(false),
+      generate_session_locally: true,
+    });
     let stream: Readable | ReadStream | undefined = getDownloadedIdStream(track.id);
     let fromCache = true;
     if (!stream) {
       // grab api stream from youtube
-      stream = ytdl(track.id, {
-        filter: "audioonly",
-        quality: "lowestaudio",
-        agent,
-        playerClients: ["WEB_EMBEDDED"],
+      const innertubeStream = await yt.download(track.id as string, {
+        type: "audio", // audio, video or video+audio
+        client: "WEB",
       });
+
+      stream = new ReadableWebToNodeStream(innertubeStream);
       fromCache = false;
     }
     const { type } = await demuxProbe(stream);
@@ -37,12 +41,14 @@ export async function createResource(track: QueuedTrack, retries = 0) {
 
     return { resource, fromCache };
   } catch (err) {
-    if (retries < 10) {
+    console.error(err);
+
+    if (retries < 0) {
       retries++;
       console.log("Retry");
       return createResource(track, retries);
     } else {
-      throw new Error(`Unable to play ${track.id} after 10 attempts.`);
+      throw new Error(`Unable to play ${track.id} after ${retries} attempts.`);
     }
   }
 }

@@ -30,8 +30,10 @@
     "discord.js": "^14.15.3",
     "dotenv": "^16.4.5",
     "keyv": "^4.5.4",
+    "readable-web-to-node-stream": "^5.0.0",
     "sodium-native": "^4.1.1",
-    "sqlite3": "^5.1.7"
+    "sqlite3": "^5.1.7",
+    "youtubei.js": "^13.4.0"
   },
   "devDependencies": {
     "@trivago/prettier-plugin-sort-imports": "^4.3.0",
