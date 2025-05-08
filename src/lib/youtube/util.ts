@@ -7,7 +7,7 @@ export const getURLFromYtID = (id: string) => {
 };
 
 export const getURLFromPlID = (id: string) => {
-  return `https://youtube.com/playlist?list=${id}`;
+  return `https://youtube.com/playlist?list=${id.replace("VL", "")}`;
 };
 
 export const getYtIDFromURL = async (
