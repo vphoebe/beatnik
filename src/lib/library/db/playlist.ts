@@ -25,6 +25,13 @@ export async function getSavedPlaylistByUrl(url: string) {
   });
 }
 
+export async function getSavedPlaylistById(id: string) {
+  return prisma.playlist.findFirst({
+    where: { id },
+    include: { tracks: true },
+  });
+}
+
 export async function savePlaylist(playlistData: YtApiPlaylist) {
   return prisma.playlist.create({
     data: {

@@ -1,12 +1,11 @@
 import { createReadStream, createWriteStream, existsSync } from "node:fs";
 import { rm } from "node:fs/promises";
 import path from "node:path";
-import { Stream } from "node:stream";
 import { finished } from "node:stream/promises";
-import { Innertube, UniversalCache } from "youtubei.js";
 
 import { getLibraryDir } from "../environment.js";
 import { log } from "../logger.js";
+import { getYtStream } from "../youtube/innertube.js";
 import { YtApiTrack } from "../youtube/metadata.js";
 
 function getItemPath(id: string) {
@@ -29,17 +28,7 @@ export async function downloadId(id: string) {
     }
     log({ type: "CACHE", user: "BOT", message: `Downloading ${id}...` });
 
-    const yt = await Innertube.create({
-      cache: new UniversalCache(false),
-      generate_session_locally: true,
-    });
-
-    const innertubeStream = await yt.download(id as string, {
-      type: "audio", // audio, video or video+audio
-      client: "WEB",
-    });
-
-    const ytStream = Stream.Readable.fromWeb(innertubeStream);
+    const ytStream = await getYtStream(id);
     const diskStream = createWriteStream(targetPath.path);
 
     // TODO: this works and I'm leaving the ts error to resolve

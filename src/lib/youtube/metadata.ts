@@ -1,11 +1,9 @@
-import ytdl from "@distube/ytdl-core";
-import ytpl from "@distube/ytpl";
-import ytsr from "@distube/ytsr";
+import { YTNodes } from "youtubei.js";
 
-import { getSavedPlaylistByUrl } from "../library/db/playlist.js";
-import { getAllTracks, getTrackByUrl } from "../library/db/track.js";
-import { durationStringToSeconds } from "../util.js";
-import { agent } from "./agent.js";
+import { getSavedPlaylistById } from "../library/db/playlist.js";
+import { getAllTracks, getTrackByYtId } from "../library/db/track.js";
+import { yt } from "./innertube.js";
+import { getLoudnessFromInfo, getURLFromPlID, getURLFromYtID, getYtIDFromURL } from "./util.js";
 
 interface Query {
   query: string;
@@ -31,122 +29,106 @@ export interface YtApiPlaylist {
   tracks: YtApiTrack[];
 }
 
-function isValidUrl(query: string): URL | null {
-  let urlObject;
+async function getQueryType(query: string): Promise<Query | null> {
   try {
-    urlObject = new URL(query);
-    return urlObject;
+    const idObject = await getYtIDFromURL(query);
+    return {
+      query: idObject.id,
+      type: idObject.type,
+    };
   } catch (err) {
-    return null;
-  }
-}
-
-function getQueryType(query: string): Query | null {
-  const urlObj = isValidUrl(query);
-  if (urlObj) {
-    // check if url is track, playlist, or none
-    const url = urlObj.toString();
-    if (url.includes("playlist") && ytpl.validateID(url)) {
+    if (err instanceof TypeError) {
+      // URL constructor error, just return as a search query
       return {
         query,
-        type: "playlist",
-      };
-    } else if (ytdl.validateURL(url)) {
-      return {
-        query,
-        type: "track",
+        type: "query",
       };
     } else {
-      return null;
+      // URL, but not a valid youtube one
+      throw new Error("Invalid YouTube URL");
     }
-  } else {
-    return {
-      query,
-      type: "query",
-    };
   }
 }
 
-async function getTrackInfo(url: string, useLibrary: boolean): Promise<YtApiTrack | undefined> {
-  const existingTrack = await getTrackByUrl(url);
+async function getTrackInfo(id: string, useLibrary: boolean): Promise<YtApiTrack | undefined> {
+  const existingTrack = await getTrackByYtId(id);
   if (existingTrack && useLibrary) {
     return existingTrack;
   }
   try {
-    const info = await ytdl.getInfo(url, { agent, playerClients: ["WEB"] });
-    const { videoDetails, player_response } = info;
-    const { title, lengthSeconds, thumbnails, author, videoId, video_url } = videoDetails;
+    const info = await yt.getBasicInfo(id, "WEB");
+    const { basic_info } = info;
     return {
-      title,
-      url: video_url,
-      length: parseInt(lengthSeconds),
-      id: videoId,
-      channelName: author.name,
-      thumbnailUrl: thumbnails[0].url,
-      loudness: player_response.playerConfig.audioConfig.loudnessDb,
+      title: basic_info.title ?? "Unknown",
+      url: getURLFromYtID(basic_info.id ?? ""),
+      length: basic_info.duration ?? 0,
+      id: basic_info.id ?? "Unknown",
+      channelName: basic_info.channel?.name ?? "Unknown",
+      thumbnailUrl: basic_info.thumbnail?.[0].url ?? "Unknown",
+      loudness: getLoudnessFromInfo(info),
       playlistIdx: null,
     };
   } catch (err) {
-    console.error(`Error for ${url}`);
+    console.error(`Error for ${id}`);
     console.error(err);
   }
 }
 
-async function getPlaylistInfo(url: string, useLibrary: boolean): Promise<YtApiPlaylist> {
-  const existingPlaylist = await getSavedPlaylistByUrl(url);
+async function getPlaylistInfo(id: string, useLibrary: boolean): Promise<YtApiPlaylist> {
+  const existingPlaylist = await getSavedPlaylistById(id);
   if (existingPlaylist && useLibrary) {
     return existingPlaylist;
   }
-  const playlistInfo = await ytpl(url, { limit: Infinity });
 
-  const tracksWithoutLoudness: Omit<YtApiTrack, "loudness">[] = playlistInfo.items.map(
-    (item, idx) => ({
-      title: item.title,
-      length: durationStringToSeconds(item.duration ?? "0:00"),
-      url: item.url,
-      id: item.id,
-      channelName: item.author?.name ?? "Unknown",
-      thumbnailUrl: item.thumbnail ?? "",
-      playlistIdx: idx,
-    }),
-  );
+  const playlistInfo = await yt.getPlaylist(id);
+  const intermediateTracks: YtApiTrack[] = playlistInfo.items
+    .filterType(YTNodes.PlaylistVideo)
+    .map((item, index) => {
+      return {
+        id: item.id,
+        title: item.title.text ?? "Unknown",
+        length: item.duration.seconds,
+        channelName: item.author.name,
+        thumbnailUrl: item.thumbnails?.[0].url,
+        playlistIdx: index,
+        url: getURLFromYtID(item.id),
+        loudness: 0,
+      };
+    });
 
-  // use existing loudness data if possible
-  const loudnessData = (await getAllTracks()).map((t) => ({
+  // patch in loudness from db or API
+  const existingLoudnessData = (await getAllTracks()).map((t) => ({
     id: t.id,
     loudness: t.loudness,
   }));
 
   const tracks: YtApiTrack[] = [];
 
-  for (const track of tracksWithoutLoudness) {
-    const match = loudnessData.find((t) => t.id === track.id);
+  for (const track of intermediateTracks) {
+    const match = existingLoudnessData.find((t) => t.id === track.id);
     if (match) {
       tracks.push({ ...track, loudness: match.loudness });
     } else {
-      const info = await ytdl.getInfo(track.url, {
-        agent,
-        playerClients: ["WEB_EMBEDDED"],
-      });
+      const info = await yt.getBasicInfo(track.id);
       tracks.push({
         ...track,
-        loudness: info.player_response.playerConfig.audioConfig.loudnessDb,
+        loudness: getLoudnessFromInfo(info),
       });
     }
   }
 
   return {
     tracks,
-    title: playlistInfo.title,
-    url: playlistInfo.url,
-    id: playlistInfo.id,
-    authorName: playlistInfo.author?.user ?? "Unknown",
+    title: playlistInfo.info.title ?? "Unknown",
+    url: getURLFromPlID(id),
+    id,
+    authorName: playlistInfo.info.author.name,
   };
 }
 
 export async function getMetadataFromQuery(query: string, options: { useLibrary: boolean }) {
   const { useLibrary } = options;
-  const parsedQuery = getQueryType(query);
+  const parsedQuery = await getQueryType(query);
 
   if (!parsedQuery) {
     return undefined;
@@ -160,9 +142,13 @@ export async function getMetadataFromQuery(query: string, options: { useLibrary:
       };
     }
     case "query": {
-      const searchResults = await ytsr(parsedQuery.query, { limit: 1 });
+      const searchResults = await yt.search(parsedQuery.query);
+      const result = searchResults.results.firstOfType(YTNodes.Video);
+      if (!result) {
+        throw new Error("No search results found.");
+      }
       return {
-        track: await getTrackInfo(searchResults.items[0].url, useLibrary),
+        track: await getTrackInfo(result.video_id, useLibrary),
         type: "track",
       };
     }
