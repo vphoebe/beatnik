@@ -1,6 +1,5 @@
 import "dotenv/config";
-import { existsSync, readFileSync } from "node:fs";
-import path from "node:path";
+import { existsSync } from "node:fs";
 
 export function getToken() {
   const token = process.env.TOKEN;
@@ -32,10 +31,4 @@ export function getLibraryDir() {
     }
   }
   return libraryPath;
-}
-
-export function getCookiesArray() {
-  const filepath = process.env.YT_COOKIE_JSON;
-  if (!filepath) return {};
-  return JSON.parse(readFileSync(path.resolve(filepath), "utf-8"));
 }

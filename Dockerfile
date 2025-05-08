@@ -19,14 +19,12 @@ FROM node:20-alpine3.20 AS beatnik
 # set up default env
 ENV DATABASE_URL="file:/library.db" \
   LIBRARY_PATH="/library" \
-  YT_COOKIE_JSON="/cookies.json" \
   YTDL_NO_UPDATE=1 \
   NODE_ENV="production"
 WORKDIR /
 # create mount points
 RUN touch library.db
 RUN mkdir library
-RUN echo "[]" > cookies.json
 # install ffmpeg
 RUN apk add --no-cache ffmpeg
 # copy beatnik code

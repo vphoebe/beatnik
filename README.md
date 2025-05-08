@@ -32,7 +32,6 @@ services:
     volumes:
       - "/path/on/your/computer/library.db:/library.db"
       - "/path/on/your/computer/library:/library"
-      # - "/path/on/your/computer/cookies.json:/cookies.json"
     environment:
       - TOKEN=xxxxxxxxxx
       - CLIENT_ID=00000000
@@ -45,9 +44,6 @@ Change `/path/on/your/computer` to a directory where Beatnik's files can live, s
 | ------------ | ------------ |
 | `TOKEN`  | Discord developer portal > Applications > [your app] > Bot > Token  |
 | `CLIENT_ID` | Discord developer portal > Applications > [your app] > OAuth2 > Client ID  |
-
-### YouTube cookies (optional)
-This isn't required for Beatnik to work, but some YouTube videos require a cookie (signed in user) to play, like age-restricted or private videos. [Follow the steps here](https://github.com/distubejs/ytdl-core?tab=readme-ov-file#how-to-get-cookies "Follow the steps here") to create `cookies.json` in the Beatnik folder you created above if you require this setup. Make sure to comment out the line with `cookies.json` in your Docker compose and set the path to your file.
 
 
 ## 🎵 Usage
