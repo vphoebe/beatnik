@@ -1,6 +1,6 @@
-import ytdl from "@distube/ytdl-core";
-import ytpl from "@distube/ytpl";
 import { YT } from "youtubei.js";
+
+import { yt } from "./innertube.js";
 
 export const getURLFromYtID = (id: string) => {
   return `https://youtube.com/watch?v=${id}`;
@@ -15,16 +15,20 @@ export const getYtIDFromURL = async (
 ): Promise<{ id: string; type: "track" | "playlist" }> => {
   const urlObject = new URL(url);
   const validUrl = urlObject.toString();
-  if (validUrl.includes("playlist") && ytpl.validateID(validUrl)) {
+  const endpoint = await yt.resolveURL(validUrl);
+  if (endpoint.payload.browseId) {
     return {
-      id: await ytpl.getPlaylistID(validUrl),
+      id: endpoint.payload.browseId,
       type: "playlist",
     };
-  } else if (ytdl.validateURL(validUrl)) {
+  } else if (endpoint.payload.videoId) {
     return {
-      id: ytdl.getVideoID(validUrl),
+      id: endpoint.payload.videoId,
       type: "track",
     };
+  } else if (endpoint.payload.url) {
+    // youtu.be link
+    return getYtIDFromURL(endpoint.payload.url);
   } else {
     throw new Error("Non-YouTube URL");
   }
