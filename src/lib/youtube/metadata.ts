@@ -80,21 +80,27 @@ async function getPlaylistInfo(id: string, useLibrary: boolean): Promise<YtApiPl
     return existingPlaylist;
   }
 
-  const playlistInfo = await yt.getPlaylist(id);
-  const intermediateTracks: YtApiTrack[] = playlistInfo.items
-    .filterType(YTNodes.PlaylistVideo)
-    .map((item, index) => {
-      return {
-        id: item.id,
-        title: item.title.text ?? "Unknown",
-        length: item.duration.seconds,
-        channelName: item.author.name,
-        thumbnailUrl: item.thumbnails?.[0].url,
-        playlistIdx: index,
-        url: getURLFromYtID(item.id),
-        loudness: 0,
-      };
-    });
+  const totalItems: YTNodes.PlaylistVideo[] = [];
+
+  let playlistInfo = await yt.getPlaylist(id);
+  totalItems.push(...playlistInfo.items.filterType(YTNodes.PlaylistVideo));
+  while (playlistInfo.has_continuation) {
+    playlistInfo = await playlistInfo.getContinuation();
+    totalItems.push(...playlistInfo.items.filterType(YTNodes.PlaylistVideo));
+  }
+
+  const intermediateTracks: YtApiTrack[] = totalItems.map((item, index) => {
+    return {
+      id: item.id,
+      title: item.title.text ?? "Unknown",
+      length: item.duration.seconds,
+      channelName: item.author.name,
+      thumbnailUrl: item.thumbnails?.[0].url,
+      playlistIdx: index,
+      url: getURLFromYtID(item.id),
+      loudness: 0,
+    };
+  });
 
   // patch in loudness from db or API
   const existingLoudnessData = (await getAllTracks()).map((t) => ({
