@@ -2,7 +2,7 @@ import { YTNodes } from "youtubei.js";
 
 import { getSavedPlaylistById } from "../library/db/playlist.js";
 import { getAllTracks, getTrackByYtId } from "../library/db/track.js";
-import { yt } from "./innertube.js";
+import { yt } from "./client.js";
 import { getLoudnessFromInfo, getURLFromPlID, getURLFromYtID, getYtIDFromURL } from "./util.js";
 
 interface Query {

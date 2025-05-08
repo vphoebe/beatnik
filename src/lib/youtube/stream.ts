@@ -4,7 +4,7 @@ import { Readable } from "node:stream";
 
 import { getDownloadedIdStream } from "../library/cache.js";
 import { QueuedTrack } from "../queue.js";
-import { getYtStream } from "./innertube.js";
+import { getYtStream } from "./client.js";
 
 export async function createResource(track: QueuedTrack, retries = 0) {
   // return resource either from stream or cache

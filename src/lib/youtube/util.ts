@@ -1,6 +1,6 @@
 import { YT } from "youtubei.js";
 
-import { yt } from "./innertube.js";
+import { yt } from "./client.js";
 
 export const getURLFromYtID = (id: string) => {
   return `https://youtube.com/watch?v=${id}`;

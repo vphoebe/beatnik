@@ -5,7 +5,7 @@ import { finished } from "node:stream/promises";
 
 import { getLibraryDir } from "../environment.js";
 import { log } from "../logger.js";
-import { getYtStream } from "../youtube/innertube.js";
+import { getYtStream } from "../youtube/client.js";
 import { YtApiTrack } from "../youtube/metadata.js";
 
 function getItemPath(id: string) {
