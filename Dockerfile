@@ -19,7 +19,6 @@ FROM node:20-alpine3.20 AS beatnik
 # set up default env
 ENV DATABASE_URL="file:/library.db" \
   LIBRARY_PATH="/library" \
-  YTDL_NO_UPDATE=1 \
   NODE_ENV="production"
 WORKDIR /
 # create mount points
@@ -33,4 +32,4 @@ COPY --from=builder /builder/prisma ./prisma
 COPY --from=builder /builder/node_modules ./node_modules
 COPY --from=builder /builder/build ./dist
 # start beatnik
-CMD npx prisma migrate deploy ; node ./dist/deploy-commands.cjs ; node ./dist/beatnik.cjs
+CMD ["sh", "-c", "npx prisma migrate deploy && node ./dist/deploy-commands.cjs && node ./dist/beatnik.cjs"]
