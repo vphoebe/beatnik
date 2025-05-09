@@ -1,5 +1,5 @@
 import { createReadStream, createWriteStream, existsSync } from "node:fs";
-import { rm } from "node:fs/promises";
+import { readdir, rename, rm } from "node:fs/promises";
 import path from "node:path";
 import { finished } from "node:stream/promises";
 
@@ -10,9 +10,22 @@ import { YtApiTrack } from "../youtube/metadata.js";
 
 function getItemPath(id: string) {
   const libDir = getLibraryDir();
-  const itemPath = path.join(libDir, id + ".opus");
+  const itemPath = path.join(libDir, id + ".cache");
   const exists = existsSync(itemPath);
   return { path: itemPath, exists };
+}
+
+export async function migrateCacheNames() {
+  const libDir = getLibraryDir();
+  const files = await readdir(libDir);
+  const opusFiles = files.filter((f) => f.endsWith(".opus"));
+  const renamePromises = opusFiles.map((f) => {
+    const oldPath = path.join(libDir, f);
+    const newPath = path.join(libDir, f.replace(".opus", ".cache"));
+    return rename(oldPath, newPath);
+  });
+  await Promise.all(renamePromises);
+  return renamePromises.length;
 }
 
 export function testCache() {

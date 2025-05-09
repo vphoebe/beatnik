@@ -3,7 +3,13 @@ import { ChatInputCommandInteraction } from "discord.js";
 
 import { log } from "../logger.js";
 import { getMetadataFromQuery, YtApiPlaylist, YtApiTrack } from "../youtube/metadata.js";
-import { downloadId, downloadPlaylist, removeDownload, testCache } from "./cache.js";
+import {
+  downloadId,
+  downloadPlaylist,
+  migrateCacheNames,
+  removeDownload,
+  testCache,
+} from "./cache.js";
 import { testDb } from "./db/client.js";
 import {
   doesPlaylistExist,
@@ -34,6 +40,14 @@ export async function testLibraryConnection() {
       user: "BOT",
       message: "Connected to library cache directory!",
     });
+    const migratedCacheCount = await migrateCacheNames();
+    if (migratedCacheCount) {
+      log({
+        type: "CACHE",
+        user: "BOT",
+        message: `Migrated ${migratedCacheCount} files to new cache format`,
+      });
+    }
     await testDb();
     log({
       type: "DB",
