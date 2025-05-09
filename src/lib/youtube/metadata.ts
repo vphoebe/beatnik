@@ -2,7 +2,7 @@ import { YTNodes } from "youtubei.js";
 
 import { getSavedPlaylistById } from "../library/db/playlist.js";
 import { getAllTracks, getTrackByYtId } from "../library/db/track.js";
-import { yt } from "./client.js";
+import { getClient } from "./client.js";
 import { getLoudnessFromInfo, getURLFromPlID, getURLFromYtID, getYtIDFromURL } from "./util.js";
 
 interface Query {
@@ -56,6 +56,7 @@ async function getTrackInfo(id: string, useLibrary: boolean): Promise<YtApiTrack
     return existingTrack;
   }
   try {
+    const yt = await getClient();
     const info = await yt.getBasicInfo(id, "WEB");
     const { basic_info } = info;
     return {
@@ -82,6 +83,7 @@ async function getPlaylistInfo(id: string, useLibrary: boolean): Promise<YtApiPl
 
   const totalItems: YTNodes.PlaylistVideo[] = [];
 
+  const yt = await getClient();
   let playlistInfo = await yt.getPlaylist(id);
   totalItems.push(...playlistInfo.items.filterType(YTNodes.PlaylistVideo));
   while (playlistInfo.has_continuation) {
@@ -148,6 +150,7 @@ export async function getMetadataFromQuery(query: string, options: { useLibrary:
       };
     }
     case "query": {
+      const yt = await getClient();
       const searchResults = await yt.search(parsedQuery.query);
       const result = searchResults.results.firstOfType(YTNodes.Video);
       if (!result) {

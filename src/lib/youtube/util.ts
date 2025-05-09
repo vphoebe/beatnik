@@ -1,6 +1,6 @@
 import { YT } from "youtubei.js";
 
-import { yt } from "./client.js";
+import { getClient } from "./client.js";
 
 export const getURLFromYtID = (id: string) => {
   return `https://youtube.com/watch?v=${id}`;
@@ -15,6 +15,7 @@ export const getYtIDFromURL = async (
 ): Promise<{ id: string; type: "track" | "playlist" }> => {
   const urlObject = new URL(url);
   const validUrl = urlObject.toString();
+  const yt = await getClient();
   const endpoint = await yt.resolveURL(validUrl);
   if (endpoint.payload.browseId) {
     return {
