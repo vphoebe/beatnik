@@ -18,13 +18,6 @@ export async function getPlaylists() {
   });
 }
 
-export async function getSavedPlaylistByUrl(url: string) {
-  return prisma.playlist.findFirst({
-    where: { url },
-    include: { tracks: true },
-  });
-}
-
 export async function getSavedPlaylistById(id: string) {
   return prisma.playlist.findFirst({
     where: { id },

@@ -2,15 +2,16 @@ import { YT } from "youtubei.js";
 
 import { getClient } from "./client.js";
 
-export const getURLFromYtID = (id: string) => {
+export const trackIdToURL = (id: string) => {
   return `https://youtube.com/watch?v=${id}`;
 };
 
-export const getURLFromPlID = (id: string) => {
+export const playlistIdToURL = (id: string) => {
+  // have to remove VL from the ID for the url to work
   return `https://youtube.com/playlist?list=${id.replace("VL", "")}`;
 };
 
-export const getYtIDFromURL = async (
+export const extractYTIdFromURL = async (
   url: string,
 ): Promise<{ id: string; type: "track" | "playlist" }> => {
   const urlObject = new URL(url);
@@ -29,7 +30,7 @@ export const getYtIDFromURL = async (
     };
   } else if (endpoint.payload.url) {
     // youtu.be link
-    return getYtIDFromURL(endpoint.payload.url);
+    return extractYTIdFromURL(endpoint.payload.url);
   } else {
     throw new Error("Non-YouTube URL");
   }

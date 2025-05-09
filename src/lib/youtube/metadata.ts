@@ -1,9 +1,9 @@
 import { YTNodes } from "youtubei.js";
 
 import { getSavedPlaylistById } from "../library/db/playlist.js";
-import { getAllTracks, getTrackByYtId } from "../library/db/track.js";
+import { getTrackByYtId } from "../library/db/track.js";
 import { getClient } from "./client.js";
-import { getLoudnessFromInfo, getURLFromPlID, getURLFromYtID, getYtIDFromURL } from "./util.js";
+import { getLoudnessFromInfo, playlistIdToURL, trackIdToURL, extractYTIdFromURL } from "./util.js";
 
 interface Query {
   query: string;
@@ -31,7 +31,7 @@ export interface YtApiPlaylist {
 
 async function getQueryType(query: string): Promise<Query | null> {
   try {
-    const idObject = await getYtIDFromURL(query);
+    const idObject = await extractYTIdFromURL(query);
     return {
       query: idObject.id,
       type: idObject.type,
@@ -61,7 +61,7 @@ async function getTrackInfo(id: string, useLibrary: boolean): Promise<YtApiTrack
     const { basic_info } = info;
     return {
       title: basic_info.title ?? "Unknown",
-      url: getURLFromYtID(basic_info.id ?? ""),
+      url: trackIdToURL(basic_info.id ?? ""),
       length: basic_info.duration ?? 0,
       id: basic_info.id ?? "Unknown",
       channelName: basic_info.channel?.name ?? "Unknown",
@@ -91,7 +91,7 @@ async function getPlaylistInfo(id: string, useLibrary: boolean): Promise<YtApiPl
     totalItems.push(...playlistInfo.items.filterType(YTNodes.PlaylistVideo));
   }
 
-  const intermediateTracks: YtApiTrack[] = totalItems.map((item, index) => {
+  const tracks: YtApiTrack[] = totalItems.map((item, index) => {
     return {
       id: item.id,
       title: item.title.text ?? "Unknown",
@@ -99,36 +99,38 @@ async function getPlaylistInfo(id: string, useLibrary: boolean): Promise<YtApiPl
       channelName: item.author.name,
       thumbnailUrl: item.thumbnails?.[0].url,
       playlistIdx: index,
-      url: getURLFromYtID(item.id),
+      url: trackIdToURL(item.id),
       loudness: 0,
     };
   });
 
+  // DISABLED TEMPORARILY TO AVOID RATE LIMITS
+  //
   // patch in loudness from db or API
-  const existingLoudnessData = (await getAllTracks()).map((t) => ({
-    id: t.id,
-    loudness: t.loudness,
-  }));
+  // const existingLoudnessData = (await getAllTracks()).map((t) => ({
+  //   id: t.id,
+  //   loudness: t.loudness,
+  // }));
 
-  const tracks: YtApiTrack[] = [];
+  // const tracks: YtApiTrack[] = [];
 
-  for (const track of intermediateTracks) {
-    const match = existingLoudnessData.find((t) => t.id === track.id);
-    if (match) {
-      tracks.push({ ...track, loudness: match.loudness });
-    } else {
-      const info = await yt.getBasicInfo(track.id);
-      tracks.push({
-        ...track,
-        loudness: getLoudnessFromInfo(info),
-      });
-    }
-  }
+  // for (const track of intermediateTracks) {
+  //   const match = existingLoudnessData.find((t) => t.id === track.id);
+  //   if (match) {
+  //     tracks.push({ ...track, loudness: match.loudness });
+  //   } else {
+  //     const info = await yt.getBasicInfo(track.id);
+  //     tracks.push({
+  //       ...track,
+  //       loudness: getLoudnessFromInfo(info),
+  //     });
+  //   }
+  // }
 
   return {
     tracks,
     title: playlistInfo.info.title ?? "Unknown",
-    url: getURLFromPlID(id),
+    url: playlistIdToURL(id),
     id,
     authorName: playlistInfo.info.author.name,
   };
