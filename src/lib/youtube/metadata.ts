@@ -154,7 +154,7 @@ export async function getMetadataFromQuery(query: string, options: { useLibrary:
     case "query": {
       const yt = await getClient();
       const searchResults = await yt.search(parsedQuery.query);
-      const result = searchResults.results.firstOfType(YTNodes.Video);
+      const result = searchResults.results.first() as YTNodes.Video;
       if (!result) {
         throw new Error("No search results found.");
       }
