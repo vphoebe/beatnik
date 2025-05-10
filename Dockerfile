@@ -26,6 +26,8 @@ RUN touch library.db
 RUN mkdir library
 # install ffmpeg
 RUN apk add --no-cache ffmpeg
+# fix prisma/alpine bug https://github.com/prisma/prisma/issues/25817
+RUN [ ! -e /lib/libssl.so.3 ] && ln -s /usr/lib/libssl.so.3 /lib/libssl.so.3 || echo "Link already exists"
 # copy beatnik code
 COPY package.json ./
 COPY --from=builder /builder/prisma ./prisma
