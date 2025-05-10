@@ -1,4 +1,4 @@
-import { inlineCode, SlashCommandBuilder } from "discord.js";
+import { inlineCode, MessageFlags, SlashCommandBuilder } from "discord.js";
 
 import { getPlaylists } from "../lib/library/db/playlist.js";
 import { getIsolatedTracks } from "../lib/library/db/track.js";
@@ -83,7 +83,7 @@ export const execute: CommandExecuter = async (interaction) => {
     }
     await interaction.reply({
       content: `Removed ${removed[0].title} from queue!`,
-      ephemeral: true,
+      flags: MessageFlags.Ephemeral,
     });
     return;
   } else if (subcommand === "playlist") {

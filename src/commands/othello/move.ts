@@ -1,4 +1,4 @@
-import { ChatInputCommandInteraction, SlashCommandBuilder } from "discord.js";
+import { ChatInputCommandInteraction, MessageFlags, SlashCommandBuilder } from "discord.js";
 
 import { gridToCoords } from "../../lib/othello/coordinates.js";
 import { state } from "../../lib/othello/state.js";
@@ -21,7 +21,7 @@ const execute = async (interaction: ChatInputCommandInteraction) => {
 
   if (!game || !interaction.guildId) {
     await interaction.reply({
-      ephemeral: true,
+      flags: MessageFlags.Ephemeral,
       content: "Use /othello-start to start a new game!",
     });
     return;
@@ -29,14 +29,14 @@ const execute = async (interaction: ChatInputCommandInteraction) => {
   const playerPiece = game.getPlayerPiece(interaction.user);
   if (!playerPiece) {
     await interaction.reply({
-      ephemeral: true,
+      flags: MessageFlags.Ephemeral,
       content: "You're not playing! Wait until the next round...",
     });
     return;
   }
   if (playerPiece !== game.activePlayer) {
     await interaction.reply({
-      ephemeral: true,
+      flags: MessageFlags.Ephemeral,
       content: "It's not your turn yet! Please hang on.",
     });
     return;
@@ -45,12 +45,12 @@ const execute = async (interaction: ChatInputCommandInteraction) => {
   const input = interaction.options.getString("coordinates")?.toLocaleUpperCase() as string; // required
   const coords = gridToCoords(input);
   if (!coords) {
-    await interaction.reply({ ephemeral: true, content: "Invalid move." });
+    await interaction.reply({ flags: MessageFlags.Ephemeral, content: "Invalid move." });
     return;
   }
   const wasValidMove = game.move(coords.x, coords.y, playerPiece);
   if (!wasValidMove) {
-    await interaction.reply({ ephemeral: true, content: "Invalid move." });
+    await interaction.reply({ flags: MessageFlags.Ephemeral, content: "Invalid move." });
     return;
   }
 
@@ -67,7 +67,6 @@ const execute = async (interaction: ChatInputCommandInteraction) => {
   }
 
   await interaction.reply({
-    ephemeral: false,
     content: `${interaction.user.displayName} placed a ${game.theme.squares[playerPiece]} piece on ${input}. ${winnerText}`,
     embeds: [game.getEmbed(winner?.piece)],
   });

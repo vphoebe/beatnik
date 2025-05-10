@@ -1,4 +1,4 @@
-import { SlashCommandBuilder } from "discord.js";
+import { MessageFlags, SlashCommandBuilder } from "discord.js";
 
 import { getNowPlayingEmbed, getQueueListEmbed } from "../lib/embeds.js";
 import { getExistingQueue } from "../lib/queue.js";
@@ -38,7 +38,7 @@ export const execute: CommandExecuter = async (interaction) => {
     if (!pagedTracks) {
       await interaction.reply({
         content: `Invalid page number: ${pageNumber}.`,
-        ephemeral: true,
+        flags: MessageFlags.Ephemeral,
       });
       return;
     }
@@ -53,13 +53,13 @@ export const execute: CommandExecuter = async (interaction) => {
     }
     await interaction.reply({
       embeds: sendEmbeds,
-      ephemeral: true,
+      flags: MessageFlags.Ephemeral,
     });
     return;
   } else {
     await interaction.reply({
       content: "Nothing in the queue.",
-      ephemeral: true,
+      flags: MessageFlags.Ephemeral,
     });
   }
 };

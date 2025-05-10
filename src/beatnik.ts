@@ -5,6 +5,8 @@ import {
   Client,
   Events,
   GatewayIntentBits,
+  InteractionEditReplyOptions,
+  InteractionReplyOptions,
 } from "discord.js";
 import fs from "node:fs";
 import path from "node:path";
@@ -67,9 +69,11 @@ client.on(Events.InteractionCreate, async (interaction) => {
     } catch (err) {
       console.error(err);
       if (interaction.deferred) {
-        await interaction.editReply(errorReply(err, interaction.ephemeral ?? false));
+        await interaction.editReply(errorReply(err, false) as InteractionEditReplyOptions);
       } else {
-        await interaction.reply(errorReply(err, interaction.ephemeral ?? false));
+        await interaction.reply(
+          errorReply(err, interaction.ephemeral ?? false) as InteractionReplyOptions,
+        );
       }
     }
   }

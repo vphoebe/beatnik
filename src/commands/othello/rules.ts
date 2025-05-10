@@ -1,4 +1,9 @@
-import { ChatInputCommandInteraction, EmbedBuilder, SlashCommandBuilder } from "discord.js";
+import {
+  ChatInputCommandInteraction,
+  EmbedBuilder,
+  MessageFlags,
+  SlashCommandBuilder,
+} from "discord.js";
 
 import { Command } from "../index.js";
 
@@ -19,7 +24,7 @@ const execute = async (interaction: ChatInputCommandInteraction) => {
   ]);
 
   await interaction.reply({
-    ephemeral: true,
+    flags: MessageFlags.Ephemeral,
     embeds: [rulesEmbed],
   });
   return;
