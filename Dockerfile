@@ -1,4 +1,4 @@
-FROM node:20-alpine3.20 AS builder
+FROM node:22-alpine AS builder
 WORKDIR /builder
 # copy needed files
 COPY package-lock.json ./
@@ -15,7 +15,7 @@ RUN npx prisma generate
 # remove dev deps from node_modules
 RUN npm prune --omit=dev
 
-FROM node:20-alpine3.20 AS beatnik
+FROM node:22-alpine AS beatnik
 # set up default env
 ENV DATABASE_URL="file:/library.db" \
   LIBRARY_PATH="/library" \
