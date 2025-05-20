@@ -46,17 +46,5 @@
   },
   "engines": {
     "node": ">=22.0.0 <23.0.0"
-  },
-  "prettier": {
-    "semi": true,
-    "printWidth": 100,
-    "plugins": [
-      "@trivago/prettier-plugin-sort-imports"
-    ],
-    "importOrder": [
-      "<THIRD_PARTY_MODULES>",
-      "^[./]"
-    ],
-    "importOrderSeparation": true
   }
 }
