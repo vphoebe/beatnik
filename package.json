@@ -7,7 +7,7 @@
   "type": "module",
   "scripts": {
     "preinstall": "npx only-allow npm",
-    "build": "esbuild src/beatnik.ts src/deploy-commands.ts --outdir=build --platform=node --target=node22 --bundle --packages=external --out-extension:.js=.cjs --minify",
+    "build": "esbuild src/beatnik.ts src/deploy-commands.ts --outdir=build --platform=node --format=esm --target=node22 --bundle --packages=external --out-extension:.js=.mjs --minify",
     "build:docker": "npm run build && docker build -t beatnik-dev .",
     "build:dockerx64": "npm run build && docker buildx build --platform linux/amd64 -t beatnik-dev-x64 .",
     "dev": "tsx watch src/beatnik.ts",
@@ -17,13 +17,13 @@
     "db:generate": "prisma generate",
     "db:migrate": "prisma migrate dev",
     "db:migratedeploy": "prisma migrate deploy",
-    "start": "npm run db:migratedeploy && node ./dist/deploy-commands.cjs && node ./dist/beatnik.cjs"
+    "start": "npm run db:migratedeploy && node ./build/deploy-commands.mjs && node ./build/beatnik.mjs"
   },
   "dependencies": {
     "@discordjs/opus": "^0.10.0",
     "@discordjs/voice": "^0.18.0",
     "@keyv/sqlite": "^3.6.7",
-    "@prisma/client": "^6.7.0",
+    "@prisma/client": "^6.8.2",
     "discord.js": "^14.19.3",
     "dotenv": "^16.4.5",
     "keyv": "^4.5.4",
@@ -40,7 +40,7 @@
     "eslint": "^8.57.0",
     "eslint-plugin-require-extensions": "^0.1.3",
     "prettier": "^3.3.2",
-    "prisma": "^6.7.0",
+    "prisma": "^6.8.2",
     "tsx": "^4.15.6",
     "typescript": "^5.5.2"
   },
