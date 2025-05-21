@@ -1,10 +1,11 @@
 import { inlineCode, MessageFlags, SlashCommandBuilder } from "discord.js";
 
-import { getPlaylists } from "../lib/library/db/playlist.js";
-import { getIsolatedTracks } from "../lib/library/db/track.js";
-import { deletePlaylistFromLibrary, deleteTrackFromLibrary } from "../lib/library/index.js";
-import { getExistingQueue } from "../lib/queue.js";
-import { noQueueReply } from "../lib/replies.js";
+import { getPlaylists } from "lib/library/db/playlist.js";
+import { getIsolatedTracks } from "lib/library/db/track.js";
+import { deletePlaylistFromLibrary, deleteTrackFromLibrary } from "lib/library/index.js";
+import { getExistingQueue } from "lib/queue.js";
+import { noQueueReply } from "lib/replies.js";
+
 import { AutocompleteHandler, Command, CommandExecuter } from "./index.js";
 
 export const builder = new SlashCommandBuilder()

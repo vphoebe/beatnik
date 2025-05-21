@@ -4,8 +4,9 @@ import {
   addPlaylistToLibrary,
   addTrackToLibrary,
   LibraryOperationResult,
-} from "../lib/library/index.js";
-import { getMetadataFromQuery } from "../lib/youtube/metadata.js";
+} from "lib/library/index.js";
+import { getMetadataFromQuery } from "lib/youtube/metadata.js";
+
 import { Command, CommandExecuter } from "./index.js";
 
 export const builder = new SlashCommandBuilder()

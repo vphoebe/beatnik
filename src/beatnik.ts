@@ -11,13 +11,14 @@ import {
 import fs from "node:fs";
 import path from "node:path";
 
-import { commandList } from "./commands/index.js";
-import { getToken } from "./lib/environment.js";
-import { testLibraryConnection } from "./lib/library/index.js";
-import { log } from "./lib/logger.js";
-import { startPresenceLifecycle } from "./lib/presence.js";
-import { allGuildQueues } from "./lib/queue.js";
-import { errorReply } from "./lib/replies.js";
+import { getToken } from "lib/environment.js";
+import { testLibraryConnection } from "lib/library/index.js";
+import { log } from "lib/logger.js";
+import { startPresenceLifecycle } from "lib/presence.js";
+import { allGuildQueues } from "lib/queue.js";
+import { errorReply } from "lib/replies.js";
+
+import { commandList } from "commands/index.js";
 
 const token = getToken();
 

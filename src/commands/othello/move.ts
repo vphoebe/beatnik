@@ -1,7 +1,8 @@
 import { ChatInputCommandInteraction, MessageFlags, SlashCommandBuilder } from "discord.js";
 
-import { gridToCoords } from "../../lib/othello/coordinates.js";
-import { state } from "../../lib/othello/state.js";
+import { gridToCoords } from "lib/othello/coordinates.js";
+import { state } from "lib/othello/state.js";
+
 import { Command } from "../index.js";
 
 const data = new SlashCommandBuilder()

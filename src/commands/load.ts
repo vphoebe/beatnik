@@ -1,9 +1,10 @@
 import { SlashCommandBuilder } from "discord.js";
 
-import { getAddedToQueueMessage } from "../lib/embeds.js";
-import { getPlaylists, getPlaylist } from "../lib/library/db/playlist.js";
-import { getAllTracks, getTrackByIntId } from "../lib/library/db/track.js";
-import { getOrCreateQueue } from "../lib/queue.js";
+import { getAddedToQueueMessage } from "lib/embeds.js";
+import { getPlaylists, getPlaylist } from "lib/library/db/playlist.js";
+import { getAllTracks, getTrackByIntId } from "lib/library/db/track.js";
+import { getOrCreateQueue } from "lib/queue.js";
+
 import { AutocompleteHandler, Command, CommandExecuter } from "./index.js";
 
 export const builder = new SlashCommandBuilder()

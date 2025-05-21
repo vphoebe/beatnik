@@ -1,8 +1,9 @@
 import { REST, Routes } from "discord.js";
 
-import { commandList } from "./commands/index.js";
-import { getClientId, getToken } from "./lib/environment.js";
-import { log } from "./lib/logger.js";
+import { getClientId, getToken } from "lib/environment.js";
+import { log } from "lib/logger.js";
+
+import { commandList } from "commands/index.js";
 
 async function main() {
   try {

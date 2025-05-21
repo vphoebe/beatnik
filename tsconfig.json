@@ -9,7 +9,12 @@
     "esModuleInterop": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
-    "outDir": "./build"
+    "outDir": "./build",
+    "paths": {
+      "generated/*": ["./src/generated/*"],
+      "lib/*": ["./src/lib/*"],
+      "commands/*": ["./src/commands/*"]
+    }
   },
   "include": ["src/**/*"]
 }

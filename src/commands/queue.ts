@@ -1,8 +1,9 @@
 import { MessageFlags, SlashCommandBuilder } from "discord.js";
 
-import { getNowPlayingEmbed, getQueueListEmbed } from "../lib/embeds.js";
-import { getExistingQueue } from "../lib/queue.js";
-import { noQueueReply } from "../lib/replies.js";
+import { getNowPlayingEmbed, getQueueListEmbed } from "lib/embeds.js";
+import { getExistingQueue } from "lib/queue.js";
+import { noQueueReply } from "lib/replies.js";
+
 import { Command, CommandExecuter } from "./index.js";
 
 export const builder = new SlashCommandBuilder()
