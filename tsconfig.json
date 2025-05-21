@@ -11,7 +11,7 @@
     "forceConsistentCasingInFileNames": true,
     "outDir": "./build",
     "paths": {
-      "generated/*": ["./src/generated/*"],
+      "@generated/*": ["./prisma/generated/client/*"],
       "lib/*": ["./src/lib/*"],
       "commands/*": ["./src/commands/*"]
     }

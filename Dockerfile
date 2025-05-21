@@ -29,7 +29,6 @@ RUN apk add --no-cache ffmpeg
 # copy runtime code
 COPY package.json ./
 COPY --from=builder /builder/prisma ./prisma
-COPY --from=builder /builder/src/generated/prisma ./prisma
 COPY --from=builder /builder/node_modules ./node_modules
 COPY --from=builder /builder/build ./build
 # start beatnik
