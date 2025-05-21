@@ -11,10 +11,9 @@ await esbuild.build({
   minify: true,
   outdir: "build",
   platform: "node",
-  format: "esm",
   target: "node22",
   packages: "external",
   outExtension: {
-    ".js": ".mjs",
+    ".js": ".cjs",
   },
 });
