@@ -11,7 +11,7 @@
     "commands": "tsx src/deploy-commands.ts",
     "db:generate": "prisma generate",
     "db:migrate": "prisma migrate dev",
-    "db:migratedeploy": "prisma migrate deploy",
+    "db:migratedeploy": "npx prisma migrate deploy",
     "dev": "tsx watch src/beatnik.ts",
     "format": "prettier --write .",
     "preinstall": "npx only-allow npm",
@@ -26,12 +26,14 @@
     "@prisma/client": "^6.8.2",
     "discord.js": "^14.19.3",
     "dotenv": "^16.4.5",
+    "ffmpeg-static": "^5.2.0",
     "keyv": "^4.5.4",
     "sodium-native": "^4.1.1",
     "sqlite3": "^5.1.7",
     "youtubei.js": "^13.4.0"
   },
   "devDependencies": {
+    "@codingame/esbuild-import-meta-url-plugin": "^1.0.3",
     "@trivago/prettier-plugin-sort-imports": "^4.3.0",
     "@types/node": "^22.15.17",
     "@typescript-eslint/eslint-plugin": "^8.32.1",

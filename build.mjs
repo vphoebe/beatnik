@@ -11,9 +11,17 @@ await esbuild.build({
   minify: true,
   outdir: "build",
   platform: "node",
+  format: "cjs",
+  treeShaking: true,
+  define: {
+    "import.meta.url": "_importMetaUrl",
+  },
+  banner: {
+    js: "const _importMetaUrl=require('url').pathToFileURL(__filename)",
+  },
   target: "node22",
-  packages: "external",
   outExtension: {
     ".js": ".cjs",
   },
+  loader: { ".node": "file" },
 });
