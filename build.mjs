@@ -23,5 +23,4 @@ await esbuild.build({
   outExtension: {
     ".js": ".cjs",
   },
-  loader: { ".node": "file" },
 });

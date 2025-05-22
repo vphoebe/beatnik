@@ -26,9 +26,8 @@
     "@prisma/client": "^6.8.2",
     "discord.js": "^14.19.3",
     "dotenv": "^16.4.5",
-    "ffmpeg-static": "^5.2.0",
     "keyv": "^4.5.4",
-    "sodium-native": "^4.1.1",
+    "sodium-native": "^5.0.4",
     "sqlite3": "^5.1.7",
     "youtubei.js": "^13.4.0"
   },

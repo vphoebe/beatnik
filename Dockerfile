@@ -8,7 +8,7 @@ COPY build.mjs ./
 COPY prisma ./prisma
 COPY ./src ./src
 # add deps
-RUN apk add --no-cache python3 py3-pip python3-dev build-base
+RUN apk add --no-cache py3-pip make g++
 RUN npm ci
 # build
 RUN npm run db:generate
