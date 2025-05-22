@@ -4,6 +4,7 @@ WORKDIR /builder
 COPY package-lock.json ./
 COPY package.json ./
 COPY tsconfig.json ./
+COPY build.mjs ./
 COPY prisma ./prisma
 COPY ./src ./src
 # add deps
@@ -20,13 +21,14 @@ FROM node:22-alpine AS beatnik
 ENV DATABASE_URL="file:/library.db" \
   LIBRARY_PATH="/library" \
   NODE_ENV="production"
-WORKDIR /
 # create mount points
+WORKDIR /
 RUN touch library.db
 RUN mkdir library
 # install ffmpeg
 RUN apk add --no-cache ffmpeg
 # copy runtime code
+WORKDIR /usr/local/beatnik
 COPY package.json ./
 COPY --from=builder /builder/prisma ./prisma
 COPY --from=builder /builder/node_modules ./node_modules
