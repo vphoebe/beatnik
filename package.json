@@ -10,14 +10,14 @@
     "commands": "tsx src/deploy-commands.ts",
     "db:generate": "prisma generate",
     "db:migrate": "prisma migrate dev",
-    "db:migratedeploy": "npx prisma migrate deploy",
+    "db:deploy": "npx prisma migrate deploy",
     "dev": "tsx watch src/beatnik.ts",
-    "docker:build": "npm run build && docker build -t nickseman/beatnik:next .",
+    "docker:build": "npm run build && docker build --platform linux/amd64,linux/arm64 -t nickseman/beatnik:next .",
     "docker:push": "docker push nickseman/beatnik:next",
     "docker:up": "docker compose -f 'docker-compose.dev.yml' up",
     "format": "prettier --write .",
     "preinstall": "npx only-allow npm",
-    "start": "npm run db:migratedeploy && node ./build/deploy-commands.cjs && node ./build/beatnik.cjs",
+    "start": "npm run db:deploy && node ./build/deploy-commands.cjs && node ./build/beatnik.cjs",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
