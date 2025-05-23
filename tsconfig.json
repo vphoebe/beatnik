@@ -9,7 +9,7 @@
     "esModuleInterop": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
-    "outDir": "./build",
+    "isolatedModules": true,
     "paths": {
       "@generated/*": ["./prisma/generated/client/*"],
       "lib/*": ["./src/lib/*"],
