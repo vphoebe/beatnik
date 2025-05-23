@@ -3,7 +3,6 @@
 ![GitHub release (latest by semver)](https://img.shields.io/github/v/release/vphoebe/beatnik)
 ![Node.js v22](https://img.shields.io/badge/node-v22.x-brightgreen)
 ![License](https://img.shields.io/github/license/vphoebe/beatnik)
-![Build](https://github.com/vphoebe/beatnik/actions/workflows/publish-package-release.yml/badge.svg)
 ![Docker Latest](https://img.shields.io/docker/image-size/nickseman/beatnik/latest?label=docker%20size)
 ![Docker Pulls](https://img.shields.io/docker/pulls/nickseman/beatnik)
 ![Last Commit](https://img.shields.io/github/last-commit/vphoebe/beatnik)
