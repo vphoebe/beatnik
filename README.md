@@ -24,7 +24,6 @@ A modern music bot for your Discord server that you can host yourself! No subscr
 You can use this example Docker compose file to get Beatnik up and running.
 
 ```yaml
-version: "3.9"
 services:
   beatnik:
     container_name: "beatnik"
@@ -38,7 +37,7 @@ services:
     restart: always
 ```
 
-Change `/path/on/your/computer` to a directory where Beatnik's files can live, such as `/Users/me/Documents/Beatnik`. Create a new folder called `library` inside there. Then, update the two environment variables in your Docker compose file:
+Change `/path/on/your/computer` to a directory where Beatnik's files can live, such as `/Users/me/Documents/Beatnik`. Create a new folder called `library` inside there, as well as an empty file called `library.db`. Then, update the two environment variables in your Docker compose file:
 
 | Variable  |  Where to find |
 | ------------ | ------------ |
