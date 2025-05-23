@@ -1,8 +1,8 @@
 import { ChatInputCommandInteraction, MessageFlags, SlashCommandBuilder } from "discord.js";
 
-import { state } from "lib/othello/state.js";
+import { state } from "lib/othello/state";
 
-import { Command } from "../index.js";
+import { Command } from "../index";
 
 const data = new SlashCommandBuilder()
   .setName("pass")

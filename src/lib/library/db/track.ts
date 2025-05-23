@@ -1,6 +1,6 @@
-import { Prisma } from "@generated/client.js";
+import { Prisma } from "@generated/client";
 
-import { prisma } from "./client.js";
+import { prisma } from "./client";
 
 export async function getTrackByYtId(ytId: string) {
   return prisma.track.findFirst({ where: { id: ytId } });

@@ -1,9 +1,9 @@
 import { MessageFlags, SlashCommandBuilder } from "discord.js";
 
-import { getExistingQueue } from "lib/queue.js";
-import { noQueueReply } from "lib/replies.js";
+import { getExistingQueue } from "lib/queue";
+import { noQueueReply } from "lib/replies";
 
-import { Command, CommandExecuter } from "./index.js";
+import { Command, CommandExecuter } from "./index";
 
 export const builder = new SlashCommandBuilder()
   .setName("skip")

@@ -1,9 +1,9 @@
 import { ChatInputCommandInteraction, MessageFlags, SlashCommandBuilder, User } from "discord.js";
 
-import { Game } from "lib/othello/game.js";
-import { state } from "lib/othello/state.js";
+import { Game } from "lib/othello/game";
+import { state } from "lib/othello/state";
 
-import { Command } from "../index.js";
+import { Command } from "../index";
 
 const data = new SlashCommandBuilder()
   .setName("othello-start")

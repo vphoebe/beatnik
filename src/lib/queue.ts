@@ -6,13 +6,13 @@ import {
 } from "@discordjs/voice";
 import { CommandInteraction, TextBasedChannel, VoiceBasedChannel } from "discord.js";
 
-import { getExistingVoiceConnection, createVoiceConnection } from "lib/connection.js";
-import { getNowPlayingEmbed } from "lib/embeds.js";
-import { log } from "lib/logger.js";
-import { shuffleArray } from "lib/util.js";
+import { getExistingVoiceConnection, createVoiceConnection } from "lib/connection";
+import { getNowPlayingEmbed } from "lib/embeds";
+import { log } from "lib/logger";
+import { shuffleArray } from "lib/util";
 
-import { getMetadataFromQuery, YtApiTrack } from "./youtube/metadata.js";
-import { createResource } from "./youtube/stream.js";
+import { getMetadataFromQuery, YtApiTrack } from "./youtube/metadata";
+import { createResource } from "./youtube/stream";
 
 export interface QueuedTrack extends YtApiTrack {
   addedBy: string;

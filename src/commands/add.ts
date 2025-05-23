@@ -1,13 +1,9 @@
 import { SlashCommandBuilder } from "discord.js";
 
-import {
-  addPlaylistToLibrary,
-  addTrackToLibrary,
-  LibraryOperationResult,
-} from "lib/library/index.js";
-import { getMetadataFromQuery } from "lib/youtube/metadata.js";
+import { addPlaylistToLibrary, addTrackToLibrary, LibraryOperationResult } from "lib/library";
+import { getMetadataFromQuery } from "lib/youtube/metadata";
 
-import { Command, CommandExecuter } from "./index.js";
+import { Command, CommandExecuter } from "./index";
 
 export const builder = new SlashCommandBuilder()
   .setName("add")

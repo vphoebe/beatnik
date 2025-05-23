@@ -5,7 +5,7 @@ import {
   SlashCommandBuilder,
 } from "discord.js";
 
-import { Command } from "../index.js";
+import { Command } from "../index";
 
 const data = new SlashCommandBuilder()
   .setName("rules")

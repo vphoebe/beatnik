@@ -1,9 +1,9 @@
 import { ChatInputCommandInteraction, MessageFlags, SlashCommandBuilder } from "discord.js";
 
-import { gridToCoords } from "lib/othello/coordinates.js";
-import { state } from "lib/othello/state.js";
+import { gridToCoords } from "lib/othello/coordinates";
+import { state } from "lib/othello/state";
 
-import { Command } from "../index.js";
+import { Command } from "../index";
 
 const data = new SlashCommandBuilder()
   .setName("move")

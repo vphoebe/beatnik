@@ -1,5 +1,5 @@
-import { YtApiPlaylist } from "../../youtube/metadata.js";
-import { prisma } from "./client.js";
+import { YtApiPlaylist } from "../../youtube/metadata";
+import { prisma } from "./client";
 
 export async function getPlaylist(int_id: number) {
   return prisma.playlist.findUnique({ where: { int_id } });

@@ -1,30 +1,30 @@
 // tracks
 import { ChatInputCommandInteraction } from "discord.js";
 
-import { log } from "../logger.js";
-import { getMetadataFromQuery, YtApiPlaylist, YtApiTrack } from "../youtube/metadata.js";
+import { log } from "../logger";
+import { getMetadataFromQuery, YtApiPlaylist, YtApiTrack } from "../youtube/metadata";
 import {
   downloadId,
   downloadPlaylist,
   migrateCacheNames,
   removeDownload,
   testCache,
-} from "./cache.js";
-import { testDb } from "./db/client.js";
+} from "./cache";
+import { testDb } from "./db/client";
 import {
   doesPlaylistExist,
   updateSavedPlaylist,
   savePlaylist,
   getPlaylist,
   deleteSavedPlaylist,
-} from "./db/playlist.js";
+} from "./db/playlist";
 import {
   getTrackByYtId,
   createTrack,
   getTrackByIntId,
   deleteTrack,
   getTracksByPlaylist,
-} from "./db/track.js";
+} from "./db/track";
 
 export interface LibraryOperationResult {
   added: boolean;

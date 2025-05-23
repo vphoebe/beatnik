@@ -11,18 +11,18 @@ import {
 import fs from "node:fs";
 import path from "node:path";
 
-import { getToken } from "lib/environment.js";
-import { testLibraryConnection } from "lib/library/index.js";
-import { log } from "lib/logger.js";
-import { startPresenceLifecycle } from "lib/presence.js";
-import { allGuildQueues } from "lib/queue.js";
-import { errorReply } from "lib/replies.js";
+import { getToken } from "lib/environment";
+import { testLibraryConnection } from "lib/library";
+import { log } from "lib/logger";
+import { startPresenceLifecycle } from "lib/presence";
+import { allGuildQueues } from "lib/queue";
+import { errorReply } from "lib/replies";
 
-import { commandList } from "commands/index.js";
+import { commandList } from "commands/index";
 
 const token = getToken();
 
-const pkgjson = fs.readFileSync(path.join(".", "package.json"), "utf-8");
+const pkgjson = fs.readFileSync(path.join(".", "packageon"), "utf-8");
 export const BEATNIK_VERSION = JSON.parse(pkgjson).version;
 
 console.log(`--------------------------------------------------

@@ -1,9 +1,9 @@
 import { YTNodes } from "youtubei.js";
 
-import { getSavedPlaylistById } from "../library/db/playlist.js";
-import { getTrackByYtId } from "../library/db/track.js";
-import { getClient } from "./client.js";
-import { getLoudnessFromInfo, playlistIdToURL, trackIdToURL, extractYTIdFromURL } from "./util.js";
+import { getSavedPlaylistById } from "../library/db/playlist";
+import { getTrackByYtId } from "../library/db/track";
+import { getClient } from "./client";
+import { getLoudnessFromInfo, playlistIdToURL, trackIdToURL, extractYTIdFromURL } from "./util";
 
 interface Query {
   query: string;
