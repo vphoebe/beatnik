@@ -1,9 +1,10 @@
-import { SlashCommandBuilder } from "discord.js";
+import { MessageFlags, SlashCommandBuilder } from "discord.js";
 
-import { getNowPlayingEmbed, getQueueListEmbed } from "../lib/embeds.js";
-import { getExistingQueue } from "../lib/queue.js";
-import { noQueueReply } from "../lib/replies.js";
-import { Command, CommandExecuter } from "./index.js";
+import { getNowPlayingEmbed, getQueueListEmbed } from "lib/embeds";
+import { getExistingQueue } from "lib/queue";
+import { noQueueReply } from "lib/replies";
+
+import { Command, CommandExecuter } from "./index";
 
 export const builder = new SlashCommandBuilder()
   .setName("queue")
@@ -38,7 +39,7 @@ export const execute: CommandExecuter = async (interaction) => {
     if (!pagedTracks) {
       await interaction.reply({
         content: `Invalid page number: ${pageNumber}.`,
-        ephemeral: true,
+        flags: MessageFlags.Ephemeral,
       });
       return;
     }
@@ -53,13 +54,13 @@ export const execute: CommandExecuter = async (interaction) => {
     }
     await interaction.reply({
       embeds: sendEmbeds,
-      ephemeral: true,
+      flags: MessageFlags.Ephemeral,
     });
     return;
   } else {
     await interaction.reply({
       content: "Nothing in the queue.",
-      ephemeral: true,
+      flags: MessageFlags.Ephemeral,
     });
   }
 };

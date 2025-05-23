@@ -1,6 +1,6 @@
 import { ActivitiesOptions, ActivityType, Client, PresenceStatusData } from "discord.js";
 
-import { getBeatTimeString } from "./util.js";
+import { getBeatTimeString } from "./util";
 
 export function getIdleActivity() {
   const activity: ActivitiesOptions = {

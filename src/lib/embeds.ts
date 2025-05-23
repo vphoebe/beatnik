@@ -1,8 +1,8 @@
 import { bold, italic, userMention } from "discord.js";
 import { EmbedBuilder } from "discord.js";
 
-import { QueuedTrack } from "./queue.js";
-import { getDurationString } from "./util.js";
+import { QueuedTrack } from "./queue";
+import { getDurationString } from "./util";
 
 const baseEmbed = () =>
   new EmbedBuilder().setColor("#F6921E").setTimestamp().setFooter({ text: "sent by Beatnik" });

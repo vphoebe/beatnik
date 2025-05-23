@@ -1,4 +1,4 @@
-import { Square } from "./board.js";
+import { Square } from "./board";
 
 export interface Coords {
   x: number; // letter/column

@@ -3,10 +3,11 @@ import { readdir, rename, rm } from "node:fs/promises";
 import path from "node:path";
 import { finished } from "node:stream/promises";
 
-import { getLibraryDir } from "../environment.js";
-import { log } from "../logger.js";
-import { getYtStream } from "../youtube/client.js";
-import { YtApiTrack } from "../youtube/metadata.js";
+import { log } from "lib/logger";
+
+import { getLibraryDir } from "../environment";
+import { getYtStream } from "../youtube/client";
+import { YtApiTrack } from "../youtube/metadata";
 
 function getItemPath(id: string) {
   const libDir = getLibraryDir();

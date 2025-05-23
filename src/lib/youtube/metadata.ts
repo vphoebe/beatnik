@@ -1,9 +1,9 @@
 import { YTNodes } from "youtubei.js";
 
-import { getSavedPlaylistById } from "../library/db/playlist.js";
-import { getTrackByYtId } from "../library/db/track.js";
-import { getClient } from "./client.js";
-import { getLoudnessFromInfo, playlistIdToURL, trackIdToURL, extractYTIdFromURL } from "./util.js";
+import { getSavedPlaylistById } from "../library/db/playlist";
+import { getTrackByYtId } from "../library/db/track";
+import { getClient } from "./client";
+import { getLoudnessFromInfo, playlistIdToURL, trackIdToURL, extractYTIdFromURL } from "./util";
 
 interface Query {
   query: string;
@@ -154,7 +154,7 @@ export async function getMetadataFromQuery(query: string, options: { useLibrary:
     case "query": {
       const yt = await getClient();
       const searchResults = await yt.search(parsedQuery.query);
-      const result = searchResults.results.firstOfType(YTNodes.Video);
+      const result = searchResults.results.first() as YTNodes.Video;
       if (!result) {
         throw new Error("No search results found.");
       }

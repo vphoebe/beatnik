@@ -2,9 +2,9 @@ import { createAudioResource, demuxProbe } from "@discordjs/voice";
 import { ReadStream } from "fs";
 import { Readable } from "node:stream";
 
-import { getDownloadedIdStream } from "../library/cache.js";
-import { QueuedTrack } from "../queue.js";
-import { getYtStream } from "./client.js";
+import { getDownloadedIdStream } from "../library/cache";
+import { QueuedTrack } from "../queue";
+import { getYtStream } from "./client";
 
 export async function createResource(track: QueuedTrack, retries = 0) {
   // return resource either from stream or cache

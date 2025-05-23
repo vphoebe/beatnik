@@ -1,7 +1,8 @@
-import { ChatInputCommandInteraction, SlashCommandBuilder } from "discord.js";
+import { ChatInputCommandInteraction, MessageFlags, SlashCommandBuilder } from "discord.js";
 
-import { state } from "../../lib/othello/state.js";
-import { Command } from "../index.js";
+import { state } from "lib/othello/state";
+
+import { Command } from "../index";
 
 const data = new SlashCommandBuilder()
   .setName("pass")
@@ -12,7 +13,7 @@ const execute = async (interaction: ChatInputCommandInteraction) => {
 
   if (!game) {
     await interaction.reply({
-      ephemeral: true,
+      flags: MessageFlags.Ephemeral,
       content: "Use /othello-start to start a new game!",
     });
     return;
@@ -20,14 +21,14 @@ const execute = async (interaction: ChatInputCommandInteraction) => {
   const playerPiece = game.getPlayerPiece(interaction.user);
   if (!playerPiece) {
     await interaction.reply({
-      ephemeral: true,
+      flags: MessageFlags.Ephemeral,
       content: "You're not playing! Wait until the next round...",
     });
     return;
   }
   if (playerPiece !== game.activePlayer) {
     await interaction.reply({
-      ephemeral: true,
+      flags: MessageFlags.Ephemeral,
       content: "It's not your turn yet! Please hang on.",
     });
     return;

@@ -1,8 +1,9 @@
-import { SlashCommandBuilder } from "discord.js";
+import { MessageFlags, SlashCommandBuilder } from "discord.js";
 
-import { getExistingQueue } from "../lib/queue.js";
-import { noQueueReply } from "../lib/replies.js";
-import { Command, CommandExecuter } from "./index.js";
+import { getExistingQueue } from "lib/queue";
+import { noQueueReply } from "lib/replies";
+
+import { Command, CommandExecuter } from "./index";
 
 export const builder = new SlashCommandBuilder()
   .setName("skip")
@@ -32,7 +33,7 @@ export const execute: CommandExecuter = async (interaction) => {
     } else {
       await interaction.reply({
         content: "Invalid track number.",
-        ephemeral: true,
+        flags: MessageFlags.Ephemeral,
       });
       return;
     }
@@ -41,7 +42,7 @@ export const execute: CommandExecuter = async (interaction) => {
   }
   await interaction.reply({
     content: `Skipping \`${currentSongTitle}\`...`,
-    ephemeral: false,
+    flags: MessageFlags.Ephemeral,
   });
 };
 

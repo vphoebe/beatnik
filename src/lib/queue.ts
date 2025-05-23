@@ -6,12 +6,13 @@ import {
 } from "@discordjs/voice";
 import { CommandInteraction, TextBasedChannel, VoiceBasedChannel } from "discord.js";
 
-import { getExistingVoiceConnection, createVoiceConnection } from "../lib/connection.js";
-import { getNowPlayingEmbed } from "../lib/embeds.js";
-import { log } from "../lib/logger.js";
-import { shuffleArray } from "../lib/util.js";
-import { getMetadataFromQuery, YtApiTrack } from "./youtube/metadata.js";
-import { createResource } from "./youtube/stream.js";
+import { getExistingVoiceConnection, createVoiceConnection } from "lib/connection";
+import { getNowPlayingEmbed } from "lib/embeds";
+import { log } from "lib/logger";
+import { shuffleArray } from "lib/util";
+
+import { getMetadataFromQuery, YtApiTrack } from "./youtube/metadata";
+import { createResource } from "./youtube/stream";
 
 export interface QueuedTrack extends YtApiTrack {
   addedBy: string;
@@ -78,7 +79,9 @@ class Queue {
         this.next();
       } else {
         this.stop();
-        textChannel?.send(":wave: Nothing left in the queue!");
+        if (textChannel?.isSendable()) {
+          textChannel?.send(":wave: Nothing left in the queue!");
+        }
       }
     });
     this.isPlaying = false;
@@ -113,7 +116,7 @@ class Queue {
         this.connection.subscribe(this.audioPlayer);
       }
       // send embed in the registered text channel
-      if (this.textChannel) {
+      if (this.textChannel && this.textChannel.isSendable()) {
         const nowPlayingEmbed = getNowPlayingEmbed(
           trackToPlay,
           this.currentIndex + 1,
@@ -135,9 +138,11 @@ class Queue {
         message: `Error playing! Error was:`,
       });
       console.error(err);
-      this.textChannel?.send(
-        `Unable to play ${this.nowPlaying?.id ?? "[no track found]"}, skipping...`,
-      );
+      if (this.textChannel?.isSendable()) {
+        this.textChannel?.send(
+          `Unable to play ${this.nowPlaying?.id ?? "[no track found]"}, skipping...`,
+        );
+      }
       await this.next();
     }
   }

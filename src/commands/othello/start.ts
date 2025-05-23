@@ -1,8 +1,9 @@
-import { ChatInputCommandInteraction, SlashCommandBuilder, User } from "discord.js";
+import { ChatInputCommandInteraction, MessageFlags, SlashCommandBuilder, User } from "discord.js";
 
-import { Game } from "../../lib/othello/game.js";
-import { state } from "../../lib/othello/state.js";
-import { Command } from "../index.js";
+import { Game } from "lib/othello/game";
+import { state } from "lib/othello/state";
+
+import { Command } from "../index";
 
 const data = new SlashCommandBuilder()
   .setName("othello-start")
@@ -19,7 +20,7 @@ const execute = async (interaction: ChatInputCommandInteraction) => {
   const white = interaction.options.getUser("white") as User;
   if (!interaction.guildId) {
     await interaction.reply({
-      ephemeral: true,
+      flags: MessageFlags.Ephemeral,
       content: "Use this command in a server to start a game.",
     });
     return;
@@ -36,7 +37,6 @@ const execute = async (interaction: ChatInputCommandInteraction) => {
   await interaction.reply({
     content,
     embeds: [newGame.getEmbed()],
-    ephemeral: false,
   });
 };
 

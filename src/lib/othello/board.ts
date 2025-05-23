@@ -1,7 +1,7 @@
 import { codeBlock } from "discord.js";
 
-import { Coords } from "./coordinates.js";
-import { Theme } from "./themes.js";
+import { Coords } from "./coordinates";
+import { Theme } from "./themes";
 
 export enum Square {
   Dark = 1,

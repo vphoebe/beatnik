@@ -1,7 +1,7 @@
 import { Stream } from "node:stream";
 import { ClientType, Innertube, UniversalCache } from "youtubei.js";
 
-import { log } from "../logger.js";
+import { log } from "../logger";
 
 const clientPromise = Innertube.create({
   cache: new UniversalCache(true),

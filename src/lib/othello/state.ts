@@ -1,6 +1,6 @@
 import { User } from "discord.js";
 
-import { Game } from "./game.js";
+import { Game } from "./game";
 
 class StateManager {
   guilds: Map<string, Game[]>;

@@ -1,0 +1,9 @@
+services:
+  beatnik:
+    container_name: "beatnik-dev"
+    image: "nickseman/beatnik:next"
+    volumes:
+      - "./docker/library.db:/library.db"
+      - "./docker/library:/library"
+    env_file: ".env"
+    restart: no

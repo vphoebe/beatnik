@@ -1,8 +1,8 @@
 import { EmbedBuilder, User, userMention } from "discord.js";
 
-import { Board, Square, Piece, opposite } from "./board.js";
-import { MoveDefinition, compass } from "./coordinates.js";
-import { Theme, themes } from "./themes.js";
+import { Board, Square, Piece, opposite } from "./board";
+import { MoveDefinition, compass } from "./coordinates";
+import { Theme, themes } from "./themes";
 
 interface Player {
   user: User;
