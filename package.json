@@ -15,7 +15,7 @@
     "dev": "tsx watch src/beatnik.ts",
     "format": "prettier --write .",
     "preinstall": "npx only-allow npm",
-    "push:docker": "docker push -t nickseman/beatnik:next",
+    "push:docker": "docker push nickseman/beatnik:next",
     "start": "npm run db:migratedeploy && node ./build/deploy-commands.cjs && node ./build/beatnik.cjs",
     "typecheck": "tsc --noEmit"
   },
