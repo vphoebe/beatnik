@@ -1,8 +1,8 @@
 import { inlineCode, MessageFlags, SlashCommandBuilder } from "discord.js";
 
+import { deletePlaylistFromLibrary, deleteTrackFromLibrary } from "lib/library";
 import { getPlaylists } from "lib/library/db/playlist";
 import { getIsolatedTracks } from "lib/library/db/track";
-import { deletePlaylistFromLibrary, deleteTrackFromLibrary } from "lib/library/index";
 import { getExistingQueue } from "lib/queue";
 import { noQueueReply } from "lib/replies";
 

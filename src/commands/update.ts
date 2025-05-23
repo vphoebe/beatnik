@@ -1,7 +1,7 @@
 import { SlashCommandBuilder } from "discord.js";
 
+import { updatePlaylistInLibrary } from "lib/library";
 import { getPlaylists } from "lib/library/db/playlist";
-import { updatePlaylistInLibrary } from "lib/library/index";
 
 import { AutocompleteHandler, Command, CommandExecuter } from "./index";
 
