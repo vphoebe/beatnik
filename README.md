@@ -1,11 +1,11 @@
 # beatnik - a music bot for Discord
 
-![GitHub release (latest by semver)](https://img.shields.io/github/v/release/vphoebe/beatnik)
-![Node.js v22](https://img.shields.io/badge/node-v22.x-brightgreen)
-![License](https://img.shields.io/github/license/vphoebe/beatnik)
-![Docker Latest](https://img.shields.io/docker/image-size/nickseman/beatnik/latest?label=docker%20size)
-![Docker Pulls](https://img.shields.io/docker/pulls/nickseman/beatnik)
-![Last Commit](https://img.shields.io/github/last-commit/vphoebe/beatnik)
+[![GitHub release (latest by semver)](https://img.shields.io/github/v/release/vphoebe/beatnik)](https://github.com/vphoebe/beatnik/releases)
+[![Node.js v22](https://img.shields.io/badge/node-v22.x-brightgreen)](https://nodejs.org/en/blog/release/v22.0.0)
+[![License](https://img.shields.io/github/license/vphoebe/beatnik)](https://github.com/vphoebe/beatnik/blob/main/LICENSE)
+[![Docker Latest](https://img.shields.io/docker/image-size/nickseman/beatnik/latest?label=docker%20size)](https://hub.docker.com/r/nickseman/beatnik/tags?name=latest)
+[![Docker Pulls](https://img.shields.io/docker/pulls/nickseman/beatnik)](https://hub.docker.com/r/nickseman/beatnik)
+[![Last Commit](https://img.shields.io/github/last-commit/vphoebe/beatnik)](https://github.com/vphoebe/beatnik/commits)
 
 A modern music bot for your Discord server that you can host yourself! No subscription fees, service API keys, or advanced knowledge required.
 
