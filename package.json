@@ -17,6 +17,8 @@
     "docker:up": "docker compose -f 'docker-compose.dev.yml' up",
     "format": "prettier --write .",
     "preinstall": "npx only-allow npm",
+    "release:build": "npm run build && docker build --platform linux/amd64,linux/arm64 -t nickseman/beatnik:latest .",
+    "release:push": "docker push nickseman/beatnik:latest",
     "start": "npm run db:deploy && node ./build/deploy-commands.cjs && node ./build/beatnik.cjs",
     "typecheck": "tsc --noEmit"
   },
