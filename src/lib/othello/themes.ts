@@ -1,5 +1,5 @@
 /* eslint-disable no-irregular-whitespace */
-import { Square } from "./board.js";
+import { Square } from "./board";
 
 export type Theme = { squares: Record<Square, string>; colHeading: string };
 

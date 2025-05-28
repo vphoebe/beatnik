@@ -1,5 +1,12 @@
 # beatnik - a music bot for Discord
 
+[![GitHub release (latest by semver)](https://img.shields.io/github/v/release/vphoebe/beatnik)](https://github.com/vphoebe/beatnik/releases)
+[![Node.js v22](https://img.shields.io/badge/node-v22.x-brightgreen)](https://nodejs.org/en/blog/release/v22.0.0)
+[![License](https://img.shields.io/github/license/vphoebe/beatnik)](https://github.com/vphoebe/beatnik/blob/main/LICENSE)
+[![Docker Latest](https://img.shields.io/docker/image-size/nickseman/beatnik/latest?label=docker%20size)](https://hub.docker.com/r/nickseman/beatnik/tags?name=latest)
+[![Docker Pulls](https://img.shields.io/docker/pulls/nickseman/beatnik)](https://hub.docker.com/r/nickseman/beatnik)
+[![Last Commit](https://img.shields.io/github/last-commit/vphoebe/beatnik)](https://github.com/vphoebe/beatnik/commits)
+
 A modern music bot for your Discord server that you can host yourself! No subscription fees, service API keys, or advanced knowledge required.
 
 ## 🥁 Features
@@ -24,7 +31,6 @@ A modern music bot for your Discord server that you can host yourself! No subscr
 You can use this example Docker compose file to get Beatnik up and running.
 
 ```yaml
-version: "3.9"
 services:
   beatnik:
     container_name: "beatnik"
@@ -38,7 +44,7 @@ services:
     restart: always
 ```
 
-Change `/path/on/your/computer` to a directory where Beatnik's files can live, such as `/Users/me/Documents/Beatnik`. Create a new folder called `library` inside there. Then, update the two environment variables in your Docker compose file:
+Change `/path/on/your/computer` to a directory where Beatnik's files can live, such as `/Users/me/Documents/Beatnik`. Create a new folder called `library` inside there, as well as an empty file called `library.db`. Then, update the two environment variables in your Docker compose file:
 
 | Variable  |  Where to find |
 | ------------ | ------------ |

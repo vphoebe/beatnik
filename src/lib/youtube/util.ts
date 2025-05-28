@@ -1,6 +1,6 @@
 import { YT } from "youtubei.js";
 
-import { getClient } from "./client.js";
+import { getClient } from "./client";
 
 export const trackIdToURL = (id: string) => {
   return `https://youtube.com/watch?v=${id}`;

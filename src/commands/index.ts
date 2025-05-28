@@ -4,19 +4,19 @@ import {
   SlashCommandBuilder,
 } from "discord.js";
 
-import add from "./add.js";
-import load from "./load.js";
-import move from "./othello/move.js";
-import pass from "./othello/pass.js";
-import rules from "./othello/rules.js";
-import start from "./othello/start.js";
-import play from "./play.js";
-import queue from "./queue.js";
-import remove from "./remove.js";
-import shuffle from "./shuffle.js";
-import skip from "./skip.js";
-import stop from "./stop.js";
-import update from "./update.js";
+import add from "./add";
+import load from "./load";
+import move from "./othello/move";
+import pass from "./othello/pass";
+import rules from "./othello/rules";
+import start from "./othello/start";
+import play from "./play";
+import queue from "./queue";
+import remove from "./remove";
+import shuffle from "./shuffle";
+import skip from "./skip";
+import stop from "./stop";
+import update from "./update";
 
 export type Command = {
   builder: SlashCommandBuilder;

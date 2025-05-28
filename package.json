@@ -1,62 +1,51 @@
 {
   "name": "beatnik",
-  "version": "4.1.0",
+  "version": "4.1.1",
   "description": "modern and simple Discord music bot with easy-to-use commands",
   "author": "vphoebe",
   "license": "MIT",
   "type": "module",
   "scripts": {
-    "preinstall": "npx only-allow npm",
-    "build": "esbuild src/beatnik.ts src/deploy-commands.ts --outdir=build --platform=node --target=node20 --bundle --packages=external --out-extension:.js=.cjs --minify",
-    "build:docker": "npm run build && docker build -t beatnik-dev .",
-    "build:dockerx64": "npm run build && docker buildx build --platform linux/amd64 -t beatnik-dev-x64 .",
-    "dev": "tsx watch src/beatnik.ts",
+    "build": "npm run typecheck && node build.mjs",
     "commands": "tsx src/deploy-commands.ts",
-    "format": "prettier --write .",
-    "typecheck": "tsc --noEmit",
     "db:generate": "prisma generate",
     "db:migrate": "prisma migrate dev",
-    "db:migratedeploy": "prisma migrate deploy",
-    "start": "npm run db:migratedeploy && node ./dist/deploy-commands.cjs && node ./dist/beatnik.cjs"
+    "db:deploy": "npx prisma migrate deploy",
+    "dev": "tsx watch src/beatnik.ts",
+    "docker:build": "npm run build && docker build --platform linux/amd64,linux/arm64 -t nickseman/beatnik:next .",
+    "docker:push": "docker push nickseman/beatnik:next",
+    "docker:up": "docker compose -f 'docker-compose.dev.yml' up",
+    "format": "prettier --write .",
+    "preinstall": "npx only-allow npm",
+    "start": "npm run db:deploy && node ./build/deploy-commands.cjs && node ./build/beatnik.cjs",
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@discordjs/opus": "^0.10.0",
     "@discordjs/voice": "^0.18.0",
     "@keyv/sqlite": "^3.6.7",
-    "@prisma/client": "^5.16.1",
-    "discord.js": "^14.15.3",
+    "@prisma/client": "^6.8.2",
+    "discord.js": "^14.19.3",
     "dotenv": "^16.4.5",
     "keyv": "^4.5.4",
-    "sodium-native": "^4.1.1",
+    "sodium-native": "^5.0.4",
     "sqlite3": "^5.1.7",
     "youtubei.js": "^13.4.0"
   },
   "devDependencies": {
     "@trivago/prettier-plugin-sort-imports": "^4.3.0",
-    "@types/node": "^20.14.10",
-    "@typescript-eslint/eslint-plugin": "^5.62.0",
-    "@typescript-eslint/parser": "^5.62.0",
-    "esbuild": "^0.17.19",
-    "eslint": "^8.57.0",
-    "eslint-plugin-require-extensions": "^0.1.3",
+    "@types/node": "^22.15.17",
+    "@typescript-eslint/eslint-plugin": "^8.32.1",
+    "@typescript-eslint/parser": "^8.32.1",
+    "esbuild": "^0.25.4",
+    "eslint": "^9.27.0",
     "prettier": "^3.3.2",
-    "prisma": "^5.16.1",
+    "prisma": "^6.8.2",
+    "rimraf": "^6.0.1",
     "tsx": "^4.15.6",
     "typescript": "^5.5.2"
   },
   "engines": {
-    "node": ">=20.0.0 <21.0.0"
-  },
-  "prettier": {
-    "semi": true,
-    "printWidth": 100,
-    "plugins": [
-      "@trivago/prettier-plugin-sort-imports"
-    ],
-    "importOrder": [
-      "<THIRD_PARTY_MODULES>",
-      "^[./]"
-    ],
-    "importOrderSeparation": true
+    "node": ">=22.0.0 <23.0.0"
   }
 }

@@ -1,8 +1,9 @@
-import { SlashCommandBuilder } from "discord.js";
+import { MessageFlags, SlashCommandBuilder } from "discord.js";
 
-import { getExistingQueue } from "../lib/queue.js";
-import { noQueueReply } from "../lib/replies.js";
-import { Command, CommandExecuter } from "./index.js";
+import { getExistingQueue } from "lib/queue";
+import { noQueueReply } from "lib/replies";
+
+import { Command, CommandExecuter } from "./index";
 
 export const builder = new SlashCommandBuilder()
   .setName("shuffle")
@@ -19,7 +20,7 @@ export const execute: CommandExecuter = async (interaction) => {
   queue.shuffle();
   await interaction.reply({
     content: "Shuffled the queue!",
-    ephemeral: true,
+    flags: MessageFlags.Ephemeral,
   });
 };
 
