@@ -22,7 +22,7 @@ import { commandList } from "commands/index";
 
 const token = getToken();
 
-const pkgjson = fs.readFileSync(path.join(".", "packageon"), "utf-8");
+const pkgjson = fs.readFileSync(path.join(".", "package.json"), "utf-8");
 export const BEATNIK_VERSION = JSON.parse(pkgjson).version;
 
 console.log(`--------------------------------------------------
