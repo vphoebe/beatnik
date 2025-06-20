@@ -8,7 +8,6 @@ await rimraf(`${BUILD_DIR}/*`, { glob: true });
 await esbuild.build({
   entryPoints: ["src/beatnik.ts", "src/deploy-commands.ts"],
   bundle: true,
-  minify: true,
   outdir: "build",
   platform: "node",
   format: "cjs",
