@@ -1,21 +1,24 @@
 import { Stream } from "node:stream";
-import { ClientType, Innertube, UniversalCache } from "youtubei.js";
+import { Innertube, UniversalCache } from "youtubei.js";
 
 import { log } from "../logger";
 
 const clientPromise = Innertube.create({
   cache: new UniversalCache(true),
-  generate_session_locally: true,
-  client_type: ClientType.WEB,
 });
 
-export const getClient = async () => {
+const streamClientPromise = Innertube.create({
+  cache: new UniversalCache(false),
+});
+
+export const getClient = async (streamClient = false) => {
+  if (streamClient) return await streamClientPromise;
   return await clientPromise;
 };
 
 export const getYtStream = async (id: string) => {
   try {
-    const yt = await getClient();
+    const yt = await getClient(true);
     const stream = await yt.download(id, {
       type: "audio",
       codec: "opus",
