@@ -57,7 +57,7 @@ async function getTrackInfo(id: string, useLibrary: boolean): Promise<YtApiTrack
   }
   try {
     const yt = await getClient();
-    const info = await yt.getBasicInfo(id, "WEB");
+    const info = await yt.getBasicInfo(id, { client: "WEB" });
     const { basic_info } = info;
     return {
       title: basic_info.title ?? "Unknown",
@@ -153,13 +153,13 @@ export async function getMetadataFromQuery(query: string, options: { useLibrary:
     }
     case "query": {
       const yt = await getClient();
-      const searchResults = await yt.search(parsedQuery.query);
-      const result = searchResults.results.first() as YTNodes.Video;
-      if (!result) {
+      const search = await yt.search(parsedQuery.query);
+      const videoId = search.videos[0].as(YTNodes.Video).video_id;
+      if (!videoId) {
         throw new Error("No search results found.");
       }
       return {
-        track: await getTrackInfo(result.video_id, useLibrary),
+        track: await getTrackInfo(videoId, useLibrary),
         type: "track",
       };
     }
