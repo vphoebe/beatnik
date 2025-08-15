@@ -15,6 +15,7 @@
     "docker:build": "npm run build && docker build --platform linux/amd64,linux/arm64 -t nickseman/beatnik:next .",
     "docker:push": "docker push nickseman/beatnik:next",
     "docker:up": "docker compose -f 'docker-compose.dev.yml' up",
+    "docker:upx86": "DOCKER_DEFAULT_PLATFORM=linux/amd64 npm run docker:up",
     "format": "prettier --write .",
     "preinstall": "npx only-allow npm",
     "release:build": "npm run build && docker build --platform linux/amd64,linux/arm64 -t nickseman/beatnik:latest .",
@@ -28,7 +29,7 @@
     "@prisma/client": "^6.8.2",
     "discord.js": "^14.20.0",
     "dotenv": "^16.4.5",
-    "sodium-native": "^5.0.4",
+    "sodium-native": "^5.0.6",
     "sqlite3": "^5.1.7",
     "youtubei.js": "^15.0.1"
   },
