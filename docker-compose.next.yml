@@ -1,7 +1,7 @@
 services:
   beatnik:
-    container_name: "beatnik-dev"
-    image: "nickseman/beatnik:dev"
+    container_name: "beatnik-next-local"
+    image: "nickseman/beatnik:next"
     volumes:
       - "./docker/library.db:/library.db"
       - "./docker/library:/library"
@@ -13,12 +13,3 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    develop:
-      watch:
-        - action: sync
-          path: ./src
-          target: /usr/local/beatnik/src
-
-        - action: rebuild
-          path: package.json
-          target: /usr/local/beatnik
