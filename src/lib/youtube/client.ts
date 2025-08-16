@@ -1,44 +1,117 @@
-import { Stream } from "node:stream";
-import { Innertube, UniversalCache } from "youtubei.js";
+import { BG, buildURL, GOOG_API_KEY, USER_AGENT, WebPoSignalOutput } from "bgutils-js";
+import { JSDOM } from "jsdom";
+import { Innertube, YT, YTNodes } from "youtubei.js";
 
-import { log } from "../logger";
+const userAgent = USER_AGENT;
 
-const clientPromise = Innertube.create({
-  cache: new UniversalCache(true),
-});
+// @NOTE: Session cache is disabled so we can get a fresh visitor data string.
+const innertubePromise = Innertube.create({ user_agent: userAgent, enable_session_cache: false });
+export const getClient = async () => await innertubePromise;
 
-const streamClientPromise = Innertube.create({
-  cache: new UniversalCache(false),
-});
+async function getIntegrityTokenBasedMinter() {
+  // #region BotGuard Initialization
+  const innertube = await getClient();
+  const dom = new JSDOM(
+    '<!DOCTYPE html><html lang="en"><head><title></title></head><body></body></html>',
+    {
+      url: "https://www.youtube.com/",
+      referrer: "https://www.youtube.com/",
+      userAgent,
+    },
+  );
 
-export const getClient = async (streamClient = false) => {
-  if (streamClient) return await streamClientPromise;
-  return await clientPromise;
-};
+  Object.assign(globalThis, {
+    window: dom.window,
+    document: dom.window.document,
+    location: dom.window.location,
+    origin: dom.window.origin,
+  });
 
-export const getYtStream = async (id: string) => {
-  try {
-    const yt = await getClient(true);
-    const stream = await yt.download(id, {
-      type: "audio",
-      codec: "opus",
-      quality: "best",
-      client: "WEB",
-    });
-    return Stream.Readable.fromWeb(stream);
-  } catch (_) {
-    // if no preferred stream found, just get whatever
-    log({
-      type: "INFO",
-      user: "BOT",
-      message: `Unable to find optimal stream for ${id}, falling back to first available.`,
-    });
-    const yt = await getClient();
-    const url = (await yt.getStreamingData(id, { format: "any" })).decipher();
-    const stream = (await fetch(url)).body;
-    if (!stream) {
-      throw new Error(`No compatible streams found for ${id}.`);
-    }
-    return Stream.Readable.fromWeb(stream);
+  if (!Reflect.has(globalThis, "navigator")) {
+    Object.defineProperty(globalThis, "navigator", { value: dom.window.navigator });
   }
+
+  const challengeResponse = await innertube.getAttestationChallenge("ENGAGEMENT_TYPE_UNBOUND");
+
+  if (!challengeResponse.bg_challenge) throw new Error("Could not get challenge");
+
+  const interpreterUrl =
+    challengeResponse.bg_challenge.interpreter_url
+      .private_do_not_access_or_else_trusted_resource_url_wrapped_value;
+  const bgScriptResponse = await fetch(`https:${interpreterUrl}`);
+  const interpreterJavascript = await bgScriptResponse.text();
+
+  if (interpreterJavascript) {
+    new Function(interpreterJavascript)();
+  } else throw new Error("Could not load VM");
+
+  const botguard = await BG.BotGuardClient.create({
+    program: challengeResponse.bg_challenge.program,
+    globalName: challengeResponse.bg_challenge.global_name,
+    globalObj: globalThis,
+  });
+  // #endregion
+
+  // #region WebPO Token Generation
+  const webPoSignalOutput: WebPoSignalOutput = [];
+  const botguardResponse = await botguard.snapshot({ webPoSignalOutput });
+  const requestKey = "O43z0dpjhgX20SCx4KAo";
+
+  const integrityTokenResponse = await fetch(buildURL("GenerateIT", true), {
+    method: "POST",
+    headers: {
+      "content-type": "application/json+protobuf",
+      "x-goog-api-key": GOOG_API_KEY,
+      "x-user-agent": "grpc-web-javascript/0.1",
+      "user-agent": userAgent,
+    },
+    body: JSON.stringify([requestKey, botguardResponse]),
+  });
+
+  const response = (await integrityTokenResponse.json()) as unknown[];
+
+  if (typeof response[0] !== "string") throw new Error("Could not get integrity token");
+
+  const integrityTokenBasedMinter = await BG.WebPoMinter.create(
+    { integrityToken: response[0] },
+    webPoSignalOutput,
+  );
+
+  return integrityTokenBasedMinter;
+}
+
+const minterPromise = getIntegrityTokenBasedMinter();
+const getMinter = async () => await minterPromise;
+
+export const getStreamUrl = async (videoId: string) => {
+  const innertube = await getClient();
+  const minter = await getMinter();
+  const visitorData = innertube.session.context.client.visitorData || "";
+  const contentPoToken = await minter.mintAsWebsafeString(videoId);
+  const sessionPoToken = await minter.mintAsWebsafeString(visitorData);
+  const watchEndpoint = new YTNodes.NavigationEndpoint({ watchEndpoint: { videoId } });
+
+  const extraRequestArgs = {
+    playbackContext: {
+      contentPlaybackContext: {
+        vis: 0,
+        splay: false,
+        lactMilliseconds: "-1",
+        signatureTimestamp: innertube.session.player?.sts,
+      },
+    },
+    serviceIntegrityDimensions: {
+      poToken: contentPoToken,
+    },
+  };
+
+  const watchResponse = await watchEndpoint.call(innertube.actions, extraRequestArgs);
+  const videoInfo = new YT.VideoInfo([watchResponse], innertube.actions, "");
+  const audioStreamingURL = `${videoInfo
+    .chooseFormat({
+      format: "any",
+    })
+    .decipher(innertube.session.player)}&pot=${sessionPoToken}`;
+
+  return audioStreamingURL;
 };

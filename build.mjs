@@ -22,4 +22,5 @@ await esbuild.build({
   outExtension: {
     ".js": ".cjs",
   },
+  external: ["jsdom", "canvas"],
 });

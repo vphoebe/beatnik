@@ -6,8 +6,8 @@ import { finished } from "node:stream/promises";
 import { log } from "lib/logger";
 
 import { getLibraryDir } from "../environment";
-import { getYtStream } from "../youtube/client";
 import { YtApiTrack } from "../youtube/metadata";
+import { getYtStream } from "../youtube/stream";
 
 function getItemPath(id: string) {
   const libDir = getLibraryDir();

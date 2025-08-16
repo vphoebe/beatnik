@@ -10,3 +10,15 @@ services:
       - LIBRARY_PATH=/library
       - DATABASE_URL=file:/library.db
     restart: no
+    build:
+      context: .
+      dockerfile: Dockerfile
+    develop:
+      watch:
+        - action: sync
+          path: ./src
+          target: /usr/local/beatnik/src
+
+        - action: rebuild
+          path: package.json
+          target: /usr/local/beatnik

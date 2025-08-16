@@ -4,19 +4,30 @@ import { Readable } from "node:stream";
 
 import { getDownloadedIdStream } from "../library/cache";
 import { QueuedTrack } from "../queue";
-import { getYtStream } from "./client";
+import { getStreamUrl } from "./client";
+import { fetchStream } from "./fetch";
 
-export async function createResource(track: QueuedTrack, retries = 0) {
+export const getYtStream = async (id: string) => {
+  try {
+    const url = await getStreamUrl(id);
+    const stream = await fetchStream(url);
+    return stream;
+  } catch (err) {
+    throw new Error(`No compatible streams found for ${id}. ${err}`);
+  }
+};
+
+export async function createResource(track: QueuedTrack) {
   // return resource either from stream or cache
   try {
-    let stream: Readable | ReadStream | undefined = getDownloadedIdStream(track.id);
+    let inputStream: Readable | ReadStream | undefined = getDownloadedIdStream(track.id);
     let fromCache = true;
-    if (!stream) {
+    if (!inputStream) {
       // grab api stream from youtube
-      stream = await getYtStream(track.id);
+      inputStream = await getYtStream(track.id);
       fromCache = false;
     }
-    const { type } = await demuxProbe(stream);
+    const { stream, type } = await demuxProbe(inputStream);
 
     const resource = createAudioResource(stream, {
       inputType: type,
@@ -32,12 +43,6 @@ export async function createResource(track: QueuedTrack, retries = 0) {
     return { resource, fromCache };
   } catch (err) {
     console.error(err);
-
-    if (retries < 1) {
-      retries++;
-      return createResource(track, retries);
-    } else {
-      throw new Error(`Unable to play ${track.id} after ${retries + 1} attempts.`);
-    }
+    throw new Error(`Unable to play ${track.id}.`);
   }
 }

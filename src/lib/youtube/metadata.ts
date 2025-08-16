@@ -57,14 +57,14 @@ async function getTrackInfo(id: string, useLibrary: boolean): Promise<YtApiTrack
   }
   try {
     const yt = await getClient();
-    const info = await yt.getBasicInfo(id, { client: "WEB" });
+    const info = await yt.getBasicInfo(id);
     const { basic_info } = info;
     return {
       title: basic_info.title ?? "Unknown",
       url: trackIdToURL(basic_info.id ?? ""),
       length: basic_info.duration ?? 0,
       id: basic_info.id ?? "Unknown",
-      channelName: basic_info.channel?.name ?? "Unknown",
+      channelName: basic_info.author ?? basic_info.channel?.name ?? "Unknown",
       thumbnailUrl: basic_info.thumbnail?.[0].url ?? "Unknown",
       loudness: getLoudnessFromInfo(info),
       playlistIdx: null,
