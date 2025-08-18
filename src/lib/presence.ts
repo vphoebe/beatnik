@@ -2,7 +2,7 @@ import { ActivitiesOptions, ActivityType, Client, PresenceStatusData } from "dis
 
 import { getBeatTimeString } from "./util";
 
-export function getIdleActivity() {
+function getIdleActivity() {
   const activity: ActivitiesOptions = {
     name: `@${getBeatTimeString()}`,
     type: ActivityType.Playing,
@@ -10,7 +10,7 @@ export function getIdleActivity() {
   return activity;
 }
 
-export function updatePresence(
+function updatePresence(
   client: Client,
   status: PresenceStatusData,
   activity: ActivitiesOptions,

@@ -1,9 +1,9 @@
-export type LoggerOptions = {
+interface LoggerOptions {
   type: "CMD" | "INFO" | "DB" | "CACHE" | "ERROR" | "YT";
   guildId?: string;
   user: string;
   message: string;
-};
+}
 
 export function log(options: LoggerOptions) {
   const { type, user, message } = options;

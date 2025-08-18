@@ -10,10 +10,6 @@ export async function getTrackByIntId(int_id: number) {
   return prisma.track.findUnique({ where: { int_id } });
 }
 
-export async function getTrackByUrl(url: string) {
-  return prisma.track.findFirst({ where: { url } });
-}
-
 export async function createTrack(trackData: Prisma.TrackCreateInput) {
   return prisma.track.create({ data: trackData });
 }

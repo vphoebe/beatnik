@@ -88,7 +88,7 @@ async function getIntegrityTokenBasedMinter() {
   return integrityTokenBasedMinter;
 }
 
-export const minterPromise = getIntegrityTokenBasedMinter().then((val) => {
+const minterPromise = getIntegrityTokenBasedMinter().then((val) => {
   log({ user: "BOT", type: "YT", message: `YouTube token minter established.` });
   return val;
 });

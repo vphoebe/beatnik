@@ -10,18 +10,16 @@ import * as skip from "./skip/command";
 import * as stop from "./stop/command";
 import * as update from "./update/command";
 
-export type Command = {
+interface Command {
   execute: CommandExecuter;
   autocomplete?: AutocompleteHandler;
-};
+}
 
 export type AutocompleteHandler = (interaction: AutocompleteInteraction) => Promise<void>;
 
 export type CommandExecuter = (interaction: ChatInputCommandInteraction) => Promise<void>;
 
-export type CommandList = {
-  [commandKey: string]: Command;
-};
+type CommandList = Record<string, Command>;
 
 export const commandList: CommandList = {
   play,
