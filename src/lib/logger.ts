@@ -1,5 +1,5 @@
 export type LoggerOptions = {
-  type: "CMD" | "INFO" | "DB" | "CACHE" | "ERROR";
+  type: "CMD" | "INFO" | "DB" | "CACHE" | "ERROR" | "YT";
   guildId?: string;
   user: string;
   message: string;

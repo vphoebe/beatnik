@@ -6,14 +6,14 @@ import { log } from "lib/logger";
 
 const userAgent = USER_AGENT;
 
-// @NOTE: Session cache is disabled so we can get a fresh visitor data string.
 const innertubePromise = Innertube.create({
   user_agent: userAgent,
   enable_session_cache: false,
 }).then((val) => {
-  log({ user: "BOT", type: "INFO", message: `YouTube client established.` });
+  log({ user: "BOT", type: "YT", message: `YouTube client established.` });
   return val;
 });
+
 export const getClient = async () => await innertubePromise;
 
 async function getIntegrityTokenBasedMinter() {
@@ -88,11 +88,12 @@ async function getIntegrityTokenBasedMinter() {
   return integrityTokenBasedMinter;
 }
 
-const minterPromise = getIntegrityTokenBasedMinter().then((val) => {
-  log({ user: "BOT", type: "INFO", message: `YouTube token minter established.` });
+export const minterPromise = getIntegrityTokenBasedMinter().then((val) => {
+  log({ user: "BOT", type: "YT", message: `YouTube token minter established.` });
   return val;
 });
-const getMinter = async () => await minterPromise;
+
+export const getMinter = async () => await minterPromise;
 
 export const getStreamUrl = async (videoId: string) => {
   const innertube = await getClient();

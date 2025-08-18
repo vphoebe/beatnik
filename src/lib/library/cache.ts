@@ -29,8 +29,11 @@ export async function migrateCacheNames() {
   return renamePromises.length;
 }
 
-export function testCache() {
-  return getLibraryDir();
+export async function countCacheFiles() {
+  const libDir = getLibraryDir();
+  const files = await readdir(libDir);
+  const cacheFiles = files.filter((f) => f.endsWith(".cache"));
+  return cacheFiles.length;
 }
 
 export async function downloadId(id: string) {

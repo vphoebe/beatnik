@@ -32,3 +32,12 @@ export function getLibraryDir() {
   }
   return libraryPath;
 }
+
+export function getDatabaseURL() {
+  const databaseURL = process.env.DATABASE_URL;
+  if (!databaseURL) {
+    console.error("No DATABASE_URL found in .env!");
+    process.exit();
+  }
+  return databaseURL;
+}

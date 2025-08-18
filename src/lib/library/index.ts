@@ -4,19 +4,20 @@ import { ChatInputCommandInteraction } from "discord.js";
 import { log } from "../logger";
 import { getMetadataFromQuery, YtApiPlaylist, YtApiTrack } from "../youtube/metadata";
 import {
+  countCacheFiles,
   downloadId,
   downloadPlaylist,
   migrateCacheNames,
   removeDownload,
-  testCache,
 } from "./cache";
-import { testDb } from "./db/client";
+import { connectDb } from "./db/client";
 import {
   doesPlaylistExist,
   updateSavedPlaylist,
   savePlaylist,
   getPlaylist,
   deleteSavedPlaylist,
+  getPlaylistCount,
 } from "./db/playlist";
 import {
   getTrackByYtId,
@@ -24,6 +25,7 @@ import {
   getTrackByIntId,
   deleteTrack,
   getTracksByPlaylist,
+  getTrackCount,
 } from "./db/track";
 
 export interface LibraryOperationResult {
@@ -34,12 +36,6 @@ export interface LibraryOperationResult {
 
 export async function testLibraryConnection() {
   try {
-    testCache();
-    log({
-      type: "CACHE",
-      user: "BOT",
-      message: "Connected to library cache directory!",
-    });
     const migratedCacheCount = await migrateCacheNames();
     if (migratedCacheCount) {
       log({
@@ -48,11 +44,19 @@ export async function testLibraryConnection() {
         message: `Migrated ${migratedCacheCount} files to new cache format`,
       });
     }
-    await testDb();
+    const cacheCount = await countCacheFiles();
+    log({
+      type: "CACHE",
+      user: "BOT",
+      message: `Found ${cacheCount} cache files.`,
+    });
+    await connectDb();
+    const playlists = await getPlaylistCount();
+    const tracks = await getTrackCount();
     log({
       type: "DB",
       user: "BOT",
-      message: "Connected to library database!",
+      message: `Connected to library database! (${playlists} playlists, ${tracks} tracks)`,
     });
   } catch (err) {
     console.error(err);

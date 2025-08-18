@@ -52,3 +52,7 @@ export async function getIsolatedTracks() {
     },
   });
 }
+
+export async function getTrackCount() {
+  return prisma.track.count();
+}

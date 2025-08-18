@@ -1,5 +1,9 @@
 import { PrismaClient } from "@generated/client";
+import { PrismaBetterSQLite3 } from "@prisma/adapter-better-sqlite3";
 
-export const prisma = new PrismaClient();
+import { getDatabaseURL } from "lib/environment";
 
-export const testDb = async () => await prisma.$connect();
+const adapter = new PrismaBetterSQLite3({ url: getDatabaseURL() });
+export const prisma = new PrismaClient({ adapter });
+
+export const connectDb = async () => await prisma.$connect();

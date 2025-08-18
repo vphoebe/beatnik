@@ -17,6 +17,7 @@ import { log } from "lib/logger";
 import { startPresenceLifecycle } from "lib/presence";
 import { allGuildQueues } from "lib/queue";
 import { errorReply } from "lib/replies";
+import { getClient, getMinter } from "lib/youtube/client";
 
 import { commandList } from "commands/index";
 
@@ -31,19 +32,21 @@ version ${BEATNIK_VERSION}`);
 console.log(generateDependencyReport());
 
 // Create a new client instance
-export const client = new Client({
+const client = new Client({
   intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildVoiceStates],
 });
 
 // When the client is ready, run this code (only once)
 client.on(Events.ClientReady, async () => {
   await testLibraryConnection();
+  await getClient();
+  await getMinter();
+  startPresenceLifecycle(client);
   log({
     type: "INFO",
     user: "BOT",
     message: "Beatnik is ready to go!",
   });
-  startPresenceLifecycle(client);
 });
 
 client.on(Events.InteractionCreate, async (interaction) => {

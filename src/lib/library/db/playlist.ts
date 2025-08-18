@@ -72,3 +72,7 @@ export async function deleteSavedPlaylist(int_id: number) {
     where: { int_id },
   });
 }
+
+export async function getPlaylistCount() {
+  return prisma.playlist.count();
+}
