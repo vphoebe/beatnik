@@ -36,8 +36,8 @@ services:
     container_name: "beatnik"
     image: "nickseman/beatnik:latest"
     volumes:
-      - "/path/on/your/computer/library.db:/library.db"
-      - "/path/on/your/computer/library:/library"
+      - "/path/on/your/computer/library.db:/app/library.db"
+      - "/path/on/your/computer/library:/app/library"
     environment:
       - TOKEN=xxxxxxxxxx
       - CLIENT_ID=00000000
