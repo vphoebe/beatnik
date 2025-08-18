@@ -98,7 +98,7 @@ class Queue {
     }
     const basis = end ? this.tracks.length : this.currentIndex + 1;
     tracks.forEach((t, idx) => this.insert({ ...t, addedBy: userId }, basis + idx));
-    return tracks.length;
+    return tracks;
   }
 
   async play() {

@@ -3,6 +3,7 @@ import { EmbedBuilder } from "discord.js";
 
 import { QueuedTrack } from "./queue";
 import { getDurationString } from "./util";
+import { YtApiTrack } from "./youtube/metadata";
 
 const baseEmbed = () =>
   new EmbedBuilder().setColor("#F6921E").setTimestamp().setFooter({ text: "sent by Beatnik" });
@@ -58,16 +59,19 @@ export function getQueueListEmbed(
 }
 
 export function getAddedToQueueMessage(
-  numberAddedToQueue: number,
+  tracksAddedToQueue: YtApiTrack[],
   isPlaying: boolean,
   isEnd: boolean,
   isShuffle: boolean,
 ) {
+  const count = tracksAddedToQueue.length;
   const location = isEnd ? "end" : "start";
   const action = isShuffle ? "Shuffled" : "Added";
   const startPlaying = !isPlaying ? "Starting playback!" : "";
+  const trackInfo =
+    count === 1
+      ? `${bold(tracksAddedToQueue[0].title)}`
+      : `${count} track${count !== 1 ? "s" : ""}`;
 
-  return `${action} ${numberAddedToQueue} track${
-    numberAddedToQueue !== 1 ? "s" : ""
-  } at the ${location} of the queue. ${startPlaying}`;
+  return `${action} ${trackInfo} at the ${location} of the queue. ${startPlaying}`;
 }

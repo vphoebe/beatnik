@@ -18,9 +18,9 @@ export const execute: CommandExecuter = async (interaction) => {
   }
 
   const queue = await getOrCreateQueue(interaction);
-  const numberAddedToQueue = await queue.enqueue(query, interaction.user.id, isShuffle, isEnd);
+  const tracksAddedToQueue = await queue.enqueue(query, interaction.user.id, isShuffle, isEnd);
   await interaction.editReply({
-    content: getAddedToQueueMessage(numberAddedToQueue, queue.isPlaying, isEnd, isShuffle),
+    content: getAddedToQueueMessage(tracksAddedToQueue, queue.isPlaying, isEnd, isShuffle),
   });
   if (!queue.isPlaying) {
     await queue.play();
