@@ -1,4 +1,4 @@
-FROM node:22-trixie-slim AS beatnik
+FROM node:22-trixie AS beatnik
 # set up default env
 ENV DATABASE_URL="file:/library.db" \
   LIBRARY_PATH="/library"
@@ -6,19 +6,19 @@ ENV DATABASE_URL="file:/library.db" \
 WORKDIR /
 RUN touch library.db
 RUN mkdir library
-# copy needed files
-WORKDIR /usr/local/beatnik
-COPY package*.json .
 # add deps
 RUN apt-get update
-RUN apt-get install -y --no-install-recommends python3-pip make g++ ffmpeg
+RUN apt-get install -y --no-install-recommends ffmpeg
+# copy needed files
+WORKDIR /usr/local/beatnik
+# npm deps
+COPY package*.json .
 RUN npm install
-COPY ./src ./src
+# prisma
 COPY ./prisma ./prisma
-COPY build.mjs .
-COPY tsconfig.json .
-# build
 RUN npm run db:generate
-RUN npm run build
+# rest
+COPY tsconfig.json .
+COPY ./src ./src
 # start beatnik
 CMD ["sh", "-c", "npm run dev"]

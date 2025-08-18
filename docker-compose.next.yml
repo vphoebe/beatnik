@@ -1,6 +1,6 @@
 services:
   beatnik:
-    container_name: "beatnik-next-local"
+    container_name: "beatnik-next"
     image: "nickseman/beatnik:next"
     volumes:
       - "./docker/library.db:/library.db"
@@ -10,6 +10,3 @@ services:
       - LIBRARY_PATH=/library
       - DATABASE_URL=file:/library.db
     restart: no
-    build:
-      context: .
-      dockerfile: Dockerfile
