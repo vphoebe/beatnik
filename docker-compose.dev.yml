@@ -3,12 +3,12 @@ services:
     container_name: "beatnik-dev"
     image: "nickseman/beatnik:dev"
     volumes:
-      - "./docker/library.db:/library.db"
-      - "./docker/library:/library"
+      - "./docker/library.db:/app/library.db"
+      - "./docker/library:/app/library"
     env_file: .env
     environment:
-      - LIBRARY_PATH=/library
-      - DATABASE_URL=file:/library.db
+      - LIBRARY_PATH=/app/library
+      - DATABASE_URL=file:/app/library.db
     restart: no
     build:
       context: .
@@ -17,8 +17,8 @@ services:
       watch:
         - action: sync
           path: ./src
-          target: /usr/local/beatnik/src
+          target: /app/src
 
         - action: rebuild
           path: package.json
-          target: /usr/local/beatnik
+          target: /app
