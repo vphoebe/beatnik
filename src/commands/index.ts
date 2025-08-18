@@ -1,25 +1,16 @@
-import {
-  AutocompleteInteraction,
-  ChatInputCommandInteraction,
-  SlashCommandBuilder,
-} from "discord.js";
+import { AutocompleteInteraction, ChatInputCommandInteraction } from "discord.js";
 
-import add from "./add";
-import load from "./load";
-import move from "./othello/move";
-import pass from "./othello/pass";
-import rules from "./othello/rules";
-import start from "./othello/start";
-import play from "./play";
-import queue from "./queue";
-import remove from "./remove";
-import shuffle from "./shuffle";
-import skip from "./skip";
-import stop from "./stop";
-import update from "./update";
+import * as add from "./add/command";
+import * as load from "./load/command";
+import * as play from "./play/command";
+import * as queue from "./queue/command";
+import * as remove from "./remove/command";
+import * as shuffle from "./shuffle/command";
+import * as skip from "./skip/command";
+import * as stop from "./stop/command";
+import * as update from "./update/command";
 
 export type Command = {
-  builder: SlashCommandBuilder;
   execute: CommandExecuter;
   autocomplete?: AutocompleteHandler;
 };
@@ -42,8 +33,4 @@ export const commandList: CommandList = {
   shuffle,
   add,
   remove,
-  move,
-  pass,
-  rules,
-  start,
 };

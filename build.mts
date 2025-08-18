@@ -19,7 +19,7 @@ const config: BuildOptions = {
   target: ["node22"],
   format: "esm",
   treeShaking: true,
-  splitting: true,
+  // splitting: true,
   outExtension: {
     ".js": ".mjs",
   },

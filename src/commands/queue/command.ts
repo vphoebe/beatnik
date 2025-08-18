@@ -1,20 +1,10 @@
-import { MessageFlags, SlashCommandBuilder } from "discord.js";
+import { MessageFlags } from "discord.js";
 
 import { getNowPlayingEmbed, getQueueListEmbed } from "lib/embeds";
 import { getExistingQueue } from "lib/queue";
 import { noQueueReply } from "lib/replies";
 
-import { Command, CommandExecuter } from "./index";
-
-export const builder = new SlashCommandBuilder()
-  .setName("queue")
-  .setDescription("View the current queue.")
-  .addIntegerOption((option) =>
-    option
-      .setName("page")
-      .setDescription("Specify the page number of the queue to view")
-      .setRequired(false),
-  );
+import { CommandExecuter } from "..";
 
 export const execute: CommandExecuter = async (interaction) => {
   const guildId = interaction.guildId;
@@ -64,5 +54,3 @@ export const execute: CommandExecuter = async (interaction) => {
     });
   }
 };
-
-export default { builder, execute } as Command;

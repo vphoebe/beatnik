@@ -1,13 +1,9 @@
-import { MessageFlags, SlashCommandBuilder } from "discord.js";
+import { MessageFlags } from "discord.js";
 
 import { getExistingQueue } from "lib/queue";
 import { noQueueReply } from "lib/replies";
 
-import { Command, CommandExecuter } from "./index";
-
-export const builder = new SlashCommandBuilder()
-  .setName("shuffle")
-  .setDescription("Shuffles the queue after the current song.");
+import { CommandExecuter } from "..";
 
 export const execute: CommandExecuter = async (interaction) => {
   const guildId = interaction.guildId;
@@ -23,5 +19,3 @@ export const execute: CommandExecuter = async (interaction) => {
     flags: MessageFlags.Ephemeral,
   });
 };
-
-export default { builder, execute } as Command;

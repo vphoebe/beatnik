@@ -1,20 +1,7 @@
-import { SlashCommandBuilder } from "discord.js";
-
 import { updatePlaylistInLibrary } from "lib/library";
 import { getPlaylists } from "lib/library/db/playlist";
 
-import { AutocompleteHandler, Command, CommandExecuter } from "./index";
-
-export const builder = new SlashCommandBuilder()
-  .setName("update")
-  .setDescription("Updated a saved library playlist.")
-  .addIntegerOption((option) =>
-    option
-      .setName("playlist")
-      .setDescription("Name of the playlist.")
-      .setRequired(true)
-      .setAutocomplete(true),
-  );
+import { AutocompleteHandler, CommandExecuter } from "..";
 
 export const autocomplete: AutocompleteHandler = async (interaction) => {
   const focusedValue = interaction.options.getFocused();
@@ -44,5 +31,3 @@ export const execute: CommandExecuter = async (interaction) => {
     await interaction.editReply(`Updated "${update.playlistData.title}"!`);
   }
 };
-
-export default { builder, execute, autocomplete } as Command;

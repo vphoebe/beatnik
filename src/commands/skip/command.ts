@@ -1,21 +1,9 @@
-import { MessageFlags, SlashCommandBuilder } from "discord.js";
+import { MessageFlags } from "discord.js";
 
 import { getExistingQueue } from "lib/queue";
 import { noQueueReply } from "lib/replies";
 
-import { Command, CommandExecuter } from "./index";
-
-export const builder = new SlashCommandBuilder()
-  .setName("skip")
-  .setDescription("Skips the current song and plays the next track.")
-  .addIntegerOption((option) =>
-    option
-      .setName("track")
-      .setDescription(
-        "Skip to a specific song in the queue by track number (seen in /queue command.)",
-      )
-      .setRequired(false),
-  );
+import { CommandExecuter } from "..";
 
 export const execute: CommandExecuter = async (interaction) => {
   const guildId = interaction.guildId;
@@ -45,5 +33,3 @@ export const execute: CommandExecuter = async (interaction) => {
     flags: MessageFlags.Ephemeral,
   });
 };
-
-export default { builder, execute } as Command;

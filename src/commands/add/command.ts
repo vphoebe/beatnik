@@ -1,19 +1,7 @@
-import { SlashCommandBuilder } from "discord.js";
-
 import { addPlaylistToLibrary, addTrackToLibrary, LibraryOperationResult } from "lib/library";
 import { getMetadataFromQuery } from "lib/youtube/metadata";
 
-import { Command, CommandExecuter } from "./index";
-
-export const builder = new SlashCommandBuilder()
-  .setName("add")
-  .setDescription("Add a track or playlist to the library and download it for future playback.")
-  .addStringOption((option) =>
-    option
-      .setName("query")
-      .setDescription("Valid URL of track or playlist, or a search query to save the first result.")
-      .setRequired(true),
-  );
+import { CommandExecuter } from "../index";
 
 export const execute: CommandExecuter = async (interaction) => {
   const guildId = interaction.guildId;
@@ -51,5 +39,3 @@ export const execute: CommandExecuter = async (interaction) => {
     );
   }
 };
-
-export default { builder, execute } as Command;
