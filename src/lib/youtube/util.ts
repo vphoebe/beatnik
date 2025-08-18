@@ -37,6 +37,7 @@ export const extractYTIdFromURL = async (
 };
 
 export const getLoudnessFromInfo = (info: YT.VideoInfo) => {
-  const { streaming_data } = info;
-  return streaming_data?.formats.find((f) => f.loudness_db !== undefined)?.loudness_db ?? 0;
+  const { player_config } = info;
+  const result = player_config?.audio_config.loudness_db;
+  return result ?? 0;
 };

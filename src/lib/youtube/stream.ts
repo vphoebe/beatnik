@@ -34,11 +34,10 @@ export async function createResource(track: QueuedTrack) {
       metadata: {
         title: track.title,
       },
-      inlineVolume: !!track.loudness,
+      inlineVolume: true,
     });
-    if (track.loudness) {
-      resource.volume?.setVolumeDecibels(-track.loudness);
-    }
+
+    resource.volume?.setVolumeDecibels(-track.loudness);
 
     return { resource, fromCache };
   } catch (err) {
