@@ -1,5 +1,4 @@
 import type { CommandExecuter } from "commands/index";
-
 import { getAddedToQueueMessage } from "discord/messaging";
 import { getOrCreateQueue } from "discord/queue";
 

@@ -8,19 +8,14 @@ import type {
 import { Client, Events, GatewayIntentBits } from "discord.js";
 import fs from "node:fs";
 import path from "node:path";
-
-import { startPresenceLifecycle } from "./discord/presence";
-import { allGuildQueues } from "./discord/queue";
-import { getToken } from "./helpers/environment";
-import { log } from "./helpers/logger";
-
 import { commandList } from "commands/index";
-
 import { errorReply } from "discord/messaging";
-
+import { startPresenceLifecycle } from "discord/presence";
+import { allGuildQueues } from "discord/queue";
 import { testLibraryConnection } from "library/operations";
-
 import { getClient, getMinter } from "youtube/client";
+import { getToken } from "helpers/environment";
+import { log } from "helpers/logger";
 
 const token = getToken();
 

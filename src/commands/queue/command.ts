@@ -1,7 +1,5 @@
 import { MessageFlags } from "discord.js";
-
 import type { CommandExecuter } from "commands/index";
-
 import { getNowPlayingEmbed, getQueueListEmbed } from "discord/messaging";
 import { noQueueReply } from "discord/messaging";
 import { getExistingQueue } from "discord/queue";

@@ -1,5 +1,4 @@
 import { prisma } from "./client";
-
 import type { Prisma } from "generated/client";
 
 export async function getTrackByYtId(ytId: string) {

@@ -1,14 +1,11 @@
 import type { AudioPlayer, PlayerSubscription } from "@discordjs/voice";
 import { AudioPlayerStatus, createAudioPlayer } from "@discordjs/voice";
 import type { CommandInteraction, TextBasedChannel, VoiceBasedChannel } from "discord.js";
-
-import { getExistingVoiceConnection, createVoiceConnection } from "./connection";
+import { createVoiceConnection, getExistingVoiceConnection } from "./connection";
 import { getNowPlayingEmbed } from "./messaging";
-
 import type { YtApiTrack } from "youtube/metadata";
 import { getMetadataFromQuery } from "youtube/metadata";
 import { createResource } from "youtube/stream";
-
 import { log } from "helpers/logger";
 
 export interface QueuedTrack extends YtApiTrack {

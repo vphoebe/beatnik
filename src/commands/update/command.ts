@@ -1,5 +1,4 @@
 import type { AutocompleteHandler, CommandExecuter } from "commands/index";
-
 import { getPlaylists } from "library/db/playlist";
 import { updatePlaylistInLibrary } from "library/operations";
 

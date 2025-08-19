@@ -1,9 +1,7 @@
 import type { InteractionEditReplyOptions, InteractionReplyOptions } from "discord.js";
-import { bold, italic, MessageFlags, userMention } from "discord.js";
+import { MessageFlags, bold, italic, userMention } from "discord.js";
 import { EmbedBuilder } from "discord.js";
-
 import type { QueuedTrack } from "discord/queue";
-
 import type { YtApiTrack } from "youtube/metadata";
 
 const getDurationString = (seconds: number | null) => {

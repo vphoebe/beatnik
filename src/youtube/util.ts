@@ -1,5 +1,4 @@
 import type { YT } from "youtubei.js";
-
 import { getClient } from "./client";
 
 export const trackIdToURL = (id: string) => {

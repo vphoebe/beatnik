@@ -1,8 +1,6 @@
 import type { CommandExecuter } from "commands/index";
-
 import type { LibraryOperationResult } from "library/operations";
 import { addPlaylistToLibrary, addTrackToLibrary } from "library/operations";
-
 import { getMetadataFromQuery } from "youtube/metadata";
 
 export const execute: CommandExecuter = async (interaction) => {

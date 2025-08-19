@@ -1,9 +1,7 @@
 import type { AutocompleteHandler, CommandExecuter } from "commands/index";
-
 import { getAddedToQueueMessage } from "discord/messaging";
 import { getOrCreateQueue } from "discord/queue";
-
-import { getPlaylists, getPlaylist } from "library/db/playlist";
+import { getPlaylist, getPlaylists } from "library/db/playlist";
 import { getAllTracks, getTrackByIntId } from "library/db/track";
 
 export const autocomplete: AutocompleteHandler = async (interaction) => {

@@ -1,8 +1,8 @@
 import {
+  VoiceConnectionStatus,
   entersState,
   getVoiceConnection,
   joinVoiceChannel,
-  VoiceConnectionStatus,
 } from "@discordjs/voice";
 import type { VoiceBasedChannel } from "discord.js";
 
