@@ -1,7 +1,7 @@
-import { updatePlaylistInLibrary } from "lib/library";
-import { getPlaylists } from "lib/library/db/playlist";
+import type { AutocompleteHandler, CommandExecuter } from "commands/index";
 
-import { AutocompleteHandler, CommandExecuter } from "..";
+import { getPlaylists } from "library/db/playlist";
+import { updatePlaylistInLibrary } from "library/operations";
 
 export const autocomplete: AutocompleteHandler = async (interaction) => {
   const focusedValue = interaction.options.getFocused();

@@ -1,7 +1,9 @@
-import { addPlaylistToLibrary, addTrackToLibrary, LibraryOperationResult } from "lib/library";
-import { getMetadataFromQuery } from "lib/youtube/metadata";
+import type { CommandExecuter } from "commands/index";
 
-import { CommandExecuter } from "../index";
+import type { LibraryOperationResult } from "library/operations";
+import { addPlaylistToLibrary, addTrackToLibrary } from "library/operations";
+
+import { getMetadataFromQuery } from "youtube/metadata";
 
 export const execute: CommandExecuter = async (interaction) => {
   const guildId = interaction.guildId;

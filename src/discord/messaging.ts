@@ -1,9 +1,22 @@
-import { bold, italic, userMention } from "discord.js";
+import type { InteractionEditReplyOptions, InteractionReplyOptions } from "discord.js";
+import { bold, italic, MessageFlags, userMention } from "discord.js";
 import { EmbedBuilder } from "discord.js";
 
-import { QueuedTrack } from "./queue";
-import { getDurationString } from "./util";
-import { YtApiTrack } from "./youtube/metadata";
+import type { QueuedTrack } from "discord/queue";
+
+import type { YtApiTrack } from "youtube/metadata";
+
+const getDurationString = (seconds: number | null) => {
+  if (seconds) {
+    const hours = Math.floor(seconds / 60 / 60);
+    const minutes = Math.floor(seconds / 60) - hours * 60;
+    const sec = Math.floor(seconds % 60);
+    return `${hours > 0 ? `${hours}:` : ""}${
+      minutes > 10 || !hours ? minutes : `0${minutes}`
+    }:${sec < 10 ? `0${sec}` : sec}`;
+  }
+  return "unknown";
+};
 
 const baseEmbed = () =>
   new EmbedBuilder().setColor("#F6921E").setTimestamp().setFooter({ text: "sent by Beatnik" });
@@ -75,3 +88,18 @@ export function getAddedToQueueMessage(
 
   return `${action} ${trackInfo} at the ${location} of the queue. ${startPlaying}`;
 }
+function ephemeral(content: string): InteractionReplyOptions {
+  return { content, flags: MessageFlags.Ephemeral };
+}
+
+export const noQueueReply: InteractionReplyOptions = ephemeral(
+  "No queue currently exists. Start playing something!",
+);
+
+export const errorReply = (
+  err: unknown,
+  isEphemeral = true,
+): InteractionReplyOptions | InteractionEditReplyOptions => {
+  const message = `Something went wrong! Tell someone with authority about the following error message: \`\`\`${err}\`\`\``;
+  return isEphemeral ? ephemeral(message) : { content: message };
+};

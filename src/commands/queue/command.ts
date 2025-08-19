@@ -1,10 +1,10 @@
 import { MessageFlags } from "discord.js";
 
-import { getNowPlayingEmbed, getQueueListEmbed } from "lib/embeds";
-import { getExistingQueue } from "lib/queue";
-import { noQueueReply } from "lib/replies";
+import type { CommandExecuter } from "commands/index";
 
-import { CommandExecuter } from "..";
+import { getNowPlayingEmbed, getQueueListEmbed } from "discord/messaging";
+import { noQueueReply } from "discord/messaging";
+import { getExistingQueue } from "discord/queue";
 
 export const execute: CommandExecuter = async (interaction) => {
   const guildId = interaction.guildId;

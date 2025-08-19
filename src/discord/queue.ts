@@ -1,24 +1,32 @@
-import {
-  AudioPlayer,
-  AudioPlayerStatus,
-  createAudioPlayer,
-  PlayerSubscription,
-} from "@discordjs/voice";
-import { CommandInteraction, TextBasedChannel, VoiceBasedChannel } from "discord.js";
+import type { AudioPlayer, PlayerSubscription } from "@discordjs/voice";
+import { AudioPlayerStatus, createAudioPlayer } from "@discordjs/voice";
+import type { CommandInteraction, TextBasedChannel, VoiceBasedChannel } from "discord.js";
 
-import { getExistingVoiceConnection, createVoiceConnection } from "lib/connection";
-import { getNowPlayingEmbed } from "lib/embeds";
-import { log } from "lib/logger";
-import { shuffleArray } from "lib/util";
+import { getExistingVoiceConnection, createVoiceConnection } from "./connection";
+import { getNowPlayingEmbed } from "./messaging";
 
-import { getMetadataFromQuery, YtApiTrack } from "./youtube/metadata";
-import { createResource } from "./youtube/stream";
+import type { YtApiTrack } from "youtube/metadata";
+import { getMetadataFromQuery } from "youtube/metadata";
+import { createResource } from "youtube/stream";
+
+import { log } from "helpers/logger";
 
 export interface QueuedTrack extends YtApiTrack {
   addedBy: string;
 }
 
 export const allGuildQueues = new Map<string, Queue>();
+
+const shuffleArray = <T>(array: T[]) => {
+  const newArray = [...array];
+  for (let i = newArray.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    const temp = newArray[i];
+    newArray[i] = newArray[j];
+    newArray[j] = temp;
+  }
+  return newArray;
+};
 
 function getVoiceChannelFromInteraction(interaction: CommandInteraction) {
   const requestingUserId = interaction.user.id;

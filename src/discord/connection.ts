@@ -4,7 +4,7 @@ import {
   joinVoiceChannel,
   VoiceConnectionStatus,
 } from "@discordjs/voice";
-import { VoiceBasedChannel } from "discord.js";
+import type { VoiceBasedChannel } from "discord.js";
 
 export function createVoiceConnection(channel: VoiceBasedChannel) {
   const connection = joinVoiceChannel({

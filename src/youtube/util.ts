@@ -1,4 +1,4 @@
-import { YT } from "youtubei.js";
+import type { YT } from "youtubei.js";
 
 import { getClient } from "./client";
 

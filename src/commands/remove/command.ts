@@ -1,12 +1,13 @@
 import { inlineCode, MessageFlags } from "discord.js";
 
-import { deletePlaylistFromLibrary, deleteTrackFromLibrary } from "lib/library";
-import { getPlaylists } from "lib/library/db/playlist";
-import { getIsolatedTracks } from "lib/library/db/track";
-import { getExistingQueue } from "lib/queue";
-import { noQueueReply } from "lib/replies";
+import type { AutocompleteHandler, CommandExecuter } from "commands/index";
 
-import { AutocompleteHandler, CommandExecuter } from "..";
+import { noQueueReply } from "discord/messaging";
+import { getExistingQueue } from "discord/queue";
+
+import { getPlaylists } from "library/db/playlist";
+import { getIsolatedTracks } from "library/db/track";
+import { deletePlaylistFromLibrary, deleteTrackFromLibrary } from "library/operations";
 
 export const autocomplete: AutocompleteHandler = async (interaction) => {
   const focusedValue = interaction.options.getFocused(true);

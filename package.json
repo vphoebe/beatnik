@@ -17,6 +17,7 @@
     "format": "prettier --write .",
     "knip": "knip",
     "lint": "npx eslint ./src",
+    "lint:fix": "npx eslint ./src --fix",
     "next:build": "docker build --platform linux/amd64 -f Dockerfile.production -t nickseman/beatnik:next .",
     "next:push": "docker push nickseman/beatnik:next",
     "next:up": "DOCKER_DEFAULT_PLATFORM=linux/amd64 docker compose -f 'docker-compose.next.yml' up",

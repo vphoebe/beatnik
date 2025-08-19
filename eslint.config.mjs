@@ -8,5 +8,8 @@ export default tseslint.config(
   tseslint.configs.stylistic,
   {
     ignores: ["build/*", "prisma/**/*"],
+    rules: {
+      "@typescript-eslint/consistent-type-imports": "error",
+    },
   },
 );

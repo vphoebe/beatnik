@@ -1,8 +1,6 @@
 // tracks
-import { ChatInputCommandInteraction } from "discord.js";
+import type { ChatInputCommandInteraction } from "discord.js";
 
-import { log } from "../logger";
-import { getMetadataFromQuery, YtApiPlaylist, YtApiTrack } from "../youtube/metadata";
 import {
   countCacheFiles,
   downloadId,
@@ -27,6 +25,11 @@ import {
   getTracksByPlaylist,
   getTrackCount,
 } from "./db/track";
+
+import type { YtApiPlaylist, YtApiTrack } from "youtube/metadata";
+import { getMetadataFromQuery } from "youtube/metadata";
+
+import { log } from "helpers/logger";
 
 export interface LibraryOperationResult {
   added: boolean;

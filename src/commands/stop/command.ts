@@ -1,7 +1,7 @@
-import { getExistingQueue } from "lib/queue";
-import { noQueueReply } from "lib/replies";
+import type { CommandExecuter } from "commands/index";
 
-import { CommandExecuter } from "..";
+import { noQueueReply } from "discord/messaging";
+import { getExistingQueue } from "discord/queue";
 
 export const execute: CommandExecuter = async (interaction) => {
   const guildId = interaction.guildId;

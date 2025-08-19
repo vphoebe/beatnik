@@ -1,8 +1,5 @@
 import { REST, Routes } from "discord.js";
 
-import { getClientId, getToken } from "lib/environment";
-import { log } from "lib/logger";
-
 import { builder as add } from "commands/add/builder";
 import { builder as load } from "commands/load/builder";
 import { builder as play } from "commands/play/builder";
@@ -12,6 +9,9 @@ import { builder as shuffle } from "commands/shuffle/builder";
 import { builder as skip } from "commands/skip/builder";
 import { builder as stop } from "commands/stop/builder";
 import { builder as update } from "commands/update/builder";
+
+import { getClientId, getToken } from "helpers/environment";
+import { log } from "helpers/logger";
 
 async function main() {
   try {

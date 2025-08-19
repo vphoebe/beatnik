@@ -1,5 +1,5 @@
 import { Browser, impersonate } from "node-libcurl-ja3";
-import { Readable } from "stream";
+import type { Readable } from "stream";
 
 export async function fetchStream(url: string): Promise<Readable> {
   const curly = impersonate(Browser.Firefox136);

@@ -1,25 +1,26 @@
 import { generateDependencyReport } from "@discordjs/voice";
-import {
+import type {
   AutocompleteInteraction,
   ChatInputCommandInteraction,
-  Client,
-  Events,
-  GatewayIntentBits,
   InteractionEditReplyOptions,
   InteractionReplyOptions,
 } from "discord.js";
+import { Client, Events, GatewayIntentBits } from "discord.js";
 import fs from "node:fs";
 import path from "node:path";
 
-import { getToken } from "lib/environment";
-import { testLibraryConnection } from "lib/library";
-import { log } from "lib/logger";
-import { startPresenceLifecycle } from "lib/presence";
-import { allGuildQueues } from "lib/queue";
-import { errorReply } from "lib/replies";
-import { getClient, getMinter } from "lib/youtube/client";
+import { startPresenceLifecycle } from "./discord/presence";
+import { allGuildQueues } from "./discord/queue";
+import { getToken } from "./helpers/environment";
+import { log } from "./helpers/logger";
 
 import { commandList } from "commands/index";
+
+import { errorReply } from "discord/messaging";
+
+import { testLibraryConnection } from "library/operations";
+
+import { getClient, getMinter } from "youtube/client";
 
 const token = getToken();
 

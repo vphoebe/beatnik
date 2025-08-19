@@ -1,9 +1,10 @@
-import { getAddedToQueueMessage } from "lib/embeds";
-import { getPlaylists, getPlaylist } from "lib/library/db/playlist";
-import { getAllTracks, getTrackByIntId } from "lib/library/db/track";
-import { getOrCreateQueue } from "lib/queue";
+import type { AutocompleteHandler, CommandExecuter } from "commands/index";
 
-import { AutocompleteHandler, CommandExecuter } from "..";
+import { getAddedToQueueMessage } from "discord/messaging";
+import { getOrCreateQueue } from "discord/queue";
+
+import { getPlaylists, getPlaylist } from "library/db/playlist";
+import { getAllTracks, getTrackByIntId } from "library/db/track";
 
 export const autocomplete: AutocompleteHandler = async (interaction) => {
   const focusedValue = interaction.options.getFocused(true);
