@@ -13,7 +13,7 @@
     "db:deploy": "npx prisma migrate deploy",
     "dev": "tsx watch src/beatnik.ts",
     "docker:build": "docker build --platform linux/amd64 -t nickseman/beatnik:dev .",
-    "docker:up": "DOCKER_DEFAULT_PLATFORM=linux/amd64 docker compose -f 'docker-compose.dev.yml' up",
+    "docker:up": "DOCKER_DEFAULT_PLATFORM=linux/amd64 docker compose -f 'docker-compose.dev.yml' up --watch",
     "format": "prettier --write .",
     "knip": "knip",
     "lint": "npx eslint ./src",
