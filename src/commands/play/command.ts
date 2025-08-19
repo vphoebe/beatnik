@@ -1,6 +1,7 @@
-import type { CommandExecuter } from "commands/index";
-import { getAddedToQueueMessage } from "discord/messaging";
-import { getOrCreateQueue } from "discord/queue";
+import type { CommandExecuter } from "@commands/index";
+
+import { getAddedToQueueMessage } from "@helpers/messaging";
+import { getOrCreateQueue } from "@helpers/queue";
 
 export const execute: CommandExecuter = async (interaction) => {
   const guildId = interaction.guildId;

@@ -11,12 +11,10 @@
     "forceConsistentCasingInFileNames": true,
     "isolatedModules": true,
     "paths": {
-      "generated/*": ["./prisma/generated/client/*"],
-      "commands/*": ["./src/commands/*"],
-      "discord/*": ["./src/discord/*"],
-      "library/*": ["./src/library/*"],
-      "helpers/*": ["./src/helpers/*"],
-      "youtube/*": ["./src/youtube/*"]
+      "@engine/*": ["./src/engine/*"],
+      "@commands/*": ["./src/commands/*"],
+      "@helpers/*": ["./src/helpers/*"],
+      "@generated/*": ["./prisma/generated/client/*"]
     }
   },
   "include": ["src/**/*"]

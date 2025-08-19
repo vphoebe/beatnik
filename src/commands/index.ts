@@ -1,4 +1,5 @@
 import type { AutocompleteInteraction, ChatInputCommandInteraction } from "discord.js";
+
 import * as add from "./add/command";
 import * as load from "./load/command";
 import * as play from "./play/command";

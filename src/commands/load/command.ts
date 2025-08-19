@@ -1,8 +1,10 @@
-import type { AutocompleteHandler, CommandExecuter } from "commands/index";
-import { getAddedToQueueMessage } from "discord/messaging";
-import { getOrCreateQueue } from "discord/queue";
-import { getPlaylist, getPlaylists } from "library/db/playlist";
-import { getAllTracks, getTrackByIntId } from "library/db/track";
+import { getPlaylist, getPlaylists } from "@engine/library/db/playlist";
+import { getAllTracks, getTrackByIntId } from "@engine/library/db/track";
+
+import type { AutocompleteHandler, CommandExecuter } from "@commands/index";
+
+import { getAddedToQueueMessage } from "@helpers/messaging";
+import { getOrCreateQueue } from "@helpers/queue";
 
 export const autocomplete: AutocompleteHandler = async (interaction) => {
   const focusedValue = interaction.options.getFocused(true);

@@ -2,7 +2,8 @@ import type { WebPoSignalOutput } from "bgutils-js";
 import { BG, GOOG_API_KEY, USER_AGENT, buildURL } from "bgutils-js";
 import { JSDOM } from "jsdom";
 import { Innertube, YT, YTNodes } from "youtubei.js";
-import { log } from "helpers/logger";
+
+import { log } from "@helpers/logger";
 
 const userAgent = USER_AGENT;
 

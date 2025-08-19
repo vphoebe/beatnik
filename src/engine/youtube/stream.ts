@@ -1,10 +1,13 @@
 import { createAudioResource, demuxProbe } from "@discordjs/voice";
 import type { ReadStream } from "fs";
 import type { Readable } from "node:stream";
+
 import { getStreamUrl } from "./client";
 import { fetchStream } from "./fetch";
-import type { QueuedTrack } from "discord/queue";
-import { getDownloadedIdStream } from "library/cache";
+
+import { getDownloadedIdStream } from "@engine/library/cache";
+
+import type { QueuedTrack } from "@helpers/queue";
 
 export async function getYtStream(id: string) {
   try {

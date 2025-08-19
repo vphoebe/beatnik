@@ -2,10 +2,12 @@ import { createReadStream, createWriteStream, existsSync } from "node:fs";
 import { readdir, rename, rm } from "node:fs/promises";
 import path from "node:path";
 import { finished } from "node:stream/promises";
-import type { YtApiTrack } from "youtube/metadata";
-import { getYtStream } from "youtube/stream";
-import { getLibraryDir } from "helpers/environment";
-import { log } from "helpers/logger";
+
+import type { YtApiTrack } from "@engine/youtube/metadata";
+import { getYtStream } from "@engine/youtube/stream";
+
+import { getLibraryDir } from "@helpers/environment";
+import { log } from "@helpers/logger";
 
 function getItemPath(id: string) {
   const libDir = getLibraryDir();

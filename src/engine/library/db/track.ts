@@ -1,5 +1,6 @@
 import { prisma } from "./client";
-import type { Prisma } from "generated/client";
+
+import type { Prisma } from "@generated/client";
 
 export async function getTrackByYtId(ytId: string) {
   return prisma.track.findFirst({ where: { id: ytId } });

@@ -4,13 +4,11 @@
   "plugins": ["@trivago/prettier-plugin-sort-imports"],
   "importOrder": [
     "^[./]",
-    "^commands/(.*)$",
-    "^discord/(.*)$",
-    "^library/(.*)$",
-    "^youtube/(.*)$",
-    "^generated/(.*)$",
-    "^helpers/(.*)$"
+    "^@engine/(.*)$",
+    "^@commands/(.*)$",
+    "^@generated/(.*)$",
+    "^@helpers/(.*)$"
   ],
-  "importOrderSeparation": false,
+  "importOrderSeparation": true,
   "importOrderSortSpecifiers": true
 }

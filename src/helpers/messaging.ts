@@ -1,10 +1,12 @@
 import type { InteractionEditReplyOptions, InteractionReplyOptions } from "discord.js";
 import { MessageFlags, bold, italic, userMention } from "discord.js";
 import { EmbedBuilder } from "discord.js";
-import type { QueuedTrack } from "discord/queue";
-import type { YtApiTrack } from "youtube/metadata";
 
-export function getDurationString(seconds: number | null) {
+import type { YtApiTrack } from "@engine/youtube/metadata";
+
+import type { QueuedTrack } from "@helpers/queue";
+
+function getDurationString(seconds: number | null) {
   if (seconds) {
     const hours = Math.floor(seconds / 60 / 60);
     const minutes = Math.floor(seconds / 60) - hours * 60;

@@ -1,7 +1,9 @@
 import { MessageFlags } from "discord.js";
-import type { CommandExecuter } from "commands/index";
-import { noQueueReply } from "discord/messaging";
-import { getExistingQueue } from "discord/queue";
+
+import type { CommandExecuter } from "@commands/index";
+
+import { noQueueReply } from "@helpers/messaging";
+import { getExistingQueue } from "@helpers/queue";
 
 export const execute: CommandExecuter = async (interaction) => {
   const guildId = interaction.guildId;

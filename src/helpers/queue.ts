@@ -1,20 +1,22 @@
 import type { AudioPlayer, PlayerSubscription } from "@discordjs/voice";
 import { AudioPlayerStatus, createAudioPlayer } from "@discordjs/voice";
 import type { CommandInteraction, TextBasedChannel, VoiceBasedChannel } from "discord.js";
+
+import { allGuildQueues } from "../beatnik";
 import { createVoiceConnection, getExistingVoiceConnection } from "./connection";
 import { getNowPlayingEmbed } from "./messaging";
-import type { YtApiTrack } from "youtube/metadata";
-import { getMetadataFromQuery } from "youtube/metadata";
-import { createResource } from "youtube/stream";
-import { log } from "helpers/logger";
+
+import type { YtApiTrack } from "@engine/youtube/metadata";
+import { getMetadataFromQuery } from "@engine/youtube/metadata";
+import { createResource } from "@engine/youtube/stream";
+
+import { log } from "@helpers/logger";
 
 export interface QueuedTrack extends YtApiTrack {
   addedBy: string;
 }
 
-export const allGuildQueues = new Map<string, Queue>();
-
-const shuffleArray = <T>(array: T[]) => {
+function shuffleArray<T>(array: T[]) {
   const newArray = [...array];
   for (let i = newArray.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
@@ -23,7 +25,7 @@ const shuffleArray = <T>(array: T[]) => {
     newArray[j] = temp;
   }
   return newArray;
-};
+}
 
 function getVoiceChannelFromInteraction(interaction: CommandInteraction) {
   const requestingUserId = interaction.user.id;
@@ -66,7 +68,7 @@ export async function getExistingQueue(
   return allGuildQueues.get(guildId);
 }
 
-class Queue {
+export class Queue {
   tracks: QueuedTrack[];
   voiceChannel: VoiceBasedChannel;
   textChannel: TextBasedChannel | null;

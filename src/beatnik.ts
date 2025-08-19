@@ -8,16 +8,21 @@ import type {
 import { Client, Events, GatewayIntentBits } from "discord.js";
 import fs from "node:fs";
 import path from "node:path";
-import { commandList } from "commands/index";
-import { errorReply } from "discord/messaging";
-import { startPresenceLifecycle } from "discord/presence";
-import { allGuildQueues } from "discord/queue";
-import { testLibraryConnection } from "library/operations";
-import { getClient, getMinter } from "youtube/client";
-import { getToken } from "helpers/environment";
-import { log } from "helpers/logger";
+
+import { testLibraryConnection } from "@engine/library/operations";
+import { getClient, getMinter } from "@engine/youtube/client";
+
+import { commandList } from "@commands/index";
+
+import { getToken } from "@helpers/environment";
+import { log } from "@helpers/logger";
+import { errorReply } from "@helpers/messaging";
+import { startPresenceLifecycle } from "@helpers/presence";
+import type { Queue } from "@helpers/queue";
 
 const token = getToken();
+
+export const allGuildQueues = new Map<string, Queue>();
 
 const pkgjson = fs.readFileSync(path.join(".", "package.json"), "utf-8");
 export const BEATNIK_VERSION = JSON.parse(pkgjson).version;
