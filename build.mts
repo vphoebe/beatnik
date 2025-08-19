@@ -1,4 +1,5 @@
-import { BuildOptions, build } from "esbuild";
+import type { BuildOptions } from "esbuild";
+import { build } from "esbuild";
 import { rimraf } from "rimraf";
 
 const BUILD_DIR = "build";
