@@ -3,8 +3,8 @@ import { YTNodes } from "youtubei.js";
 import { getClient } from "./client";
 import { extractYTIdFromURL, getLoudnessFromInfo, playlistIdToURL, trackIdToURL } from "./util";
 
-import { getSavedPlaylistById } from "@engine/library/db/playlist";
-import { getTrackByYtId } from "@engine/library/db/track";
+import { getSavedPlaylistById } from "@engine/db/playlist";
+import { getTrackByYtId } from "@engine/db/track";
 
 interface Query {
   query: string;

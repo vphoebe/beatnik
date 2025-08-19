@@ -1,14 +1,7 @@
 // tracks
 import type { ChatInputCommandInteraction } from "discord.js";
 
-import {
-  countCacheFiles,
-  downloadId,
-  downloadPlaylist,
-  migrateCacheNames,
-  removeDownload,
-} from "./cache";
-import { connectDb } from "./db/client";
+import { connectDb } from "../db/client";
 import {
   deleteSavedPlaylist,
   doesPlaylistExist,
@@ -16,7 +9,7 @@ import {
   getPlaylistCount,
   savePlaylist,
   updateSavedPlaylist,
-} from "./db/playlist";
+} from "../db/playlist";
 import {
   createTrack,
   deleteTrack,
@@ -24,7 +17,14 @@ import {
   getTrackByYtId,
   getTrackCount,
   getTracksByPlaylist,
-} from "./db/track";
+} from "../db/track";
+import {
+  countCacheFiles,
+  downloadId,
+  downloadPlaylist,
+  migrateCacheNames,
+  removeDownload,
+} from "./cache";
 
 import type { YtApiPlaylist, YtApiTrack } from "@engine/youtube/metadata";
 import { getMetadataFromQuery } from "@engine/youtube/metadata";
