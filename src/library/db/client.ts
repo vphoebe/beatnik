@@ -5,4 +5,6 @@ import { getDatabaseURL } from "helpers/environment";
 const adapter = new PrismaBetterSQLite3({ url: getDatabaseURL() });
 export const prisma = new PrismaClient({ adapter });
 
-export const connectDb = async () => await prisma.$connect();
+export async function connectDb() {
+  return await prisma.$connect();
+}

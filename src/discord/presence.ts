@@ -1,7 +1,7 @@
 import type { ActivitiesOptions, Client, PresenceStatusData } from "discord.js";
 import { ActivityType } from "discord.js";
 
-const getBeatTimeString = (date = new Date()): string => {
+function getBeatTimeString(date = new Date()): string {
   const value =
     ((((date.getUTCHours() + 1) % 24) + date.getUTCMinutes() / 60 + date.getUTCSeconds() / 3600) *
       1000) /
@@ -11,7 +11,7 @@ const getBeatTimeString = (date = new Date()): string => {
       ? `00${Math.floor(value)}`
       : `0${Math.floor(value)}`
     : `${Math.floor(value)}`;
-};
+}
 
 function getIdleActivity() {
   const activity: ActivitiesOptions = {

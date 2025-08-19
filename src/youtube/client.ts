@@ -95,7 +95,7 @@ const minterPromise = getIntegrityTokenBasedMinter().then((val) => {
 
 export const getMinter = async () => await minterPromise;
 
-export const getStreamUrl = async (videoId: string) => {
+export async function getStreamUrl(videoId: string) {
   const innertube = await getClient();
   const minter = await getMinter();
   const visitorData = innertube.session.context.client.visitorData || "";
@@ -126,4 +126,4 @@ export const getStreamUrl = async (videoId: string) => {
     .decipher(innertube.session.player)}&pot=${sessionPoToken}`;
 
   return audioStreamingURL;
-};
+}

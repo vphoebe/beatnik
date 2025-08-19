@@ -1,18 +1,18 @@
 import type { YT } from "youtubei.js";
 import { getClient } from "./client";
 
-export const trackIdToURL = (id: string) => {
+export function trackIdToURL(id: string) {
   return `https://youtube.com/watch?v=${id}`;
-};
+}
 
-export const playlistIdToURL = (id: string) => {
+export function playlistIdToURL(id: string) {
   // have to remove VL from the ID for the url to work
   return `https://youtube.com/playlist?list=${id.replace("VL", "")}`;
-};
+}
 
-export const extractYTIdFromURL = async (
+export async function extractYTIdFromURL(
   url: string,
-): Promise<{ id: string; type: "track" | "playlist" }> => {
+): Promise<{ id: string; type: "track" | "playlist" }> {
   const urlObject = new URL(url);
   const validUrl = urlObject.toString();
   const yt = await getClient();
@@ -33,10 +33,10 @@ export const extractYTIdFromURL = async (
   } else {
     throw new Error("Non-YouTube URL");
   }
-};
+}
 
-export const getLoudnessFromInfo = (info: YT.VideoInfo) => {
+export function getLoudnessFromInfo(info: YT.VideoInfo) {
   const { player_config } = info;
   const result = player_config?.audio_config.loudness_db;
   return result ?? 0;
-};
+}

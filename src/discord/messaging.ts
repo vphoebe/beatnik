@@ -4,7 +4,7 @@ import { EmbedBuilder } from "discord.js";
 import type { QueuedTrack } from "discord/queue";
 import type { YtApiTrack } from "youtube/metadata";
 
-const getDurationString = (seconds: number | null) => {
+export function getDurationString(seconds: number | null) {
   if (seconds) {
     const hours = Math.floor(seconds / 60 / 60);
     const minutes = Math.floor(seconds / 60) - hours * 60;
@@ -14,7 +14,7 @@ const getDurationString = (seconds: number | null) => {
     }:${sec < 10 ? `0${sec}` : sec}`;
   }
   return "unknown";
-};
+}
 
 const baseEmbed = () =>
   new EmbedBuilder().setColor("#F6921E").setTimestamp().setFooter({ text: "sent by Beatnik" });

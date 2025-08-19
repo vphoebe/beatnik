@@ -6,7 +6,7 @@ import { fetchStream } from "./fetch";
 import type { QueuedTrack } from "discord/queue";
 import { getDownloadedIdStream } from "library/cache";
 
-export const getYtStream = async (id: string) => {
+export async function getYtStream(id: string) {
   try {
     const url = await getStreamUrl(id);
     const stream = await fetchStream(url);
@@ -14,7 +14,7 @@ export const getYtStream = async (id: string) => {
   } catch (err) {
     throw new Error(`No compatible streams found for ${id}. ${err}`);
   }
-};
+}
 
 export async function createResource(track: QueuedTrack) {
   // return resource either from stream or cache
