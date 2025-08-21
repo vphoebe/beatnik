@@ -1,18 +1,15 @@
-import { defineConfig } from "eslint/config";
+// @ts-check
+import eslint from "@eslint/js";
+import tseslint from "typescript-eslint";
 
-export default defineConfig([
+export default tseslint.config(
+  eslint.configs.recommended,
+  tseslint.configs.strict,
+  tseslint.configs.stylistic,
   {
-    env: {
-      es2022: true,
-      node: true,
+    ignores: ["build/*", "prisma/**/*"],
+    rules: {
+      "@typescript-eslint/consistent-type-imports": "error",
     },
-    extends: ["eslint:recommended", "plugin:@typescript-eslint/recommended"],
-    parser: "@typescript-eslint/parser",
-    parserOptions: {
-      ecmaVersion: "latest",
-      sourceType: "module",
-    },
-    plugins: ["@typescript-eslint"],
-    rules: {},
   },
-]);
+);

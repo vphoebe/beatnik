@@ -1,26 +1,28 @@
 import { generateDependencyReport } from "@discordjs/voice";
-import {
+import type {
   AutocompleteInteraction,
   ChatInputCommandInteraction,
-  Client,
-  Events,
-  GatewayIntentBits,
   InteractionEditReplyOptions,
   InteractionReplyOptions,
 } from "discord.js";
+import { Client, Events, GatewayIntentBits } from "discord.js";
 import fs from "node:fs";
 import path from "node:path";
 
-import { getToken } from "lib/environment";
-import { testLibraryConnection } from "lib/library";
-import { log } from "lib/logger";
-import { startPresenceLifecycle } from "lib/presence";
-import { allGuildQueues } from "lib/queue";
-import { errorReply } from "lib/replies";
+import { testLibraryConnection } from "@engine/library/operations";
+import { getClient, getMinter } from "@engine/youtube/client";
 
-import { commandList } from "commands/index";
+import { commandList } from "@commands/index";
+
+import { getToken } from "@helpers/environment";
+import { log } from "@helpers/logger";
+import { errorReply } from "@helpers/messaging";
+import { startPresenceLifecycle } from "@helpers/presence";
+import type { Queue } from "@helpers/queue";
 
 const token = getToken();
+
+export const allGuildQueues = new Map<string, Queue>();
 
 const pkgjson = fs.readFileSync(path.join(".", "package.json"), "utf-8");
 export const BEATNIK_VERSION = JSON.parse(pkgjson).version;
@@ -31,19 +33,21 @@ version ${BEATNIK_VERSION}`);
 console.log(generateDependencyReport());
 
 // Create a new client instance
-export const client = new Client({
+const client = new Client({
   intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildVoiceStates],
 });
 
 // When the client is ready, run this code (only once)
 client.on(Events.ClientReady, async () => {
   await testLibraryConnection();
+  await getClient();
+  await getMinter();
+  startPresenceLifecycle(client);
   log({
     type: "INFO",
     user: "BOT",
     message: "Beatnik is ready to go!",
   });
-  startPresenceLifecycle(client);
 });
 
 client.on(Events.InteractionCreate, async (interaction) => {

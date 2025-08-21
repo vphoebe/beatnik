@@ -13,7 +13,6 @@ A modern music bot for your Discord server that you can host yourself! No subscr
 - Use easy to understand slash commands to play audio from YouTube videos in your server's voice channels
 - Save YouTube playlists and videos to your library for fast, local playback
   - Adding to your library downloads the audio and metadata locally, so future plays don't require the API
-- Text-based Othello which can be played with other users in any text channel
 - Get up and running using Docker in minutes
 - No fees, service tokens, or privacy concerns - everything is operated by you locally
 
@@ -36,8 +35,8 @@ services:
     container_name: "beatnik"
     image: "nickseman/beatnik:latest"
     volumes:
-      - "/path/on/your/computer/library.db:/library.db"
-      - "/path/on/your/computer/library:/library"
+      - "/path/on/your/computer/library.db:/app/library.db"
+      - "/path/on/your/computer/library:/app/library"
     environment:
       - TOKEN=xxxxxxxxxx
       - CLIENT_ID=00000000
@@ -67,14 +66,3 @@ Beatnik uses Discord slash commands. You can type `/` in any text channel, and t
 | `/queue` | Lists the current queue and currently playing track. | `page`: View another page of the queue, if necessary. |
 | `/remove queue [track]` | Removes a track from the queue. | | |
 | `/remove (playlist \| saved-track) [item]` | Removes an item from your library. | |
-
-### Othello commands
-Beatnik includes a text-based version of Othello.
-
-| Command | Description |
-| -- | -- |
-| `/othello-start [player 1] [player 2]` | Starts the game with the two users you specify. If any of the players are in an active game, it will be removed. |
-| `/move [coordinates]`| Makes your player's move using the grid coordinates. Example: `/move c4` |
-| `/pass` | Passes your turn to the next player. Used if there are no available moves. |
-| `/rules` | Shows basic rules and usage for commands. |
- 

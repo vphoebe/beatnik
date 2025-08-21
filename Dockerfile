@@ -1,39 +1,55 @@
-FROM node:22-alpine AS builder
-WORKDIR /builder
-# copy needed files
-COPY package-lock.json ./
-COPY package.json ./
-COPY tsconfig.json ./
-COPY build.mjs ./
-COPY prisma ./prisma
-COPY ./src ./src
-# add deps
-RUN apk add --no-cache py3-pip make g++
+FROM node:22-slim AS base
+WORKDIR /app
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    ca-certificates openssl \
+ && rm -rf /var/lib/apt/lists/*
+
+# install/build npm deps
+FROM base AS deps
+WORKDIR /app
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    python3 make g++  \
+ && rm -rf /var/lib/apt/lists/*
+
+COPY package*.json tsconfig.json build.mts eslint.config.mjs ./
 RUN npm ci
-# build
-RUN npm run db:generate
-RUN npm run build
 
-FROM node:22-alpine AS beatnik
-# set up default env
-ENV DATABASE_URL="file:/library.db" \
-  LIBRARY_PATH="/library" \
-  NODE_ENV="production"
-# create mount points
-WORKDIR /
-RUN touch library.db
-RUN mkdir library
-# install ffmpeg
-RUN apk add --no-cache ffmpeg
-# copy runtime code
-WORKDIR /usr/local/beatnik
-COPY package.json ./
-COPY --from=builder /builder/prisma/migrations ./prisma/migrations
-COPY --from=builder /builder/prisma/schema.prisma ./prisma
-COPY --from=builder /builder/prisma/generated/client/*.node ./build/
-COPY --from=builder /builder/build ./build
-COPY --from=builder /builder/node_modules/@discordjs/opus ./node_modules/@discordjs/opus
-COPY --from=builder /builder/node_modules/sodium-native ./node_modules/sodium-native
+# build stage
+FROM deps AS builder
+WORKDIR /app
 
-# start beatnik
-CMD ["sh", "-c", "npm start"]
+COPY src ./src
+COPY prisma ./prisma
+
+RUN npm run db:generate \
+ && npm run build
+
+# production
+FROM base AS prod
+WORKDIR /app
+
+ENV NODE_ENV=production \
+    DATABASE_URL="file:/app/library.db" \
+    LIBRARY_PATH="/app/library"
+
+RUN mkdir -p library
+
+COPY package*.json ./
+COPY --from=deps /app/node_modules ./node_modules
+COPY --from=builder /app/build ./build
+COPY --from=builder /app/prisma ./prisma
+
+RUN npm prune --omit=dev
+
+ENTRYPOINT ["sh", "-c", "npx prisma migrate deploy && node ./build/deploy-commands.mjs && node ./build/beatnik.mjs"]
+
+# dev server
+FROM base AS dev
+WORKDIR /app
+
+COPY package*.json tsconfig.json build.mts eslint.config.mjs ./
+COPY --from=deps /app/node_modules ./node_modules
+COPY prisma ./prisma
+
+CMD ["tsx", "watch", "src/beatnik.ts"]
