@@ -5,6 +5,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     ca-certificates openssl \
  && rm -rf /var/lib/apt/lists/*
 
+COPY package*.json ./
+
 # install/build npm deps
 FROM base AS deps
 WORKDIR /app
@@ -12,18 +14,19 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     python3 make g++  \
  && rm -rf /var/lib/apt/lists/*
 
-COPY package*.json tsconfig.json build.mts eslint.config.mjs ./
 RUN npm ci
 
 # build stage
 FROM deps AS builder
 WORKDIR /app
 
+COPY eslint.config.mjs tsconfig.json tsdown.config.ts ./
 COPY src ./src
 COPY prisma ./prisma
 
 RUN npm run db:generate \
- && npm run build
+ && npm run build \
+ && npm prune --omit=dev
 
 # production
 FROM base AS prod
@@ -35,12 +38,9 @@ ENV NODE_ENV=production \
 
 RUN mkdir -p library
 
-COPY package*.json ./
 COPY --from=deps /app/node_modules ./node_modules
 COPY --from=builder /app/build ./build
 COPY --from=builder /app/prisma ./prisma
-
-RUN npm prune --omit=dev
 
 ENTRYPOINT ["sh", "-c", "npx prisma migrate deploy && node ./build/deploy-commands.mjs && node ./build/beatnik.mjs"]
 
@@ -48,8 +48,7 @@ ENTRYPOINT ["sh", "-c", "npx prisma migrate deploy && node ./build/deploy-comman
 FROM base AS dev
 WORKDIR /app
 
-COPY package*.json tsconfig.json build.mts eslint.config.mjs ./
+COPY eslint.config.mjs tsconfig.json tsdown.config.ts ./
 COPY --from=deps /app/node_modules ./node_modules
-COPY prisma ./prisma
-
-CMD ["tsx", "watch", "src/beatnik.ts"]
+# src and prisma dirs must be bind mounted
+CMD ["npx", "tsx", "watch", "src/beatnik.ts"]
