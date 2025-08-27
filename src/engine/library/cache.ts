@@ -47,8 +47,6 @@ export async function downloadId(id: string) {
 
     const ytStream = await getYtStream(id);
     const diskStream = createWriteStream(targetPath.path);
-
-    // TODO: this works and I'm leaving the ts error to resolve
     await finished(ytStream.pipe(diskStream));
 
     log({ type: "CACHE", user: "BOT", message: `Finished downloading ${id}` });
