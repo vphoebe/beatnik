@@ -18,5 +18,5 @@
       "@generated/*": ["./prisma/generated/client/*"]
     }
   },
-  "include": ["src/**/*"]
+  "include": ["src/**/*", "prisma/generated/client/**/*"]
 }
