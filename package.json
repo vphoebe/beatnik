@@ -1,12 +1,12 @@
 {
   "name": "beatnik",
-  "version": "4.2.0",
+  "version": "4.2.1",
   "description": "modern and simple Discord music bot with easy-to-use commands",
   "author": "vphoebe",
   "license": "MIT",
   "type": "module",
   "scripts": {
-    "build": "npm run lint && npm run typecheck && tsx build.mjs",
+    "build": "npm run lint && npm run typecheck && tsdown",
     "commands": "tsx src/deploy-commands.ts",
     "db:generate": "prisma generate",
     "db:migrate": "prisma migrate dev",
@@ -37,23 +37,27 @@
     "node-libcurl-ja3": "^5.0.3",
     "prisma": "^6.14.0",
     "sodium-native": "^5.0.6",
-    "youtubei.js": "^15.0.1"
+    "youtubei.js": "^15.1.1"
   },
   "devDependencies": {
     "@eslint/js": "^9.33.0",
     "@trivago/prettier-plugin-sort-imports": "^4.3.0",
     "@types/jsdom": "^21.1.7",
     "@types/node": "^22.17.2",
-    "esbuild": "^0.25.9",
     "eslint": "^9.33.0",
     "knip": "^5.62.0",
     "prettier": "^3.3.2",
-    "rimraf": "^6.0.1",
+    "tsdown": "^0.14.1",
     "tsx": "^4.15.6",
     "typescript": "^5.8.3",
     "typescript-eslint": "^8.40.0"
   },
   "engines": {
     "node": ">=22.0.0 <23.0.0"
+  },
+  "exports": {
+    "./beatnik": "./build/beatnik.mjs",
+    "./deploy-commands": "./build/deploy-commands.mjs",
+    "./package.json": "./package.json"
   }
 }
