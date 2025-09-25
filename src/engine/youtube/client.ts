@@ -10,6 +10,7 @@ const userAgent = USER_AGENT;
 const innertubePromise = Innertube.create({
   user_agent: userAgent,
   enable_session_cache: false,
+  player_id: "0004de42",
 }).then((val) => {
   log({ user: "BOT", type: "YT", message: `YouTube client established.` });
   return val;
