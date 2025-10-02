@@ -31,6 +31,8 @@ export async function createResource(track: QueuedTrack) {
     }
     const { stream, type } = await demuxProbe(inputStream);
 
+    stream.on("error", (err) => console.error("Stream error", err));
+
     const resource = createAudioResource(stream, {
       inputType: type,
       metadata: {

@@ -81,16 +81,31 @@ export class Queue {
   constructor(voiceChannel: VoiceBasedChannel, textChannel: TextBasedChannel | null) {
     this.tracks = [];
     this.currentIndex = 0;
-    this.audioPlayer = createAudioPlayer().on(AudioPlayerStatus.Idle, () => {
-      if (this.tracks.length - 1 > this.currentIndex) {
-        this.next();
-      } else {
-        this.stop();
-        if (textChannel?.isSendable()) {
-          textChannel?.send(":wave: Nothing left in the queue!");
+    this.audioPlayer = createAudioPlayer()
+      .on(AudioPlayerStatus.Idle, () => {
+        if (this.tracks.length - 1 > this.currentIndex) {
+          this.next();
+        } else {
+          this.stop();
+          if (textChannel?.isSendable()) {
+            textChannel?.send(":wave: Nothing left in the queue!");
+          }
         }
-      }
-    });
+      })
+      .on("error", (err) => {
+        log({
+          type: "ERROR",
+          user: "BOT",
+          message: `Error playing! Error was:`,
+        });
+        console.error(err);
+        if (this.textChannel?.isSendable()) {
+          this.textChannel?.send(
+            `There was a problem with ${this.nowPlaying?.title ?? ""}, skipping...`,
+          );
+        }
+        this.next();
+      });
     this.isPlaying = false;
     this.voiceChannel = voiceChannel;
     this.textChannel = textChannel;
