@@ -7,6 +7,7 @@ import type { SabrPlaybackOptions } from "googlevideo/sabr-stream";
 import { SabrStream } from "googlevideo/sabr-stream";
 import { EnabledTrackTypes, buildSabrFormat } from "googlevideo/utils";
 import Stream from "node:stream";
+import type { ReadableStream as NodeReadableStream } from "node:stream/web";
 import { Constants, YTNodes } from "youtubei.js";
 
 import { getWebPoMinter, invalidateWebPoMinter } from "./browser";
@@ -26,6 +27,7 @@ export async function createSabrStream(videoId: string, logSabrEvents = false) {
   try {
     accountInfo = await innertube.account.getInfo();
   } catch (e) {
+    console.error(e);
     accountInfo = null;
   }
   const dataSyncId =
@@ -65,20 +67,23 @@ export async function createSabrStream(videoId: string, logSabrEvents = false) {
 
   const sabrFormats = playerResponse.streaming_data?.adaptive_formats.map(buildSabrFormat) || [];
 
+  const clientName = innertube.session.context.client
+    .clientName as keyof typeof Constants.CLIENT_NAME_IDS;
+
   const serverAbrStream = new SabrStream({
     formats: sabrFormats,
     serverAbrStreamingUrl,
     videoPlaybackUstreamerConfig,
     poToken: contentPoToken,
     clientInfo: {
-      clientName: parseInt(Constants.CLIENT_NAME_IDS[innertube.session.context.client.clientName]),
+      clientName: parseInt(Constants.CLIENT_NAME_IDS[clientName]),
       clientVersion: innertube.session.context.client.clientVersion,
     },
   });
 
   // === Stream protection handling ===
   let protectionFailureCount = 0;
-  let lastStatus = null;
+  let lastStatus: number | undefined | null = null;
   serverAbrStream.on("streamProtectionStatusUpdate", async (statusUpdate) => {
     if (statusUpdate.status !== lastStatus) {
       if (logSabrEvents) console.log("Stream Protection Status Update:", statusUpdate);
@@ -110,13 +115,9 @@ export async function createSabrStream(videoId: string, logSabrEvents = false) {
     }
   });
 
-  serverAbrStream.on("error", (err) => {
-    if (logSabrEvents) console.error("SABR stream error:", err);
-  });
-
   // === Start SABR stream ===
   const { audioStream } = await serverAbrStream.start(DEFAULT_OPTIONS);
-  const nodeStream = Stream.Readable.fromWeb(audioStream);
+  const nodeStream = Stream.Readable.fromWeb(audioStream as NodeReadableStream);
 
   return nodeStream;
 }

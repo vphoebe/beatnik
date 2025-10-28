@@ -3,20 +3,30 @@
  * Copyright (c) 2025 iTsMaaT
  * Licensed under the MIT License (see LICENSE for details)
  */
+import type { Canvas, CanvasRenderingContext2D } from "@napi-rs/canvas";
 import { ImageData as CanvasImageData, createCanvas } from "@napi-rs/canvas";
+import type { WebPoSignalOutput } from "bgutils-js";
 import { BG, GOOG_API_KEY, USER_AGENT, buildURL } from "bgutils-js";
+import type { DOMWindow } from "jsdom";
 import { JSDOM } from "jsdom";
+import type Innertube from "youtubei.js";
+
+declare global {
+  interface HTMLCanvasElement {
+    _napiCanvasState: { canvas: Canvas | null; context: CanvasRenderingContext2D | null };
+  }
+}
 
 const REQUEST_KEY = "O43z0dpjhgX20SCx4KAo";
 
-let domWindow;
-let initializationPromise = null;
-let botguardClient;
-let webPoMinter;
-let activeScriptId = null;
+let domWindow: DOMWindow;
+let initializationPromise: Promise<BG.WebPoMinter> | null = null;
+let botguardClient: BG.BotGuardClient | undefined;
+let webPoMinter: BG.WebPoMinter | undefined;
+let activeScriptId: string | null = null;
 let canvasPatched = false;
 
-function patchCanvasSupport(window) {
+function patchCanvasSupport(window: DOMWindow) {
   if (canvasPatched) return;
 
   const HTMLCanvasElement = window?.HTMLCanvasElement;
@@ -28,7 +38,7 @@ function patchCanvasSupport(window) {
     writable: true,
     value: null,
   });
-
+  // @ts-expect-error Extending DOM types is too much paperwork
   HTMLCanvasElement.prototype.getContext = function getContext(type, options) {
     if (type !== "2d") return null;
 
@@ -58,8 +68,8 @@ function patchCanvasSupport(window) {
         context: null,
       };
     }
-
-    return this._napiCanvasState.canvas.toDataURL(...args);
+    // @ts-expect-error Extending DOM types is too much paperwork
+    return this._napiCanvasState.canvas?.toDataURL(...args) as string;
   };
 
   if (!window.ImageData) window.ImageData = CanvasImageData;
@@ -76,7 +86,7 @@ function patchCanvasSupport(window) {
   canvasPatched = true;
 }
 
-function ensureDomEnvironment(userAgent) {
+function ensureDomEnvironment(userAgent: string) {
   if (domWindow) return domWindow;
 
   const dom = new JSDOM("<!DOCTYPE html><html><head></head><body></body></html>", {
@@ -143,7 +153,10 @@ function resetBotguardState() {
   initializationPromise = null;
 }
 
-async function initializeBotguard(innertube, { forceRefresh } = {}) {
+async function initializeBotguard(
+  innertube: Innertube,
+  { forceRefresh }: { forceRefresh?: boolean } = {},
+) {
   if (forceRefresh) resetBotguardState();
 
   if (webPoMinter) return webPoMinter;
@@ -193,7 +206,7 @@ async function initializeBotguard(innertube, { forceRefresh } = {}) {
       globalObj: globalThis,
     });
 
-    const webPoSignalOutput = [];
+    const webPoSignalOutput: WebPoSignalOutput = [];
     const botguardSnapshot = await botguardClient.snapshot({ webPoSignalOutput });
 
     const integrityResponse = await fetch(buildURL("GenerateIT", true), {
@@ -228,19 +241,19 @@ async function initializeBotguard(innertube, { forceRefresh } = {}) {
   return await initializationPromise;
 }
 
-function requireBinding(binding) {
+function requireBinding(binding?: string) {
   if (!binding) throw new Error("Content binding is required to mint a WebPO token.");
   return binding;
 }
 
-export async function getWebPoMinter(innertube, options = {}) {
+export async function getWebPoMinter(innertube: Innertube, options = {}) {
   const minter = await initializeBotguard(innertube, options);
 
   return {
-    generatePlaceholder(binding) {
+    generatePlaceholder(binding: string) {
       return BG.PoToken.generateColdStartToken(requireBinding(binding));
     },
-    async mint(binding) {
+    async mint(binding: string) {
       return await minter.mintAsWebsafeString(requireBinding(binding));
     },
   };
