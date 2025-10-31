@@ -10,7 +10,7 @@ import fs from "node:fs";
 import path from "node:path";
 
 import { testLibraryConnection } from "@engine/library/operations";
-import { getClient, getMinter } from "@engine/youtube/client";
+import { getClient } from "@engine/youtube/client";
 
 import { commandList } from "@commands/index";
 
@@ -41,7 +41,6 @@ const client = new Client({
 client.on(Events.ClientReady, async () => {
   await testLibraryConnection();
   await getClient();
-  await getMinter();
   startPresenceLifecycle(client);
   log({
     type: "INFO",

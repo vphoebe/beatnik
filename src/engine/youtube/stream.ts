@@ -2,8 +2,7 @@ import { createAudioResource, demuxProbe } from "@discordjs/voice";
 import type { ReadStream } from "fs";
 import type { Readable } from "node:stream";
 
-import { getStreamUrl } from "./client";
-import { fetchStream } from "./fetch";
+import { createSabrStream } from "./sabr";
 
 import { getDownloadedIdStream } from "@engine/library/cache";
 
@@ -11,8 +10,7 @@ import type { QueuedTrack } from "@helpers/queue";
 
 export async function getYtStream(id: string) {
   try {
-    const url = await getStreamUrl(id);
-    const stream = await fetchStream(url);
+    const stream = await createSabrStream(id);
     return stream;
   } catch (err) {
     throw new Error(`No compatible streams found for ${id}. ${err}`);
