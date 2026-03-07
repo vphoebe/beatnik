@@ -41,7 +41,6 @@ export async function createSabrStream(videoId: string, logSabrEvents = false) {
   const watchEndpoint = new YTNodes.NavigationEndpoint({ watchEndpoint: { videoId } });
   const playerResponse = await watchEndpoint.call(innertube.actions, {
     playbackContext: {
-      adPlaybackContext: { pyv: true },
       contentPlaybackContext: {
         vis: 0,
         splay: false,
