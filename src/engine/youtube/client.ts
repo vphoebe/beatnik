@@ -1,18 +1,6 @@
-import { Innertube, Platform, UniversalCache } from "youtubei.js";
+import { Innertube, UniversalCache } from "youtubei.js";
 
 import { log } from "@helpers/logger";
-
-Platform.shim.eval = async (data, env) => {
-  const properties = [];
-
-  if (env.n) properties.push(`n: exportedVars.nFunction("${env.n}")`);
-
-  if (env.sig) properties.push(`sig: exportedVars.sigFunction("${env.sig}")`);
-
-  const code = `${data.output}\nreturn { ${properties.join(", ")} }`;
-
-  return new Function(code)();
-};
 
 // https://github.com/LuanRT/YouTube.js/issues/1146#issuecomment-4006959046
 const KNOWN_PIDS = [
