@@ -1,4 +1,4 @@
-import { Innertube, UniversalCache } from "youtubei.js";
+import { Innertube, Platform, UniversalCache } from "youtubei.js";
 
 import { log } from "@helpers/logger";
 
@@ -17,6 +17,15 @@ const KNOWN_PIDS = [
 ];
 
 const getPlayerId = () => KNOWN_PIDS[Math.floor(Math.random() * KNOWN_PIDS.length)];
+
+Platform.shim.eval = async (data, env) => {
+  const properties = [];
+  if (env.n) properties.push(`n: exportedVars.nFunction("${env.n}")`);
+  if (env.sig) properties.push(`sig: exportedVars.sigFunction("${env.sig}")`);
+  const code = `${data.output}\nreturn { ${properties.join(", ")} }`;
+
+  return new Function(code)();
+};
 
 const innertubePromise = Innertube.create({
   cache: new UniversalCache(false),
