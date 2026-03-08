@@ -1,5 +1,6 @@
 import { Innertube, Platform, UniversalCache } from "youtubei.js";
 
+import { getPlayerIdOverride } from "@helpers/environment";
 import { log } from "@helpers/logger";
 
 // https://github.com/LuanRT/YouTube.js/issues/1146#issuecomment-4006959046
@@ -16,7 +17,11 @@ const KNOWN_PIDS = [
   "a944b11f",
 ];
 
-const getPlayerId = () => KNOWN_PIDS[Math.floor(Math.random() * KNOWN_PIDS.length)];
+const getPlayerId = () => {
+  const envOverride = getPlayerIdOverride();
+
+  return envOverride ?? KNOWN_PIDS[Math.floor(Math.random() * KNOWN_PIDS.length)];
+};
 
 Platform.shim.eval = async (data, env) => {
   const properties = [];

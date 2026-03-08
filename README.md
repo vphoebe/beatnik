@@ -49,6 +49,7 @@ Change `/path/on/your/computer` to a directory where Beatnik's files can live, s
 | ------------ | ------------ |
 | `TOKEN`  | Discord developer portal > Applications > [your app] > Bot > Token  |
 | `CLIENT_ID` | Discord developer portal > Applications > [your app] > OAuth2 > Client ID  |
+| `PLAYER_ID` | (Optional) Player ID override. Can be used to work around temporary issues when YouTube introduces breaking changes by forcing an older player. |
 
 
 ## 🎵 Usage
