@@ -38,11 +38,11 @@ ENV NODE_ENV=production \
 
 RUN mkdir -p library
 
-COPY --from=deps /app/node_modules ./node_modules
+COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/build ./build
 COPY --from=builder /app/prisma ./prisma
 
-ENTRYPOINT ["sh", "-c", "npx prisma migrate deploy && node ./build/deploy-commands.mjs && node ./build/beatnik.mjs"]
+ENTRYPOINT ["sh", "-c", "./node_modules/.bin/prisma migrate deploy && node ./build/deploy-commands.mjs && node ./build/beatnik.mjs"]
 
 # dev server
 FROM base AS dev
