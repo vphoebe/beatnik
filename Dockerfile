@@ -26,7 +26,25 @@ COPY prisma ./prisma
 
 RUN npm run db:generate \
  && npm run build \
- && npm prune --omit=dev
+ && npm prune --omit=dev \
+ # Drop unneeded stuff in node_modules
+ && find node_modules -type f \( \
+      -name "*.md" -o -name "*.map" -o -name "*.ts" \
+      -o -name "CHANGELOG*" -o -name "README*" \
+      -o -name "LICENSE*" -o -name "*.test.js" \
+    \) -delete \
+ && find node_modules -type d \( -name "test" -o -name "tests" -o -name "__tests__" \) \
+      -exec rm -rf {} + 2>/dev/null; true \
+ # Drop musl variants (using glibc/gnu on node:22-slim)
+ && rm -rf node_modules/@napi-rs/canvas-linux-x64-musl \
+ && rm -rf node_modules/@snazzah/davey-linux-x64-musl \
+ # Drop opus build artifacts, keep only prebuild
+ && rm -rf node_modules/@discordjs/opus/build-tmp-napi-v3 \
+ # Drop non-debian Prisma engines
+ && find node_modules/@prisma/engines -type f \
+      ! -name "*debian-openssl-3.0.x*" \
+      \( -name "*.node" -o -name "*.so*" \) \
+      -delete
 
 # production
 FROM base AS prod
@@ -38,11 +56,11 @@ ENV NODE_ENV=production \
 
 RUN mkdir -p library
 
-COPY --from=deps /app/node_modules ./node_modules
+COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/build ./build
 COPY --from=builder /app/prisma ./prisma
 
-ENTRYPOINT ["sh", "-c", "npx prisma migrate deploy && node ./build/deploy-commands.mjs && node ./build/beatnik.mjs"]
+ENTRYPOINT ["sh", "-c", "./node_modules/.bin/prisma migrate deploy && node ./build/deploy-commands.mjs && node ./build/beatnik.mjs"]
 
 # dev server
 FROM base AS dev

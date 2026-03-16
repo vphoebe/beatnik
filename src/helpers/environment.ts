@@ -41,3 +41,8 @@ export function getDatabaseURL() {
   }
   return databaseURL;
 }
+
+export function getPlayerIdOverride() {
+  const player_id = process.env.PLAYER_ID;
+  return player_id;
+}
