@@ -24,5 +24,6 @@ jobs:
         with:
           push: true
           tags: nickseman/beatnik:latest
+          target: prod
           cache-from: type=gha
           cache-to: type=gha,mode=max
