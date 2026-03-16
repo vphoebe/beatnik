@@ -26,8 +26,7 @@ export async function createSabrStream(videoId: string, logSabrEvents = false) {
   // === Mint initial PO token ===
   try {
     accountInfo = await innertube.account.getInfo();
-  } catch (e) {
-    console.error(e);
+  } catch (_err) {
     accountInfo = null;
   }
   const dataSyncId =
