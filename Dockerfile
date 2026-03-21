@@ -2,7 +2,7 @@ FROM node:22-slim AS base
 WORKDIR /app
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    ca-certificates openssl \
+    ca-certificates openssl ffmpeg \
  && rm -rf /var/lib/apt/lists/*
 
 COPY package*.json ./
