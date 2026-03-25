@@ -1,16 +1,15 @@
 {
   "name": "beatnik",
-  "version": "4.2.6",
+  "version": "4.3.0",
   "description": "modern and simple Discord music bot with easy-to-use commands",
   "author": "vphoebe",
   "license": "MIT",
   "type": "module",
   "scripts": {
-    "build": "npm run lint && npm run typecheck && tsdown",
     "commands": "tsx src/deploy-commands.ts",
     "db:generate": "prisma generate",
     "db:migrate": "prisma migrate dev",
-    "db:deploy": "npx prisma migrate deploy",
+    "db:deploy": "prisma migrate deploy",
     "dev": "tsx watch src/beatnik.ts",
     "docker:up": "docker compose -f 'docker-compose.dev.yml' up --build --remove-orphans",
     "format": "prettier --write .",
@@ -22,7 +21,7 @@
     "next:build": "docker build --platform linux/amd64 --target prod -t nickseman/beatnik:next .",
     "next:push": "docker push nickseman/beatnik:next",
     "next:up": "docker compose -f 'docker-compose.next.yml' up --build --remove-orphans",
-    "start": "npm run db:deploy && node ./build/deploy-commands.mjs && node ./build/beatnik.mjs",
+    "start": "npm run db:deploy && npm run commands && tsx src/beatnik.ts",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
@@ -38,27 +37,21 @@
     "googlevideo": "^4.0.4",
     "jsdom": "^26.1.0",
     "prisma": "^6.14.0",
+    "tsx": "^4.21.0",
     "youtubei.js": "^17.0.1"
   },
   "devDependencies": {
     "@eslint/js": "^9.33.0",
     "@trivago/prettier-plugin-sort-imports": "^4.3.0",
     "@types/jsdom": "^21.1.7",
-    "@types/node": "^22.17.2",
+    "@types/node": "^25.5.0",
     "eslint": "^9.33.0",
     "knip": "^5.62.0",
     "prettier": "^3.3.2",
-    "tsdown": "^0.21.0",
-    "tsx": "^4.15.6",
     "typescript": "^5.8.3",
     "typescript-eslint": "^8.40.0"
   },
   "engines": {
     "node": ">=22.0.0 <23.0.0"
-  },
-  "exports": {
-    "./beatnik": "./build/beatnik.mjs",
-    "./deploy-commands": "./build/deploy-commands.mjs",
-    "./package.json": "./package.json"
   }
 }

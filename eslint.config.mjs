@@ -7,7 +7,7 @@ export default tseslint.config(
   tseslint.configs.strict,
   tseslint.configs.stylistic,
   {
-    ignores: ["build/*", "prisma/**/*"],
+    ignores: ["prisma/**/*"],
     rules: {
       "@typescript-eslint/consistent-type-imports": "error",
       "@typescript-eslint/no-unused-vars": [
