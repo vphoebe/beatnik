@@ -1,3 +1,6 @@
+#
+# base image with deps/files needed for each
+#
 FROM node:22-slim AS base
 WORKDIR /app
 
@@ -17,7 +20,7 @@ WORKDIR /app
 RUN apt-get update && apt-get install -y --no-install-recommends \
     python3 make g++  \
  && rm -rf /var/lib/apt/lists/*
-
+  # install without devDeps
 RUN npm ci --omit=dev
 
 COPY prisma ./prisma
@@ -53,7 +56,7 @@ ENV NODE_ENV=production \
 
 RUN mkdir -p library
 
-# copy code and prebuilt deps
+  # copy code and prebuilt deps
 COPY --from=deps /app/node_modules ./node_modules
 COPY --from=deps /app/prisma ./prisma
 COPY src ./src
@@ -69,5 +72,4 @@ WORKDIR /app
 
 COPY eslint.config.mjs ./
 COPY --from=deps /app/node_modules ./node_modules
-# src and prisma dirs must be bind mounted
 CMD ["npx", "tsx", "watch", "src/beatnik.ts"]
