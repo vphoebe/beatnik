@@ -7,9 +7,6 @@
   "type": "module",
   "scripts": {
     "build": "npm run typecheck && npm run knip && npm run next:build",
-    "db:generate": "prisma generate",
-    "db:migrate": "prisma migrate dev",
-    "db:deploy": "prisma migrate deploy",
     "dev": "docker compose -f 'docker-compose.dev.yml' up --build --remove-orphans",
     "dev:local": "tsx watch src/beatnik.ts",
     "format": "prettier --write .",
@@ -28,8 +25,6 @@
     "@discordjs/opus": "^0.10.0",
     "@discordjs/voice": "^0.19.2",
     "@napi-rs/canvas": "^0.1.81",
-    "@prisma/adapter-better-sqlite3": "^7.5.0",
-    "@prisma/client": "^7.5.0",
     "@snazzah/davey": "^0.1.7",
     "better-sqlite3": "^12.8.0",
     "bgutils-js": "^3.2.0",
@@ -50,7 +45,6 @@
     "eslint": "^9.33.0",
     "knip": "^5.62.0",
     "prettier": "^3.3.2",
-    "prisma": "^7.5.0",
     "typescript": "^5.8.3",
     "typescript-eslint": "^8.40.0"
   },

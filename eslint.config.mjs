@@ -15,7 +15,6 @@ export default tseslint.config(
     },
   },
   {
-    ignores: ["prisma/**/*"],
     rules: {
       "@typescript-eslint/await-thenable": "warn",
       "@typescript-eslint/consistent-type-imports": "error",

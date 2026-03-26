@@ -37,4 +37,3 @@ async function getDatabaseClient() {
 }
 
 export const db = await getDatabaseClient();
-export const prisma = {};

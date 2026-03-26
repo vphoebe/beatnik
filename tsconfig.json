@@ -15,8 +15,7 @@
       "@engine/*": ["./src/engine/*"],
       "@commands/*": ["./src/commands/*"],
       "@helpers/*": ["./src/helpers/*"],
-      "@generated/*": ["./prisma/generated/client/*"]
-    }
+    },
   },
-  "include": ["src/**/*", "prisma/generated/client/**/*"]
+  "include": ["src/**/*"],
 }

@@ -8,7 +8,6 @@ services:
       target: dev-server
     volumes:
       - ./src:/app/src
-      - ./prisma:/app/prisma
       - ./docker/library.db:/app/library.db
       - ./docker/library:/app/library
     env_file: .env
