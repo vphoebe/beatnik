@@ -52,7 +52,7 @@ async function getQueryType(query: string): Promise<Query | null> {
 }
 
 async function getTrackInfo(id: string, useLibrary: boolean): Promise<YtApiTrack | undefined> {
-  const existingTrack = await getTrackByYtId(id);
+  const existingTrack = getTrackByYtId(id);
   if (existingTrack && useLibrary) {
     return existingTrack;
   }
@@ -77,7 +77,7 @@ async function getTrackInfo(id: string, useLibrary: boolean): Promise<YtApiTrack
 }
 
 async function getPlaylistInfo(id: string, useLibrary: boolean): Promise<YtApiPlaylist> {
-  const existingPlaylist = await getSavedPlaylistById(id);
+  const existingPlaylist = getSavedPlaylistById(id);
   if (existingPlaylist && useLibrary) {
     return existingPlaylist;
   }
@@ -106,7 +106,7 @@ async function getPlaylistInfo(id: string, useLibrary: boolean): Promise<YtApiPl
 
   const tracks: YtApiTrack[] = await Promise.all(
     tracksWithoutLoudness.map(async (track) => {
-      const matchedTrack = await getTrackByYtId(track.id);
+      const matchedTrack = getTrackByYtId(track.id);
       if (matchedTrack) {
         return { ...track, loudness: matchedTrack.loudness };
       }

@@ -12,7 +12,7 @@ import { getExistingQueue } from "@helpers/queue";
 export const autocomplete: AutocompleteHandler = async (interaction) => {
   const focusedValue = interaction.options.getFocused(true);
   if (focusedValue.name === "playlist-name") {
-    const savedPlaylists = await getPlaylists();
+    const savedPlaylists = getPlaylists();
     const choices = savedPlaylists.map((sp) => ({
       name: sp.title,
       value: sp.int_id,
@@ -21,7 +21,7 @@ export const autocomplete: AutocompleteHandler = async (interaction) => {
       choices.filter((c) => c.name.startsWith(focusedValue.value)).slice(0, 25),
     );
   } else if (focusedValue.name === "track-name") {
-    const tracks = await getIsolatedTracks();
+    const tracks = getIsolatedTracks();
     const choices = tracks.map((t) => ({ name: t.title, value: t.int_id }));
     await interaction.respond(
       choices.filter((c) => c.name.startsWith(focusedValue.value)).slice(0, 25),

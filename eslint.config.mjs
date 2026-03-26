@@ -7,8 +7,17 @@ export default tseslint.config(
   tseslint.configs.strict,
   tseslint.configs.stylistic,
   {
+    languageOptions: {
+      parserOptions: {
+        projectService: true,
+        tsconfigRootDir: import.meta.dirname,
+      },
+    },
+  },
+  {
     ignores: ["prisma/**/*"],
     rules: {
+      "@typescript-eslint/await-thenable": "warn",
       "@typescript-eslint/consistent-type-imports": "error",
       "@typescript-eslint/no-unused-vars": [
         "error",
