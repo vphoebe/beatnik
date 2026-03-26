@@ -30,7 +30,11 @@ async function shouldDeploy() {
 async function main() {
   try {
     if (!(await shouldDeploy())) {
-      console.log("Commands up to date, skipping deployment.");
+      log({
+        type: "INFO",
+        user: "BOT",
+        message: `Command version ${COMMANDS_VERSION} already installed, skipping deployment.`,
+      });
       return;
     }
 
