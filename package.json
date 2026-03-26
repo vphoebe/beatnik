@@ -7,7 +7,6 @@
   "type": "module",
   "scripts": {
     "build": "npm run typecheck && npm run knip && npm run next:build",
-    "commands": "tsx src/deploy-commands.ts",
     "db:generate": "prisma generate",
     "db:migrate": "prisma migrate dev",
     "db:deploy": "prisma migrate deploy",

@@ -27,13 +27,13 @@ async function shouldDeploy() {
   }
 }
 
-async function main() {
+export async function deployCommands() {
   try {
     if (!(await shouldDeploy())) {
       log({
         type: "INFO",
         user: "BOT",
-        message: `Command version ${COMMANDS_VERSION} already installed, skipping deployment.`,
+        message: `Command version ${COMMANDS_VERSION} already deployed, skipping.`,
       });
       return;
     }
@@ -57,5 +57,3 @@ async function main() {
     console.error(err);
   }
 }
-
-main();

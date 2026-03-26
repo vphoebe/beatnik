@@ -47,7 +47,7 @@ COPY --from=dep-builder /app/node_modules ./node_modules
 COPY --from=dep-builder /app/prisma ./prisma
 COPY src ./src
 
-ENTRYPOINT ["sh", "-c", "./node_modules/.bin/prisma migrate deploy && ./node_modules/.bin/tsx ./src/deploy-commands.ts && ./node_modules/.bin/tsx ./src/beatnik.ts"]
+ENTRYPOINT ["sh", "-c", "./node_modules/.bin/prisma migrate deploy && ./node_modules/.bin/tsx ./src/beatnik.ts"]
 
 #
 # dev server
