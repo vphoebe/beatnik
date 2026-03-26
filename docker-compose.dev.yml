@@ -5,7 +5,7 @@ services:
     image: nickseman/beatnik:dev
     build:
       context: .
-      target: dev
+      target: dev-server
     volumes:
       - ./src:/app/src
       - ./prisma:/app/prisma

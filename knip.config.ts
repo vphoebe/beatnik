@@ -3,7 +3,7 @@ import type { KnipConfig } from "knip";
 const config: KnipConfig = {
   entry: ["src/*.ts"],
   project: ["src/**/*.ts"],
-  ignoreDependencies: ["@discordjs/opus", "@prisma/client", "@snazzah/davey"],
+  ignoreDependencies: ["@discordjs/opus", "@prisma/client", "@snazzah/davey", "ffmpeg-static"],
 };
 
 export default config;

@@ -3,18 +3,16 @@
 
 generator client {
   provider = "prisma-client"
-  previewFeatures = ["queryCompiler", "driverAdapters"]
-  output = "./generated/client"
-  runtime = "nodejs"
+  output   = "./generated/client"
+  runtime  = "nodejs"
 }
 
 datasource db {
   provider = "sqlite"
-  url      = env("DATABASE_URL")
 }
 
 model Playlist {
-  int_id      Int     @id @default(autoincrement())
+  int_id      Int      @id @default(autoincrement())
   id          String
   url         String
   title       String
@@ -24,9 +22,9 @@ model Playlist {
 }
 
 model Track {
-  int_id       Int     @id @default(autoincrement())
-  id           String 
-  url          String    
+  int_id       Int       @id @default(autoincrement())
+  id           String
+  url          String
   title        String
   thumbnailUrl String
   length       Int
