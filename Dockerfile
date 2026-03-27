@@ -1,5 +1,5 @@
 #
-# install/build/optimize npm deps
+# install / build npm deps
 #
 FROM node:22-slim AS deps-builder
 WORKDIR /app
@@ -10,7 +10,7 @@ COPY package*.json ./
 RUN npm ci
 
 #
-# build app for distroless
+# build app for distroless / optimize deps
 #
 FROM deps-builder AS app-builder
 WORKDIR /app
