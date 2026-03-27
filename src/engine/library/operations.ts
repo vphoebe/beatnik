@@ -1,7 +1,6 @@
 // tracks
 import type { ChatInputCommandInteraction } from "discord.js";
 
-import { connectDb } from "../db/client";
 import {
   deleteSavedPlaylist,
   doesPlaylistExist,
@@ -53,9 +52,8 @@ export async function testLibraryConnection() {
       user: "BOT",
       message: `Found ${cacheCount} cache files.`,
     });
-    await connectDb();
-    const playlists = await getPlaylistCount();
-    const tracks = await getTrackCount();
+    const playlists = getPlaylistCount();
+    const tracks = getTrackCount();
     log({
       type: "DB",
       user: "BOT",
@@ -69,7 +67,7 @@ export async function testLibraryConnection() {
 
 export async function addTrackToLibrary(track: YtApiTrack): Promise<LibraryOperationResult> {
   // add track to db and save file
-  const existingTrack = await getTrackByYtId(track.id);
+  const existingTrack = getTrackByYtId(track.id);
   if (existingTrack) {
     return {
       added: false,
@@ -77,7 +75,7 @@ export async function addTrackToLibrary(track: YtApiTrack): Promise<LibraryOpera
       error: "EXISTS",
     };
   }
-  await createTrack(track);
+  createTrack({ ...track, playlistId: null, playlistIdx: null });
   await downloadId(track.id);
   return {
     added: true,
@@ -86,10 +84,11 @@ export async function addTrackToLibrary(track: YtApiTrack): Promise<LibraryOpera
 }
 
 export async function deleteTrackFromLibrary(int_id: number) {
-  const trackRecord = await getTrackByIntId(int_id);
+  const trackRecord = getTrackByIntId(int_id);
   if (!trackRecord) return;
   await removeDownload(trackRecord.id);
-  return deleteTrack(int_id);
+  deleteTrack(int_id);
+  return { title: trackRecord?.title ?? "Unknown" };
 }
 
 // playlists
@@ -97,11 +96,11 @@ export async function deleteTrackFromLibrary(int_id: number) {
 export async function addPlaylistToLibrary(
   playlistData: YtApiPlaylist,
 ): Promise<LibraryOperationResult> {
-  const playlistExists = await doesPlaylistExist(playlistData.id);
+  const playlistExists = doesPlaylistExist(playlistData.id);
   if (playlistExists) {
-    await updateSavedPlaylist(playlistData);
+    updateSavedPlaylist(playlistData);
   } else {
-    await savePlaylist(playlistData);
+    savePlaylist(playlistData);
   }
   await downloadPlaylist(playlistData.tracks, playlistData.id);
   return {
@@ -114,7 +113,7 @@ export async function updatePlaylistInLibrary(
   playlistIntId: number,
   interaction: ChatInputCommandInteraction,
 ) {
-  const existingPlaylistData = await getPlaylist(playlistIntId);
+  const existingPlaylistData = getPlaylist(playlistIntId);
   if (!existingPlaylistData) {
     return;
   }
@@ -135,7 +134,7 @@ export async function updatePlaylistInLibrary(
 }
 
 export async function deletePlaylistFromLibrary(int_id: number) {
-  const trackRecords = await getTracksByPlaylist(int_id);
+  const trackRecords = getTracksByPlaylist(int_id);
   const rmPromises = trackRecords.map((t) => removeDownload(t.id));
   await Promise.all(rmPromises);
 

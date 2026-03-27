@@ -1,28 +1,24 @@
 #
-# base image with deps/files needed for each
+# install / build npm deps
 #
-FROM node:22-slim AS base
-WORKDIR /app
-ENV DATABASE_URL="file:/app/library.db" \
-    LIBRARY_PATH="/app/library"
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    ca-certificates openssl \
-    && rm -rf /var/lib/apt/lists/*
-COPY package*.json ./
-COPY tsconfig.json ./
-COPY prisma.config.ts ./
-
-#
-# install/build/optimize npm deps and prisma client
-#
-FROM base AS dep-builder
+FROM node:22-slim AS deps-builder
 WORKDIR /app
 # required for node-pre-gyp to build @discordjs/opus
 RUN apt-get update && apt-get install -y --no-install-recommends \
     python3 make g++
-COPY prisma ./prisma
+COPY package*.json ./
 RUN npm ci
-RUN npm run db:generate
+
+#
+# build app for distroless / optimize deps
+#
+FROM deps-builder AS app-builder
+WORKDIR /app
+RUN mkdir -p library
+COPY tsdown.config.ts ./
+COPY tsconfig.json ./
+COPY src ./src
+RUN npm run build
 RUN npm prune --omit=dev \
  && find node_modules -type f \( \
       -name "*.md" -o -name "*.map" -o -name "*.ts" \
@@ -38,23 +34,21 @@ RUN npm prune --omit=dev \
 #
 # production
 #
-FROM base AS prod
+FROM gcr.io/distroless/nodejs22-debian13 AS prod
 WORKDIR /app
-ENV NODE_ENV=production
-RUN mkdir -p library
-# copy code and prebuilt deps
-COPY --from=dep-builder /app/node_modules ./node_modules
-COPY --from=dep-builder /app/prisma ./prisma
-COPY src ./src
-
-ENTRYPOINT ["sh", "-c", "./node_modules/.bin/prisma migrate deploy && ./node_modules/.bin/tsx ./src/beatnik.ts"]
+ENV DATABASE_URL="/app/library.db" \
+    LIBRARY_PATH="/app/library" \
+    NODE_ENV="production"
+COPY --from=app-builder /app/dist ./dist
+COPY --from=app-builder /app/node_modules ./node_modules
+COPY --from=app-builder /app/package.json ./
+CMD ["dist/beatnik.mjs"]
 
 #
 # dev server
-# (bind mounts required for src and prisma directories)
+# (bind mount required for src directory)
 #
-FROM base AS dev-server
+FROM deps-builder AS dev-server
 WORKDIR /app
-COPY eslint.config.mjs ./
-COPY --from=dep-builder /app/node_modules ./node_modules
+COPY tsconfig.json ./
 CMD ["./node_modules/.bin/tsx", "watch", "src/beatnik.ts"]

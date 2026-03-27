@@ -1,54 +1,55 @@
-import { prisma } from "./client";
+import { db } from "./client";
+import type { Track } from "./types";
 
-import type { Prisma } from "@generated/client";
-
-export async function getTrackByYtId(ytId: string) {
-  return prisma.track.findFirst({ where: { id: ytId } });
+export function getTrackByYtId(ytId: string) {
+  return db.prepare<[string], Track>("SELECT * FROM Track WHERE id = ? LIMIT 1").get(ytId);
 }
 
-export async function getTrackByIntId(int_id: number) {
-  return prisma.track.findUnique({ where: { int_id } });
+export function getTrackByIntId(int_id: number) {
+  return db.prepare<[number], Track>("SELECT * FROM Track WHERE int_id = ? LIMIT 1").get(int_id);
 }
 
-export async function createTrack(trackData: Prisma.TrackCreateInput) {
-  return prisma.track.create({ data: trackData });
+export function createTrack(trackData: Omit<Track, "int_id">) {
+  const { lastInsertRowid } = db
+    .prepare<Omit<Track, "int_id">>(
+      `
+    INSERT INTO Track (id, url, title, thumbnailUrl, length, channelName, loudness, playlistId, playlistIdx)
+    VALUES (@id, @url, @title, @thumbnailUrl, @length, @channelName, @loudness, @playlistId, @playlistIdx)
+  `,
+    )
+    .run(trackData);
+  return db
+    .prepare<[number], Track>("SELECT * FROM Track WHERE int_id = ?")
+    .get(Number(lastInsertRowid));
 }
 
-export async function deleteTrack(int_id: number) {
-  return prisma.track.delete({ where: { int_id } });
+export function deleteTrack(int_id: number) {
+  return db.prepare<[number]>("DELETE FROM Track WHERE int_id = ?").run(int_id);
 }
 
-export async function getAllTracks() {
-  return prisma.track.findMany({
-    select: {
-      title: true,
-      channelName: true,
-      int_id: true,
-      id: true,
-      loudness: true,
-    },
-  });
+export function getAllTracks() {
+  return db
+    .prepare<
+      [],
+      Pick<Track, "title" | "channelName" | "int_id" | "id" | "loudness">
+    >("SELECT title, channelName, int_id, id, loudness FROM Track")
+    .all();
 }
 
-export async function getTracksByPlaylist(int_id: number) {
-  return prisma.track.findMany({
-    where: { playlistId: int_id },
-  });
+export function getTracksByPlaylist(int_id: number) {
+  return db.prepare<[number], Track>("SELECT * FROM Track WHERE playlistId = ?").all(int_id);
 }
 
-export async function getIsolatedTracks() {
-  // return tracks that aren't in a playlist
-  return prisma.track.findMany({
-    where: {
-      playlistId: null,
-    },
-    select: {
-      title: true,
-      int_id: true,
-    },
-  });
+export function getIsolatedTracks() {
+  return db
+    .prepare<
+      [],
+      Pick<Track, "title" | "int_id">
+    >("SELECT title, int_id FROM Track WHERE playlistId IS NULL")
+    .all();
 }
 
-export async function getTrackCount() {
-  return prisma.track.count();
+export function getTrackCount() {
+  const result = db.prepare<[], { count: number }>("SELECT COUNT(*) as count FROM track").get();
+  return result?.count ?? 0;
 }

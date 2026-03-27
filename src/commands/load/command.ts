@@ -9,7 +9,7 @@ import { getOrCreateQueue } from "@helpers/queue";
 export const autocomplete: AutocompleteHandler = async (interaction) => {
   const focusedValue = interaction.options.getFocused(true);
   if (focusedValue.name === "playlist") {
-    const savedPlaylists = await getPlaylists();
+    const savedPlaylists = getPlaylists();
     const choices = savedPlaylists.map((sp) => ({
       name: sp.title,
       value: sp.int_id,
@@ -20,7 +20,7 @@ export const autocomplete: AutocompleteHandler = async (interaction) => {
         .slice(0, 25),
     );
   } else if (focusedValue.name === "track") {
-    const tracks = await getAllTracks();
+    const tracks = getAllTracks();
     const choices = tracks.map((t) => ({
       name: `${t.title} (${t.channelName})`.slice(0, 100),
       value: t.int_id,
@@ -47,7 +47,7 @@ export const execute: CommandExecuter = async (interaction) => {
 
   if (subcommand === "playlist") {
     const playlistIntId = interaction.options.getInteger("playlist", true);
-    const playlist = await getPlaylist(playlistIntId);
+    const playlist = getPlaylist(playlistIntId);
 
     if (!playlist) {
       await interaction.editReply("No playlist found.");
@@ -59,7 +59,7 @@ export const execute: CommandExecuter = async (interaction) => {
 
   if (subcommand === "track") {
     const trackIntId = interaction.options.getInteger("track", true);
-    const track = await getTrackByIntId(trackIntId);
+    const track = getTrackByIntId(trackIntId);
     if (!track) {
       await interaction.editReply("No track found.");
       return;
