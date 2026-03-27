@@ -13,4 +13,4 @@ services:
     env_file: .env
     environment:
       - LIBRARY_PATH=/app/library
-      - DATABASE_URL=file:/app/library.db
+      - DATABASE_URL=/app/library.db

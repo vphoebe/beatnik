@@ -3,7 +3,7 @@
 #
 FROM node:22-slim AS base
 WORKDIR /app
-ENV DATABASE_URL="file:/app/library.db" \
+ENV DATABASE_URL="/app/library.db" \
     LIBRARY_PATH="/app/library"
 RUN apt-get update && apt-get install -y --no-install-recommends \
     ca-certificates openssl \
