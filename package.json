@@ -6,7 +6,7 @@
   "license": "MIT",
   "type": "module",
   "scripts": {
-    "build": "npm run typecheck && npm run knip && npm run next:build",
+    "build": "npm run typecheck && tsdown",
     "dev": "docker compose -f 'docker-compose.dev.yml' up --build --remove-orphans",
     "dev:local": "tsx watch src/beatnik.ts",
     "format": "prettier --write .",
@@ -33,7 +33,6 @@
     "ffmpeg-static": "^5.3.0",
     "googlevideo": "^4.0.4",
     "jsdom": "^26.1.0",
-    "tsx": "^4.21.0",
     "youtubei.js": "^17.0.1"
   },
   "devDependencies": {
@@ -45,10 +44,16 @@
     "eslint": "^9.33.0",
     "knip": "^5.62.0",
     "prettier": "^3.3.2",
+    "tsdown": "^0.21.5",
+    "tsx": "^4.21.0",
     "typescript": "^5.8.3",
     "typescript-eslint": "^8.40.0"
   },
   "engines": {
     "node": ">=22.0.0 <23.0.0"
+  },
+  "exports": {
+    ".": "./dist/beatnik.mjs",
+    "./package.json": "./package.json"
   }
 }

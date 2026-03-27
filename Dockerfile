@@ -1,25 +1,24 @@
 #
-# base image with deps/files needed for each
-#
-FROM node:22-slim AS base
-WORKDIR /app
-ENV DATABASE_URL="/app/library.db" \
-    LIBRARY_PATH="/app/library"
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    ca-certificates openssl \
-    && rm -rf /var/lib/apt/lists/*
-COPY package*.json ./
-COPY tsconfig.json ./
-
-#
 # install/build/optimize npm deps
 #
-FROM base AS dep-builder
+FROM node:22-slim AS deps-builder
 WORKDIR /app
 # required for node-pre-gyp to build @discordjs/opus
 RUN apt-get update && apt-get install -y --no-install-recommends \
     python3 make g++
+COPY package*.json ./
 RUN npm ci
+
+#
+# build app for distroless
+#
+FROM deps-builder AS app-builder
+WORKDIR /app
+RUN mkdir -p library
+COPY tsdown.config.ts ./
+COPY tsconfig.json ./
+COPY src ./src
+RUN npm run build
 RUN npm prune --omit=dev \
  && find node_modules -type f \( \
       -name "*.md" -o -name "*.map" -o -name "*.ts" \
@@ -35,22 +34,21 @@ RUN npm prune --omit=dev \
 #
 # production
 #
-FROM base AS prod
+FROM gcr.io/distroless/nodejs22-debian13 AS prod
 WORKDIR /app
-ENV NODE_ENV=production
-RUN mkdir -p library
-# copy code and prebuilt deps
-COPY --from=dep-builder /app/node_modules ./node_modules
-COPY src ./src
-
-ENTRYPOINT ["sh", "-c", "./node_modules/.bin/tsx ./src/beatnik.ts"]
+ENV DATABASE_URL="/app/library.db" \
+    LIBRARY_PATH="/app/library" \
+    NODE_ENV="production"
+COPY --from=app-builder /app/dist ./dist
+COPY --from=app-builder /app/node_modules ./node_modules
+COPY --from=app-builder /app/package.json ./
+CMD ["dist/beatnik.mjs"]
 
 #
 # dev server
 # (bind mount required for src directory)
 #
-FROM base AS dev-server
+FROM deps-builder AS dev-server
 WORKDIR /app
-COPY eslint.config.mjs ./
-COPY --from=dep-builder /app/node_modules ./node_modules
+COPY tsconfig.json ./
 CMD ["./node_modules/.bin/tsx", "watch", "src/beatnik.ts"]
