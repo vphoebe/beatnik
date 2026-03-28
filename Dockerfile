@@ -1,7 +1,7 @@
 #
 # install / build npm deps
 #
-FROM node:22-slim AS deps-builder
+FROM node:22-trixie AS deps-builder
 WORKDIR /app
 # required for node-pre-gyp to build @discordjs/opus
 RUN apt-get update && apt-get install -y --no-install-recommends \
