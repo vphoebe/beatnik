@@ -1,33 +1,22 @@
-FROM node:22-slim AS base
+#
+# install / build npm deps
+#
+FROM node:22-trixie AS deps-builder
 WORKDIR /app
-
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    ca-certificates openssl \
- && rm -rf /var/lib/apt/lists/*
-
 COPY package*.json ./
-
-# install/build npm deps
-FROM base AS deps
-WORKDIR /app
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    python3 make g++  \
- && rm -rf /var/lib/apt/lists/*
-
 RUN npm ci
 
-# build stage
-FROM deps AS builder
+#
+# build app for distroless / optimize deps
+#
+FROM deps-builder AS app-builder
 WORKDIR /app
-
-COPY eslint.config.mjs tsconfig.json tsdown.config.ts ./
+RUN mkdir -p library
+COPY tsdown.config.ts ./
+COPY tsconfig.json ./
 COPY src ./src
-COPY prisma ./prisma
-
-RUN npm run db:generate \
- && npm run build \
- && npm prune --omit=dev \
- # Drop unneeded stuff in node_modules
+RUN npm run build
+RUN npm prune --omit=dev \
  && find node_modules -type f \( \
       -name "*.md" -o -name "*.map" -o -name "*.ts" \
       -o -name "CHANGELOG*" -o -name "README*" \
@@ -35,38 +24,28 @@ RUN npm run db:generate \
     \) -delete \
  && find node_modules -type d \( -name "test" -o -name "tests" -o -name "__tests__" \) \
       -exec rm -rf {} + 2>/dev/null; true \
- # Drop musl variants (using glibc/gnu on node:22-slim)
  && rm -rf node_modules/@napi-rs/canvas-linux-x64-musl \
  && rm -rf node_modules/@snazzah/davey-linux-x64-musl \
- # Drop opus build artifacts, keep only prebuild
- && rm -rf node_modules/@discordjs/opus/build-tmp-napi-v3 \
- # Drop non-debian Prisma engines
- && find node_modules/@prisma/engines -type f \
-      ! -name "*debian-openssl-3.0.x*" \
-      \( -name "*.node" -o -name "*.so*" \) \
-      -delete
+ && rm -rf node_modules/@discordjs/opus/build-tmp-napi-v3
 
+#
 # production
-FROM base AS prod
+#
+FROM gcr.io/distroless/nodejs22-debian13 AS prod
 WORKDIR /app
+ENV DATABASE_URL="/app/library.db" \
+    LIBRARY_PATH="/app/library" \
+    NODE_ENV="production"
+COPY --from=app-builder /app/dist ./dist
+COPY --from=app-builder /app/node_modules ./node_modules
+COPY --from=app-builder /app/package.json ./
+CMD ["dist/beatnik.mjs"]
 
-ENV NODE_ENV=production \
-    DATABASE_URL="file:/app/library.db" \
-    LIBRARY_PATH="/app/library"
-
-RUN mkdir -p library
-
-COPY --from=builder /app/node_modules ./node_modules
-COPY --from=builder /app/build ./build
-COPY --from=builder /app/prisma ./prisma
-
-ENTRYPOINT ["sh", "-c", "./node_modules/.bin/prisma migrate deploy && node ./build/deploy-commands.mjs && node ./build/beatnik.mjs"]
-
+#
 # dev server
-FROM base AS dev
+# (bind mount required for src directory)
+#
+FROM deps-builder AS dev-server
 WORKDIR /app
-
-COPY eslint.config.mjs tsconfig.json tsdown.config.ts ./
-COPY --from=deps /app/node_modules ./node_modules
-# src and prisma dirs must be bind mounted
-CMD ["npx", "tsx", "watch", "src/beatnik.ts"]
+COPY tsconfig.json ./
+CMD ["./node_modules/.bin/tsx", "watch", "src/beatnik.ts"]

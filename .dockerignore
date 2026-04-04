@@ -1,5 +1,4 @@
 node_modules
-build
 docker
-prisma/generated/
 .env
+dist

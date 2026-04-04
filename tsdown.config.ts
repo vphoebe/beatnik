@@ -1,10 +1,9 @@
 import { defineConfig } from "tsdown";
 
-const BUILD_DIR = "build";
-const ENTRYPOINTS = ["src/beatnik.ts", "src/deploy-commands.ts"];
+const BUILD_DIR = "dist";
 
 export default defineConfig({
-  entry: ENTRYPOINTS,
+  entry: "src/beatnik.ts",
   outDir: BUILD_DIR,
   platform: "node",
   target: "node22",

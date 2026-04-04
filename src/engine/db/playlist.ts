@@ -1,79 +1,108 @@
-import { prisma } from "./client";
+import { db } from "./client";
+import type { Playlist, PlaylistWithTracks, Track } from "./types";
 
 import type { YtApiPlaylist } from "@engine/youtube/metadata";
 
-export async function getPlaylist(int_id: number) {
-  return prisma.playlist.findUnique({ where: { int_id } });
+export function getPlaylist(int_id: number) {
+  const stmt = db.prepare<[number], Playlist>("SELECT * FROM playlist WHERE int_id = ?");
+  return stmt.get(int_id);
 }
 
-export async function doesPlaylistExist(id: string) {
-  return (await prisma.playlist.findMany({ where: { id } })).length !== 0;
+export function doesPlaylistExist(id: string) {
+  const matches = db.prepare<[string], Playlist>("SELECT * FROM playlist WHERE id = ?").all(id);
+  return matches.length !== 0;
 }
 
-export async function getPlaylists() {
-  return prisma.playlist.findMany({
-    select: {
-      title: true,
-      int_id: true,
-    },
+export function getPlaylists() {
+  return db
+    .prepare<[], Pick<Playlist, "int_id" | "title">>("SELECT title, int_id FROM playlist")
+    .all();
+}
+
+export function getSavedPlaylistById(id: string) {
+  const playlist = db
+    .prepare<[string], Playlist>("SELECT * FROM playlist WHERE id = ? LIMIT 1")
+    .get(id);
+
+  if (!playlist) return undefined;
+
+  const tracks = db
+    .prepare<[number], Track>("SELECT * FROM track WHERE playlistId = ?")
+    .all(playlist.int_id);
+
+  return { ...playlist, tracks } as PlaylistWithTracks;
+}
+
+export function savePlaylist(playlistData: YtApiPlaylist) {
+  const insertPlaylist = db.prepare<Omit<Playlist, "int_id">>(`
+    INSERT INTO playlist (id, url, title, authorName, lastUpdated)
+    VALUES (@id, @url, @title, @authorName, @lastUpdated)
+  `);
+
+  const insertTrack = db.prepare<Omit<Track, "int_id">>(`
+    INSERT INTO track (id, url, title, thumbnailUrl, length, channelName, loudness, playlistId, playlistIdx)
+    VALUES (@id, @url, @title, @thumbnailUrl, @length, @channelName, @loudness, @playlistId, @playlistIdx)
+  `);
+
+  const transaction = db.transaction((data: YtApiPlaylist) => {
+    const { lastInsertRowid } = insertPlaylist.run({
+      id: data.id,
+      url: data.url,
+      title: data.title,
+      authorName: data.authorName,
+      lastUpdated: new Date().toISOString(),
+    });
+
+    const createdId = Number(lastInsertRowid);
+
+    for (const track of data.tracks) {
+      insertTrack.run({
+        ...track,
+        playlistId: createdId,
+        playlistIdx: data.tracks.indexOf(track),
+      });
+    }
   });
+
+  return transaction(playlistData);
 }
 
-export async function getSavedPlaylistById(id: string) {
-  return prisma.playlist.findFirst({
-    where: { id },
-    include: { tracks: true },
-  });
-}
+export function updateSavedPlaylist(playlistData: YtApiPlaylist) {
+  const existingPlaylist = db
+    .prepare<[string], Playlist>("SELECT * FROM Playlist WHERE id = ? LIMIT 1")
+    .get(playlistData.id);
 
-export async function savePlaylist(playlistData: YtApiPlaylist) {
-  return prisma.playlist.create({
-    data: {
-      id: playlistData.id,
-      url: playlistData.url,
-      title: playlistData.title,
-      authorName: playlistData.authorName,
-      tracks: {
-        createMany: { data: playlistData.tracks },
-      },
-      lastUpdated: new Date(),
-    },
-  });
-}
+  if (!existingPlaylist) return null;
 
-export async function updateSavedPlaylist(playlistData: YtApiPlaylist) {
-  const existingPlaylist = await prisma.playlist.findFirst({
-    where: { id: playlistData.id },
-  });
-  if (!existingPlaylist) {
-    return null;
-  }
+  const deleteTracks = db.prepare<[number]>("DELETE FROM Track WHERE playlistId = ?");
 
-  return await prisma.$transaction([
-    prisma.track.deleteMany({
-      where: {
+  const insertTrack = db.prepare<Omit<Track, "int_id">>(`
+    INSERT INTO Track (id, url, title, thumbnailUrl, length, channelName, loudness, playlistId, playlistIdx)
+    VALUES (@id, @url, @title, @thumbnailUrl, @length, @channelName, @loudness, @playlistId, @playlistIdx)
+  `);
+
+  const transaction = db.transaction(() => {
+    deleteTracks.run(existingPlaylist.int_id);
+    for (const track of playlistData.tracks) {
+      insertTrack.run({
+        ...track,
         playlistId: existingPlaylist.int_id,
-      },
-    }),
-    prisma.playlist.update({
-      where: {
-        int_id: existingPlaylist.int_id,
-      },
-      data: {
-        tracks: {
-          createMany: { data: playlistData.tracks },
-        },
-      },
-    }),
-  ]);
-}
-
-export async function deleteSavedPlaylist(int_id: number) {
-  return prisma.playlist.delete({
-    where: { int_id },
+        playlistIdx: playlistData.tracks.indexOf(track),
+      });
+    }
   });
+
+  return transaction();
 }
 
-export async function getPlaylistCount() {
-  return prisma.playlist.count();
+export function deleteSavedPlaylist(int_id: number) {
+  const stmt = db.prepare<[number], Playlist>("SELECT title FROM playlist WHERE int_id = ?");
+  const result = stmt.get(int_id);
+  db.prepare<[number]>("DELETE FROM Playlist WHERE int_id = ?").run(int_id);
+  return { title: result?.title ?? "Unknown" };
+}
+
+export function getPlaylistCount() {
+  const result = db.prepare<[], { count: number }>("SELECT COUNT(*) as count FROM playlist").get();
+  return result?.count ?? 0;
 }

@@ -5,13 +5,12 @@ services:
     image: nickseman/beatnik:dev
     build:
       context: .
-      target: dev
+      target: dev-server
     volumes:
       - ./src:/app/src
-      - ./prisma:/app/prisma
       - ./docker/library.db:/app/library.db
       - ./docker/library:/app/library
     env_file: .env
     environment:
       - LIBRARY_PATH=/app/library
-      - DATABASE_URL=file:/app/library.db
+      - DATABASE_URL=/app/library.db

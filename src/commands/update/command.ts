@@ -5,7 +5,7 @@ import type { AutocompleteHandler, CommandExecuter } from "@commands/index";
 
 export const autocomplete: AutocompleteHandler = async (interaction) => {
   const focusedValue = interaction.options.getFocused();
-  const savedPlaylists = await getPlaylists();
+  const savedPlaylists = getPlaylists();
   const choices = savedPlaylists.map((sp) => ({
     name: sp.title,
     value: sp.int_id,

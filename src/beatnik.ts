@@ -12,6 +12,7 @@ import path from "node:path";
 import { testLibraryConnection } from "@engine/library/operations";
 import { getClient } from "@engine/youtube/client";
 
+import { deployCommands } from "@commands/deploy-commands";
 import { commandList } from "@commands/index";
 
 import { getToken } from "@helpers/environment";
@@ -31,6 +32,8 @@ console.log(`--------------------------------------------------
 welcome to beatnik
 version ${BEATNIK_VERSION}`);
 console.log(generateDependencyReport());
+
+await deployCommands();
 
 // Create a new client instance
 const client = new Client({
