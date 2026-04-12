@@ -38,6 +38,6 @@ export async function extractYTIdFromURL(
 
 export function getLoudnessFromInfo(info: YT.VideoInfo) {
   const { player_config } = info;
-  const result = player_config?.audio_config.loudness_db;
-  return result ?? 0;
+  const result = player_config?.audio_config.loudness_db ?? 0;
+  return Math.floor(result);
 }
