@@ -15,8 +15,8 @@
       "@db/*": ["./src/db/*"],
       "@engine/*": ["./src/engine/*"],
       "@commands/*": ["./src/commands/*"],
-      "@helpers/*": ["./src/helpers/*"],
-    },
+      "@helpers/*": ["./src/helpers/*"]
+    }
   },
-  "include": ["src/**/*"],
+  "include": ["src/**/*"]
 }
