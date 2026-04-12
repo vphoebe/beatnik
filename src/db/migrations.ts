@@ -1,5 +1,7 @@
 import type { Database } from "better-sqlite3";
 
+import { log } from "@helpers/logger";
+
 interface Migration {
   name: string;
   up: (db: Database) => void;
@@ -18,7 +20,7 @@ const migrations: Migration[] = [
   {
     name: "001_loudness_nullable_and_real",
     up: (db) => {
-      const tableInfo = db.prepare("PRAGMA table_info(Track)").all() as ColumnInfo[];
+      const tableInfo = db.prepare<[], ColumnInfo>("PRAGMA table_info(Track)").all();
       const loudnessCol = tableInfo.find((col) => col.name === "loudness");
       if (loudnessCol?.notnull === 0 && loudnessCol?.type === "REAL") return;
 
@@ -56,11 +58,13 @@ export function runMigrations(db: Database): void {
   `);
 
   for (const migration of migrations) {
-    const already = db.prepare("SELECT 1 FROM Migration WHERE name = ?").get(migration.name);
+    const already = db
+      .prepare<[string], Migration>("SELECT 1 FROM Migration WHERE name = ?")
+      .get(migration.name);
     if (already) continue;
 
     migration.up(db);
-    db.prepare("INSERT INTO Migration (name) VALUES (?)").run(migration.name);
-    console.log(`[DB] Ran migration: ${migration.name}`);
+    db.prepare<[string], Migration>("INSERT INTO Migration (name) VALUES (?)").run(migration.name);
+    log({ message: `Ran migration: ${migration.name}`, user: "BOT", type: "DB" });
   }
 }
