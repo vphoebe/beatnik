@@ -1,6 +1,4 @@
 // tracks
-import type { ChatInputCommandInteraction } from "discord.js";
-
 import {
   deleteSavedPlaylist,
   doesPlaylistExist,
@@ -8,7 +6,7 @@ import {
   getPlaylistCount,
   savePlaylist,
   updateSavedPlaylist,
-} from "../db/playlist";
+} from "@db/playlist";
 import {
   createTrack,
   deleteTrack,
@@ -16,7 +14,9 @@ import {
   getTrackByYtId,
   getTrackCount,
   getTracksByPlaylist,
-} from "../db/track";
+} from "@db/track";
+import type { ChatInputCommandInteraction } from "discord.js";
+
 import {
   countCacheFiles,
   downloadId,

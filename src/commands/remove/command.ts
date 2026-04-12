@@ -1,7 +1,7 @@
+import { getPlaylists } from "@db/playlist";
+import { getIsolatedTracks } from "@db/track";
 import { MessageFlags, inlineCode } from "discord.js";
 
-import { getPlaylists } from "@engine/db/playlist";
-import { getIsolatedTracks } from "@engine/db/track";
 import { deletePlaylistFromLibrary, deleteTrackFromLibrary } from "@engine/library/operations";
 
 import type { AutocompleteHandler, CommandExecuter } from "@commands/index";

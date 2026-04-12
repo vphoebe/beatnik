@@ -1,4 +1,5 @@
-import { getPlaylists } from "@engine/db/playlist";
+import { getPlaylists } from "@db/playlist";
+
 import { updatePlaylistInLibrary } from "@engine/library/operations";
 
 import type { AutocompleteHandler, CommandExecuter } from "@commands/index";

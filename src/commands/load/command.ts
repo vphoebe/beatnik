@@ -1,5 +1,5 @@
-import { getPlaylist, getPlaylists } from "@engine/db/playlist";
-import { getAllTracks, getTrackByIntId } from "@engine/db/track";
+import { getPlaylist, getPlaylists } from "@db/playlist";
+import { getAllTracks, getTrackByIntId } from "@db/track";
 
 import type { AutocompleteHandler, CommandExecuter } from "@commands/index";
 

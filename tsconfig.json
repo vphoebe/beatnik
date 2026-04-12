@@ -12,6 +12,7 @@
     "forceConsistentCasingInFileNames": true,
     "isolatedModules": true,
     "paths": {
+      "@db/*": ["./src/db/*"],
       "@engine/*": ["./src/engine/*"],
       "@commands/*": ["./src/commands/*"],
       "@helpers/*": ["./src/helpers/*"],
