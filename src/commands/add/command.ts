@@ -22,7 +22,7 @@ export const execute: CommandExecuter = async (interaction) => {
   let operation: LibraryOperationResult | null;
 
   if (queryResult?.playlist) {
-    operation = await addPlaylistToLibrary(queryResult.playlist);
+    operation = await addPlaylistToLibrary(queryResult.playlist, interaction);
   } else if (queryResult?.track) {
     operation = await addTrackToLibrary(queryResult.track);
   } else {

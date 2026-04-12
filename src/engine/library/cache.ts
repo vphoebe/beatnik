@@ -1,3 +1,4 @@
+import { ChatInputCommandInteraction } from "discord.js";
 import { createReadStream, createWriteStream, existsSync } from "node:fs";
 import { readdir, rename, rm } from "node:fs/promises";
 import path from "node:path";
@@ -67,13 +68,29 @@ export async function removeDownload(id: string) {
   return rm(targetPath.path);
 }
 
-export async function downloadPlaylist(tracks: YtApiTrack[], playlistId: string) {
+export async function downloadPlaylist(
+  tracks: YtApiTrack[],
+  playlistId: string,
+  interaction: ChatInputCommandInteraction,
+) {
   log({
     type: "CACHE",
     user: "BOT",
-    message: `Downloading playlist ${playlistId} with ${tracks.length} tracks.`,
+    message: `Downloading playlist ${playlistId} with ${tracks.length} total tracks.`,
   });
-  const results = await Promise.all(tracks.map((t) => downloadId(t.id)));
+  const tracksToDownload = tracks.filter((t) => !getItemPath(t.id).exists);
+
+  const total = tracksToDownload.length;
+  let current = 0;
+  interaction.editReply(`Downloading ${current}/${total} tracks...`);
+  const results = await Promise.all(
+    tracksToDownload.map(async (t) => {
+      const r = await downloadId(t.id);
+      current++;
+      interaction.editReply(`Downloading ${current}/${total} tracks...`);
+      return r;
+    }),
+  );
   const downloadedFileCount = results.filter((r) => r === true).length;
   log({
     type: "CACHE",

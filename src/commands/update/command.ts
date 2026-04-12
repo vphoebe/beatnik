@@ -23,7 +23,7 @@ export const execute: CommandExecuter = async (interaction) => {
   if (!guildId) return;
 
   await interaction.deferReply();
-  await interaction.editReply("Finding new playlist metadata...");
+  await interaction.editReply("Getting playlist...");
   const playlistIntId = interaction.options.getInteger("playlist", true);
   const update = await updatePlaylistInLibrary(playlistIntId, interaction);
   if (!update || !update.operation) {

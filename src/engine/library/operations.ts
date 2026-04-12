@@ -96,14 +96,17 @@ export async function deleteTrackFromLibrary(int_id: number) {
 
 export async function addPlaylistToLibrary(
   playlistData: YtApiPlaylist,
+  interaction: ChatInputCommandInteraction,
 ): Promise<LibraryOperationResult> {
   const playlistExists = doesPlaylistExist(playlistData.id);
   if (playlistExists) {
+    interaction.editReply(`Playlist already added, saving new changes...`);
     updateSavedPlaylist(playlistData);
   } else {
+    interaction.editReply(`Saving new playlist...`);
     savePlaylist(playlistData);
   }
-  await downloadPlaylist(playlistData.tracks, playlistData.id);
+  await downloadPlaylist(playlistData.tracks, playlistData.id, interaction);
   return {
     added: !playlistExists,
     updated: playlistExists,
@@ -125,11 +128,8 @@ export async function updatePlaylistInLibrary(
   if (!freshPlaylist) {
     return;
   }
-  interaction.editReply(
-    `Found ${freshPlaylist.tracks.length} tracks in playlist, updating and downloading any new tracks...`,
-  );
   return {
-    operation: await addPlaylistToLibrary(freshPlaylist),
+    operation: await addPlaylistToLibrary(freshPlaylist, interaction),
     playlistData: existingPlaylistData,
   };
 }
