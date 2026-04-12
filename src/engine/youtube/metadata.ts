@@ -107,7 +107,7 @@ async function getPlaylistInfo(id: string, useLibrary: boolean): Promise<YtApiPl
   const tracks: YtApiTrack[] = await Promise.all(
     tracksWithoutLoudness.map(async (track) => {
       const matchedTrack = getTrackByYtId(track.id);
-      if (matchedTrack) {
+      if (matchedTrack && matchedTrack.loudness !== 0) {
         return { ...track, loudness: matchedTrack.loudness };
       }
 
