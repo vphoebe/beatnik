@@ -5,6 +5,8 @@ import { YTNodes } from "youtubei.js";
 import { getClient } from "./client";
 import { extractYTIdFromURL, getLoudnessFromInfo, playlistIdToURL, trackIdToURL } from "./util";
 
+import { log } from "@helpers/logger";
+
 interface Query {
   query: string;
   type: "playlist" | "track" | "query";
@@ -113,7 +115,11 @@ async function getPlaylistInfo(id: string, useLibrary: boolean): Promise<YtApiPl
       try {
         const info = await yt.getBasicInfo(track.id);
         const loudness = getLoudnessFromInfo(info);
-        console.log(`Getting loudness info for playlist track: ${track.id} = ${loudness}`);
+        log({
+          user: "BOT",
+          type: "YT",
+          message: `Getting loudness info for playlist track: ${track.id} = ${loudness}`,
+        });
         return { ...track, loudness };
       } catch {
         return { ...track, loudness: null };
