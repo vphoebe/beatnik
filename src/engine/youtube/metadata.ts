@@ -113,7 +113,9 @@ async function getPlaylistInfo(id: string, useLibrary: boolean): Promise<YtApiPl
 
       try {
         const info = await yt.getBasicInfo(track.id);
-        return { ...track, loudness: getLoudnessFromInfo(info) };
+        const loudness = getLoudnessFromInfo(info);
+        console.log(`Getting loudness info for playlist track: ${track.id} = ${loudness}`);
+        return { ...track, loudness };
       } catch {
         return { ...track, loudness: 0 };
       }

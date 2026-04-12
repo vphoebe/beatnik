@@ -30,7 +30,7 @@ const tableInit = `
 
 async function getDatabaseClient() {
   const db = new Database(url);
-  db.pragma("journal_mode = WAL");
+  db.pragma("journal_mode = DELETE");
   db.pragma("foreign_keys = ON");
   db.exec(tableInit);
   return db;
