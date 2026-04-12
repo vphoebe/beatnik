@@ -39,7 +39,8 @@ export async function createResource(track: QueuedTrack) {
       inlineVolume: true,
     });
 
-    resource.volume?.setVolumeDecibels(-track.loudness);
+    const decibels = -(track.loudness ?? 0);
+    resource.volume?.setVolumeDecibels(decibels);
 
     return { resource, fromCache };
   } catch (err) {
