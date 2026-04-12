@@ -17,7 +17,7 @@ export interface YtApiTrack {
   thumbnailUrl: string;
   channelName: string;
   length: number;
-  loudness: number;
+  loudness: number | null;
   playlistIdx: number | null;
 }
 
@@ -106,7 +106,7 @@ async function getPlaylistInfo(id: string, useLibrary: boolean): Promise<YtApiPl
   const tracks: YtApiTrack[] = await Promise.all(
     tracksWithoutLoudness.map(async (track) => {
       const matchedTrack = getTrackByYtId(track.id);
-      if (matchedTrack && matchedTrack.loudness !== 0) {
+      if (matchedTrack && matchedTrack.loudness !== null) {
         return { ...track, loudness: matchedTrack.loudness };
       }
 
@@ -116,7 +116,7 @@ async function getPlaylistInfo(id: string, useLibrary: boolean): Promise<YtApiPl
         console.log(`Getting loudness info for playlist track: ${track.id} = ${loudness}`);
         return { ...track, loudness };
       } catch {
-        return { ...track, loudness: 0 };
+        return { ...track, loudness: null };
       }
     }),
   );

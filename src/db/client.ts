@@ -1,5 +1,7 @@
 import Database from "better-sqlite3";
 
+import { runMigrations } from "./migrations";
+
 import { getDatabaseURL } from "@helpers/environment";
 
 const url = getDatabaseURL();
@@ -22,7 +24,7 @@ const tableInit = `
     thumbnailUrl TEXT NOT NULL,
     length       INTEGER NOT NULL,
     channelName  TEXT NOT NULL,
-    loudness     INTEGER NOT NULL,
+    loudness     REAL,
     playlistId   INTEGER REFERENCES Playlist(int_id) ON DELETE CASCADE ON UPDATE CASCADE,
     playlistIdx  INTEGER
   );
@@ -33,6 +35,7 @@ async function getDatabaseClient() {
   db.pragma("journal_mode = DELETE");
   db.pragma("foreign_keys = ON");
   db.exec(tableInit);
+  runMigrations(db);
   return db;
 }
 

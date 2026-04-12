@@ -15,7 +15,7 @@ export interface Track {
   thumbnailUrl: string;
   length: number;
   channelName: string;
-  loudness: number;
+  loudness: number | null;
   playlistId: number | null;
   playlistIdx: number | null;
 }
