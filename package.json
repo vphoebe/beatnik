@@ -1,47 +1,17 @@
 {
   "name": "beatnik",
-  "version": "4.3.1",
-  "description": "modern and simple Discord music bot with easy-to-use commands",
-  "author": "vphoebe",
-  "license": "MIT",
-  "type": "module",
+  "version": "5.0.0",
+  "description": "",
+  "main": "index.js",
   "scripts": {
-    "build": "npm run typecheck && tsdown",
-    "dev": "docker compose -f 'docker-compose.dev.yml' up --build --remove-orphans",
-    "dev:local": "tsx watch src/beatnik.ts",
-    "format": "prettier --write .",
-    "knip": "knip",
-    "latest:build": "docker build --platform linux/amd64 --target prod -t nickseman/beatnik:latest .",
-    "latest:push": "docker push nickseman/beatnik:latest",
-    "lint": "npx eslint ./src",
-    "lint:fix": "npx eslint ./src --fix",
-    "next:build": "docker build --platform linux/amd64 --target prod -t nickseman/beatnik:next .",
-    "next:push": "docker push nickseman/beatnik:next",
-    "next:up": "docker compose -f 'docker-compose.next.yml' up --build --remove-orphans",
-    "start": "npm run next:up",
-    "typecheck": "tsc --noEmit"
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "dependencies": {
-    "@discordjs/opus": "^0.10.0",
-    "@discordjs/voice": "^0.19.2",
-    "@napi-rs/canvas": "^0.1.81",
-    "@snazzah/davey": "^0.1.7",
-    "better-sqlite3": "^12.8.0",
-    "bgutils-js": "^3.2.0",
-    "bufferutil": "^4.1.0",
-    "discord.js": "^14.22.1",
-    "dotenv": "^16.4.5",
-    "ffmpeg-static": "^5.3.0",
-    "googlevideo": "^4.0.4",
-    "jsdom": "^26.1.0",
-    "youtubei.js": "^17.0.1",
-    "zlib-sync": "^0.1.10"
-  },
+  "keywords": [],
+  "author": "me@vphoebe.dev",
+  "license": "MIT",
   "devDependencies": {
     "@eslint/js": "^9.33.0",
     "@trivago/prettier-plugin-sort-imports": "^4.3.0",
-    "@types/better-sqlite3": "^7.6.13",
-    "@types/jsdom": "^21.1.7",
     "@types/node": "^25.5.0",
     "eslint": "^9.33.0",
     "knip": "^5.62.0",
@@ -51,11 +21,5 @@
     "typescript": "^5.8.3",
     "typescript-eslint": "^8.40.0"
   },
-  "engines": {
-    "node": ">=22.0.0 <23.0.0"
-  },
-  "exports": {
-    ".": "./dist/beatnik.mjs",
-    "./package.json": "./package.json"
-  }
+  "packageManager": "pnpm@10.33.0"
 }

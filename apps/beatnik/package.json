@@ -1,0 +1,49 @@
+{
+  "name": "@beatnik/core",
+  "version": "5.0.0-alpha",
+  "description": "modern and simple Discord music bot with easy-to-use commands",
+  "author": "vphoebe",
+  "license": "MIT",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "build": "npm run typecheck && tsdown",
+    "dev": "docker compose -f 'docker-compose.dev.yml' up --build --remove-orphans",
+    "dev:local": "tsx watch src/index.ts",
+    "format": "prettier --write .",
+    "knip": "knip",
+    "latest:build": "docker build --platform linux/amd64 --target prod -t nickseman/beatnik:latest .",
+    "latest:push": "docker push nickseman/beatnik:latest",
+    "lint": "npx eslint ./src",
+    "lint:fix": "npx eslint ./src --fix",
+    "next:build": "docker build --platform linux/amd64 --target prod -t nickseman/beatnik:next .",
+    "next:push": "docker push nickseman/beatnik:next",
+    "next:up": "docker compose -f 'docker-compose.next.yml' up --build --remove-orphans",
+    "start": "npm run next:up",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@beatnik/providers": "workspace:*",
+    "@beatnik/shared": "workspace:*",
+    "@discordjs/opus": "^0.10.0",
+    "@discordjs/voice": "^0.19.2",
+    "@snazzah/davey": "^0.1.7",
+    "better-sqlite3": "^12.8.0",
+    "bufferutil": "^4.1.0",
+    "discord.js": "^14.22.1",
+    "dotenv": "^16.4.5",
+    "ffmpeg-static": "^5.3.0",
+    "zlib-sync": "^0.1.10"
+  },
+  "devDependencies": {
+    "@types/better-sqlite3": "^7.6.13"
+  },
+  "engines": {
+    "node": ">=22.0.0 <23.0.0"
+  },
+  "exports": {
+    ".": "./dist/beatnik.mjs",
+    "./package.json": "./package.json"
+  },
+  "packageManager": "pnpm@10.33.0+sha512.10568bb4a6afb58c9eb3630da90cc9516417abebd3fabbe6739f0ae795728da1491e9db5a544c76ad8eb7570f5c4bb3d6c637b2cb41bfdcdb47fa823c8649319"
+}
