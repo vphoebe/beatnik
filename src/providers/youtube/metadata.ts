@@ -60,37 +60,22 @@ export async function getPlaylistInfo(yt: Innertube, id: string): Promise<Provid
       totalItems.push(...playlistInfo.items.filterType(YTNodes.PlaylistVideo));
     }
 
-    const tracksWithoutLoudness: Omit<ProviderTrack, "loudness">[] = totalItems.map(
-      (item, index) => {
-        return {
-          providerId: PROVIDER_ID,
-          id: item.id,
-          title: item.title.text ?? "Unknown",
-          length: item.duration.seconds,
-          channelName: item.author.name,
-          thumbnailUrl: item.thumbnails?.[0].url,
-          playlistIdx: index,
-          url: trackIdToURL(item.id),
-        };
-      },
-    );
-
-    const tracks: ProviderTrack[] = await Promise.all(
-      tracksWithoutLoudness.map(async (track) => {
-        try {
-          const info = await yt.getBasicInfo(track.id);
-          const loudness = getLoudnessFromInfo(info);
-          log({
-            component: "PROVIDER",
-            name: PROVIDER_ID,
-            message: `Getting loudness info for playlist track: ${track.id} = ${loudness}`,
-          });
-          return { ...track, loudness };
-        } catch {
-          return { ...track, loudness: null };
-        }
-      }),
-    );
+    const tracks: ProviderTrack[] = totalItems.map((item, index) => {
+      return {
+        providerId: PROVIDER_ID,
+        id: item.id,
+        title: item.title.text ?? "Unknown",
+        length: item.duration.seconds,
+        channelName: item.author.name,
+        thumbnailUrl: item.thumbnails?.[0].url,
+        playlistIdx: index,
+        url: trackIdToURL(item.id),
+        // loudness not available from getPlaylist, would require individual calls
+        // return null, will be resolved at playback-time by corePlayer and resolver
+        // via calling getTrack on this provider (which returns loudness)
+        loudness: null,
+      };
+    });
 
     return {
       tracks,
