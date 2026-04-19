@@ -1,4 +1,5 @@
 import type { Provider, ProviderTrack } from "@/providers";
+import { log } from "@/shared";
 import type { Readable } from "node:stream";
 
 import type { Queue, QueuedTrack } from "./queue";
@@ -7,7 +8,7 @@ import { agnosticResolve, getStream } from "./resolve";
 
 export class CorePlayer {
   constructor(
-    private queue: Queue,
+    public readonly queue: Queue,
     private providers: Provider[],
   ) {}
 
@@ -51,11 +52,16 @@ export class CorePlayer {
     }
     try {
       const provider = this.providers.find((p) => p.id === track.providerId);
-      if (!provider) throw new Error(`No provider found for source: ${track.providerId}`);
+      if (!provider) throw new Error(`No provider found for ${track.providerId}`);
       const { stream, fromCache } = await getStream(track.id, provider);
       this.isPlaying = true;
       this.fromCache = fromCache;
       this.onStream?.(track, stream);
+      log({
+        component: "CORE",
+        name: "PLAYER",
+        message: `Playing ${track.providerId}:${track.id} from ${fromCache ? "cache" : "provider"}`,
+      });
     } catch (err) {
       this.isPlaying = false;
       this.onError?.(track, err instanceof Error ? err : new Error(String(err)));
@@ -70,10 +76,6 @@ export class CorePlayer {
   async jump(idx: number) {
     this.queue.currentIndex = idx;
     await this.play();
-  }
-
-  get nowPlaying() {
-    return this.queue.nowPlaying;
   }
 
   async stop() {

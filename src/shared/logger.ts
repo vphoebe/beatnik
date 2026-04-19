@@ -20,7 +20,7 @@ type LogOptions = {
       /** The core layer emitting the log. */
       component: "CORE";
       /** The core subsystem emitting the log. */
-      name: "CACHE" | "DB";
+      name: "PLAYER" | "QUEUE" | "CACHE" | "DB";
     }
 );
 

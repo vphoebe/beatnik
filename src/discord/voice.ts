@@ -1,5 +1,6 @@
 import { deleteSession } from "@/core/manager";
 import type { CorePlayer } from "@/core/player";
+import { log } from "@/shared";
 import type { PlayerSubscription, VoiceConnection } from "@discordjs/voice";
 import {
   AudioPlayerStatus,
@@ -11,6 +12,7 @@ import type { TextBasedChannel, VoiceBasedChannel } from "discord.js";
 
 import { createVoiceConnection } from "./connection";
 import { deleteVoiceSession } from "./manager";
+import { getNowPlayingEmbed } from "./messaging";
 
 export class VoiceSession {
   private guildId: string;
@@ -33,14 +35,38 @@ export class VoiceSession {
       const { stream, type } = await demuxProbe(inputStream);
       const resource = createAudioResource(stream, {
         inputType: type,
-        metadata: {
-          title: track.title,
-        },
         inlineVolume: true,
       });
       const decibels = -(track.loudness ?? 0);
       resource.volume?.setVolumeDecibels(decibels);
       this.audioPlayer.play(resource);
+
+      if (track.loudness === null) {
+        log({
+          level: "WARN",
+          component: "DISCORD",
+          name: "VoiceSession",
+          message: `Track ${track.id} has no loudness value!`,
+        });
+      }
+
+      const operator = decibels >= 0 ? "+" : "-";
+      log({
+        component: "DISCORD",
+        name: "VoiceSession",
+        message: `Playing resource, adjusted loudness ${operator}${decibels}dB`,
+      });
+
+      // send embed in textchannel
+      if (this.textChannel && this.textChannel.isSendable() && corePlayer.queue.nowPlaying) {
+        const nowPlayingEmbed = getNowPlayingEmbed(
+          corePlayer.queue.nowPlaying,
+          corePlayer.queue.currentIndex + 1,
+          corePlayer.queue.tracks.length,
+          corePlayer.fromCache,
+        );
+        this.textChannel.send({ embeds: [nowPlayingEmbed] });
+      }
     };
 
     corePlayer.onQueueEnd = () => {
@@ -58,7 +84,7 @@ export class VoiceSession {
 
     this.audioPlayer.on(AudioPlayerStatus.Idle, () => corePlayer.next());
     this.audioPlayer.on("error", (err) => {
-      const track = corePlayer.nowPlaying;
+      const track = corePlayer.queue.nowPlaying;
       if (track) corePlayer.onError?.(track, err);
     });
   }

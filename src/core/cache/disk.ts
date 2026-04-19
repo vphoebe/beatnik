@@ -83,6 +83,14 @@ export async function downloadPlaylist(
 
 export function getDownloadedIdStream(id: string) {
   const targetPath = getItemPath(id);
-  if (!targetPath.exists) return undefined;
+  if (!targetPath.exists) {
+    log({
+      level: "ERROR",
+      component: "CORE",
+      name: "CACHE",
+      message: `Unable to locate ${id} in cache!`,
+    });
+    return undefined;
+  }
   return createReadStream(targetPath.path);
 }

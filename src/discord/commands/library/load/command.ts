@@ -2,7 +2,8 @@ import { playlists } from "@/core/db/playlist";
 import { tracks } from "@/core/db/track";
 import { getOrCreateSession } from "@/core/manager";
 import type { AutocompleteHandler, CommandExecuter } from "@/discord/commands";
-import { getAddedToQueueMessage } from "@/discord/messaging";
+import { getOrCreateVoiceSession } from "@/discord/manager";
+import { getAddedToQueueMessage, requireVoiceChannel } from "@/discord/messaging";
 
 export const autocomplete: AutocompleteHandler = async (interaction) => {
   const focusedValue = interaction.options.getFocused(true);
@@ -36,8 +37,15 @@ export const execute: CommandExecuter = async (interaction) => {
   if (!guildId) return;
   await interaction.deferReply();
 
-  const subcommand = interaction.options.getSubcommand();
+  const voiceChannel = await requireVoiceChannel(interaction);
+  if (!voiceChannel) return;
+  const textChannel = interaction.channel;
+
   const { player } = getOrCreateSession(guildId);
+  getOrCreateVoiceSession(voiceChannel, textChannel, player);
+
+  const subcommand = interaction.options.getSubcommand();
+
   const isEnd = interaction.options.getBoolean("end") ?? false;
   const isShuffle = interaction.options.getBoolean("shuffle") ?? false;
 
