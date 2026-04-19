@@ -50,7 +50,7 @@ export class VoiceSession {
         });
       }
 
-      const operator = decibels >= 0 ? "+" : "-";
+      const operator = decibels >= 0 ? "+" : "";
       log({
         component: "DISCORD",
         name: "VoiceSession",
