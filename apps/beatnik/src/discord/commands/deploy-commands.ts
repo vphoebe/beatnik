@@ -30,8 +30,8 @@ export async function deployCommands() {
   try {
     if (!(await shouldDeploy())) {
       log({
-        type: "INFO",
-        user: "BOT",
+        component: "DISCORD",
+        name: "COMMANDS",
         message: `Command version ${COMMANDS_VERSION} already deployed, skipping.`,
       });
       return;
@@ -48,8 +48,8 @@ export async function deployCommands() {
     await writeFile(versionFile, COMMANDS_VERSION, "utf-8");
 
     log({
-      type: "INFO",
-      user: "BOT",
+      component: "DISCORD",
+      name: "COMMANDS",
       message: `Successfully registered ${count} global commands for Beatnik (command version ${COMMANDS_VERSION})`,
     });
   } catch (err) {

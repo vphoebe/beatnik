@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "pnpm --filter @beatnik/core dev:local"
+    "dev": "pnpm --filter @beatnik/core dev:local",
+    "typecheck": "pnpm -r typecheck"
   },
   "keywords": [],
   "author": "me@vphoebe.dev",

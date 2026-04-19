@@ -1,6 +1,8 @@
 import { log } from "@beatnik/shared";
 import { Innertube, Platform, UniversalCache } from "youtubei.js";
 
+import { PROVIDER_ID } from ".";
+
 const KNOWN_WORKING_PID = "487b9fc1";
 
 export interface YoutubeClientConfig {
@@ -22,8 +24,8 @@ export const createInnertubeClient = async (config: YoutubeClientConfig) => {
     player_id: config.player_id || KNOWN_WORKING_PID,
   }).then((val) => {
     log({
-      user: "BOT",
-      type: "YT",
+      component: "PROVIDER",
+      name: PROVIDER_ID,
       message: `YouTube client established, player ID: ${val.session.player?.player_id}`,
     });
     return val;

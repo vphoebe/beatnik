@@ -64,6 +64,6 @@ export function runMigrations(db: Database): void {
 
     migration.up(db);
     db.prepare<[string], Migration>("INSERT INTO Migration (name) VALUES (?)").run(migration.name);
-    log({ message: `Ran migration: ${migration.name}`, user: "BOT", type: "DB" });
+    log({ message: `Ran migration: ${migration.name}`, component: "CORE", name: "DB" });
   }
 }

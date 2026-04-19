@@ -42,12 +42,12 @@ export async function downloadToCache(id: string, stream: Readable) {
     if (targetPath.exists) {
       return false;
     }
-    log({ type: "CACHE", user: "BOT", message: `Downloading ${id}...` });
+    log({ component: "CORE", name: "CACHE", message: `Downloading ${id}...` });
 
     const diskStream = createWriteStream(targetPath.path);
     await finished(stream.pipe(diskStream));
 
-    log({ type: "CACHE", user: "BOT", message: `Finished downloading ${id}` });
+    log({ component: "CORE", name: "CACHE", message: `Finished downloading ${id}` });
     return true;
   } catch (err) {
     console.error(err);
@@ -60,7 +60,7 @@ export async function removeDownload(id: string) {
   if (!targetPath.exists) {
     return;
   }
-  log({ type: "CACHE", user: "BOT", message: `Deleting ${id} from disk.` });
+  log({ component: "CORE", name: "CACHE", message: `Deleting ${id} from disk.` });
 
   return rm(targetPath.path);
 }

@@ -23,22 +23,22 @@ export async function testLibraryConnection() {
     const migratedCacheCount = await migrateCacheNames();
     if (migratedCacheCount) {
       log({
-        type: "CACHE",
-        user: "BOT",
+        component: "CORE",
+        name: "CACHE",
         message: `Migrated ${migratedCacheCount} files to new cache format`,
       });
     }
     const cacheCount = await countCacheFiles();
     log({
-      type: "CACHE",
-      user: "BOT",
+      component: "CORE",
+      name: "CACHE",
       message: `Found ${cacheCount} cache files.`,
     });
     const playlistCount = playlists.count();
     const trackCount = tracks.count();
     log({
-      type: "DB",
-      user: "BOT",
+      component: "CORE",
+      name: "DB",
       message: `Connected to library database! (${playlistCount} playlists, ${trackCount} tracks)`,
     });
   } catch (err) {

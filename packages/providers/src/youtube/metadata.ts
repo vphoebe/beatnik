@@ -81,8 +81,8 @@ export async function getPlaylistInfo(yt: Innertube, id: string): Promise<Provid
           const info = await yt.getBasicInfo(track.id);
           const loudness = getLoudnessFromInfo(info);
           log({
-            user: "BOT",
-            type: "YT",
+            component: "PROVIDER",
+            name: PROVIDER_ID,
             message: `Getting loudness info for playlist track: ${track.id} = ${loudness}`,
           });
           return { ...track, loudness };

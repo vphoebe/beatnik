@@ -9,6 +9,7 @@ export const BEATNIK_VERSION = JSON.parse(pkg).version;
 
 console.log(`--------------------------------------------------
 welcome to beatnik
-version ${BEATNIK_VERSION}`);
+version ${BEATNIK_VERSION}
+--------------------------------------------------`);
 
 await startDiscord();

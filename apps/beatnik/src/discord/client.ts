@@ -32,8 +32,9 @@ export async function handleInteraction(interaction: Interaction) {
     const command = commandList[interaction.commandName];
     if (!command) return;
     log({
-      type: "CMD",
-      user: interaction.user.username,
+      component: "DISCORD",
+      name: interaction.guildId ?? "No guild",
+      username: interaction.user.username,
       message: `Ran ${interaction.commandName}`,
     });
     try {
@@ -72,7 +73,7 @@ export async function startDiscord() {
 
   client.on(Events.ClientReady, async () => {
     startPresenceLifecycle(client);
-    log({ type: "INFO", user: "BOT", message: "Discord client is ready!" });
+    log({ component: "DISCORD", name: "CLIENT", message: "Discord client is ready!" });
   });
 
   client.on(Events.InteractionCreate, handleInteraction);
