@@ -1,9 +1,9 @@
 import Database from "better-sqlite3";
 
-import { getDatabaseURL } from "../environment";
+import { config } from "../config";
 import { runMigrations } from "./migrations";
 
-const url = getDatabaseURL();
+const url = config.databaseUrl;
 
 const tableInit = `
   CREATE TABLE IF NOT EXISTS Playlist (

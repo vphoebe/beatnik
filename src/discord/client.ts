@@ -1,4 +1,4 @@
-import { getToken } from "@/core/environment";
+import { config } from "@/core/config";
 import { getSession } from "@/core/manager";
 import { log } from "@/shared";
 import { generateDependencyReport } from "@discordjs/voice";
@@ -77,5 +77,5 @@ export async function startDiscord() {
   client.on(Events.InteractionCreate, handleInteraction);
   client.on(Events.VoiceStateUpdate, handleVoiceStateUpdate);
 
-  await client.login(getToken());
+  await client.login(config.discord.token);
 }

@@ -6,17 +6,17 @@ import path from "node:path";
 import type { Readable } from "node:stream";
 import { finished } from "node:stream/promises";
 
-import { getLibraryDir } from "../environment";
+import { config } from "../config";
+
+const libDir = config.libraryPath;
 
 function getItemPath(id: string) {
-  const libDir = getLibraryDir();
   const itemPath = path.join(libDir, id + ".cache");
   const exists = existsSync(itemPath);
   return { path: itemPath, exists };
 }
 
 export async function migrateCacheNames() {
-  const libDir = getLibraryDir();
   const files = await readdir(libDir);
   const opusFiles = files.filter((f) => f.endsWith(".opus"));
   const renamePromises = opusFiles.map((f) => {
@@ -29,7 +29,6 @@ export async function migrateCacheNames() {
 }
 
 export async function countCacheFiles() {
-  const libDir = getLibraryDir();
   const files = await readdir(libDir);
   const cacheFiles = files.filter((f) => f.endsWith(".cache"));
   return cacheFiles.length;
