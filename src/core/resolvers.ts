@@ -22,16 +22,7 @@ interface StreamResult {
   fromCache: boolean;
 }
 
-export async function getStream(id: string, provider: Provider): Promise<StreamResult> {
-  // prefer disk cache, then provider method
-  const cached = getDownloadedIdStream(id);
-  if (cached) {
-    return { stream: cached, fromCache: true };
-  }
-  return { stream: await provider.getStream(id), fromCache: false };
-}
-
-export async function getTrack(id: string, provider: Provider): Promise<ProviderTrack | null> {
+async function resolveTrackMetadata(id: string, provider: Provider): Promise<ProviderTrack | null> {
   // prefer database metadata, then provider method
   const dbTrack = tracks.get(id);
   if (dbTrack) {
@@ -43,7 +34,7 @@ export async function getTrack(id: string, provider: Provider): Promise<Provider
   return provider.getTrack(id);
 }
 
-export async function getPlaylist(
+async function resolvePlaylistMetadata(
   id: string,
   provider: Provider,
 ): Promise<ProviderPlaylist | null> {
@@ -57,6 +48,15 @@ export async function getPlaylist(
     return { ...dbPlaylist, tracks: tracksWithProviderId };
   }
   return provider.getPlaylist(id);
+}
+
+export async function resolveStream(id: string, provider: Provider): Promise<StreamResult> {
+  // prefer disk cache, then provider method
+  const cached = getDownloadedIdStream(id);
+  if (cached) {
+    return { stream: cached, fromCache: true };
+  }
+  return { stream: await provider.getStream(id), fromCache: false };
 }
 
 export async function resolveTrackLoudness(
@@ -85,7 +85,7 @@ export async function resolveTrackLoudness(
  * @param input - A URL or search query string.
  * @returns The resolved query (such as a parsed ID from a URL), along with the metadata and matched {@link Provider}.
  */
-export async function agnosticResolve(input: string): Promise<ResolveResult> {
+export async function resolveQuery(input: string): Promise<ResolveResult> {
   for (const provider of providers) {
     const resolution = await provider.resolve(input);
     if (!resolution) continue;
@@ -93,14 +93,14 @@ export async function agnosticResolve(input: string): Promise<ResolveResult> {
     switch (type) {
       case "track":
         return {
-          metadata: await getTrack(resolvedQuery, provider),
+          metadata: await resolveTrackMetadata(resolvedQuery, provider),
           type,
           resolvedQuery,
           provider,
         };
       case "playlist":
         return {
-          metadata: await getPlaylist(resolvedQuery, provider),
+          metadata: await resolvePlaylistMetadata(resolvedQuery, provider),
           type,
           resolvedQuery,
           provider,

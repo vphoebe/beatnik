@@ -1,6 +1,6 @@
 import type { LibraryOperationResult } from "@/core/cache/operations";
 import { addPlaylistToLibrary, addTrackToLibrary } from "@/core/cache/operations";
-import { agnosticResolve } from "@/core/resolve";
+import { resolveQuery } from "@/core/resolvers";
 import type { CommandExecuter } from "@/discord/commands";
 
 export const execute: CommandExecuter = async (interaction) => {
@@ -14,7 +14,7 @@ export const execute: CommandExecuter = async (interaction) => {
     `Finding metadata for your query... please wait (this can take a while).`,
   );
 
-  const { type, metadata, provider } = await agnosticResolve(query);
+  const { type, metadata, provider } = await resolveQuery(query);
   if (!metadata) return;
 
   const count = type === "playlist" ? metadata.tracks.length : 1;

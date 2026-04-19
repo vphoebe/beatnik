@@ -4,7 +4,7 @@ import type { Readable } from "node:stream";
 
 import type { Queue, QueuedTrack } from "./queue";
 import { shuffleArray } from "./queue";
-import { agnosticResolve, getStream, resolveTrackLoudness } from "./resolve";
+import { resolveQuery, resolveStream, resolveTrackLoudness } from "./resolvers";
 
 export class CorePlayer {
   constructor(
@@ -26,7 +26,7 @@ export class CorePlayer {
     willShuffle = false,
     addToEnd = false,
   ): Promise<QueuedTrack[]> {
-    const { metadata, type } = await agnosticResolve(query);
+    const { metadata, type } = await resolveQuery(query);
     let tracks: ProviderTrack[] = [];
     if (type === "playlist") {
       tracks = metadata?.tracks || [];
@@ -57,7 +57,7 @@ export class CorePlayer {
       const loudness = await resolveTrackLoudness(track, provider);
       const trackWithLoudness = { ...track, loudness };
 
-      const { stream, fromCache } = await getStream(track.id, provider);
+      const { stream, fromCache } = await resolveStream(track.id, provider);
       this.isPlaying = true;
       this.fromCache = fromCache;
       this.onStream?.(trackWithLoudness, stream);
