@@ -1,10 +1,7 @@
-import {
-  type LibraryOperationResult,
-  addPlaylistToLibrary,
-  addTrackToLibrary,
-} from "@/core/cache/operations";
+import type { LibraryOperationResult } from "@/core/cache/operations";
+import { addPlaylistToLibrary, addTrackToLibrary } from "@/core/cache/operations";
 import { agnosticResolve } from "@/core/resolve";
-import { type CommandExecuter } from "@/discord/commands";
+import type { CommandExecuter } from "@/discord/commands";
 
 export const execute: CommandExecuter = async (interaction) => {
   const guildId = interaction.guildId;

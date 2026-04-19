@@ -2,15 +2,13 @@ import { getToken } from "@/core/environment";
 import { getSession } from "@/core/manager";
 import { log } from "@/shared";
 import { generateDependencyReport } from "@discordjs/voice";
-import {
-  Client,
-  Events,
-  GatewayIntentBits,
-  type Interaction,
-  type InteractionEditReplyOptions,
-  type InteractionReplyOptions,
-  type VoiceState,
+import type {
+  Interaction,
+  InteractionEditReplyOptions,
+  InteractionReplyOptions,
+  VoiceState,
 } from "discord.js";
+import { Client, Events, GatewayIntentBits } from "discord.js";
 
 import { commandList } from "./commands";
 import { deployCommands } from "./commands/deploy-commands";

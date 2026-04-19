@@ -1,7 +1,8 @@
 import type { Innertube } from "youtubei.js";
 
 import type { Provider } from "../provider";
-import { type YoutubeClientConfig, createInnertubeClient } from "./client";
+import type { YoutubeClientConfig } from "./client";
+import { createInnertubeClient } from "./client";
 import { getPlaylistInfo, getTrackInfo, resolve, search } from "./metadata";
 import { createSabrStream } from "./sabr";
 

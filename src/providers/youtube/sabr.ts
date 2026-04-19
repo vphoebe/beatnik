@@ -8,7 +8,8 @@ import { SabrStream } from "googlevideo/sabr-stream";
 import { EnabledTrackTypes, buildSabrFormat } from "googlevideo/utils";
 import Stream from "node:stream";
 import type { ReadableStream as NodeReadableStream } from "node:stream/web";
-import { Constants, type Innertube, YTNodes } from "youtubei.js";
+import type { Innertube } from "youtubei.js";
+import { Constants, YTNodes } from "youtubei.js";
 
 import { getWebPoMinter, invalidateWebPoMinter } from "./browser";
 

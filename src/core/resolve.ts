@@ -1,4 +1,4 @@
-import { type Provider, type ProviderPlaylist, type ProviderTrack } from "@/providers";
+import type { Provider, ProviderPlaylist, ProviderTrack } from "@/providers";
 import type { Readable } from "node:stream";
 
 import { getDownloadedIdStream } from "./cache/disk";

@@ -1,14 +1,13 @@
 import { deleteSession } from "@/core/manager";
-import { type CorePlayer } from "@/core/player";
+import type { CorePlayer } from "@/core/player";
+import type { PlayerSubscription, VoiceConnection } from "@discordjs/voice";
 import {
   AudioPlayerStatus,
-  type PlayerSubscription,
-  type VoiceConnection,
   createAudioPlayer,
   createAudioResource,
   demuxProbe,
 } from "@discordjs/voice";
-import { type TextBasedChannel, type VoiceBasedChannel } from "discord.js";
+import type { TextBasedChannel, VoiceBasedChannel } from "discord.js";
 
 import { createVoiceConnection } from "./connection";
 import { deleteVoiceSession } from "./manager";

@@ -1,7 +1,8 @@
 import type { Provider, ProviderTrack } from "@/providers";
 import type { Readable } from "node:stream";
 
-import { type Queue, type QueuedTrack, shuffleArray } from "./queue";
+import type { Queue, QueuedTrack } from "./queue";
+import { shuffleArray } from "./queue";
 import { agnosticResolve, getStream } from "./resolve";
 
 export class CorePlayer {

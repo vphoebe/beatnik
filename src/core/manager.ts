@@ -1,4 +1,5 @@
-import { type Provider, YoutubeProvider } from "@/providers";
+import type { Provider } from "@/providers";
+import { YoutubeProvider } from "@/providers";
 
 import { config } from "./config";
 import { CorePlayer } from "./player";
