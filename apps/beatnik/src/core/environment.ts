@@ -1,4 +1,3 @@
-import "dotenv/config";
 import { existsSync } from "node:fs";
 
 export function getToken() {

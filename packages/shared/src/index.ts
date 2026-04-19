@@ -1,2 +1,2 @@
-export * from "./logger";
-export * from "./beattime";
+export { log } from "./logger";
+export { getBeatTimeString } from "./beattime";

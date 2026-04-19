@@ -1,5 +1,5 @@
+import { log } from "@beatnik/shared";
 import { generateDependencyReport } from "@discordjs/voice";
-import { log } from "console";
 import {
   Client,
   Events,
@@ -72,7 +72,7 @@ export async function startDiscord() {
 
   client.on(Events.ClientReady, async () => {
     startPresenceLifecycle(client);
-    log({ type: "INFO", user: "BOT", message: "Beatnik is ready!" });
+    log({ type: "INFO", user: "BOT", message: "Discord client is ready!" });
   });
 
   client.on(Events.InteractionCreate, handleInteraction);

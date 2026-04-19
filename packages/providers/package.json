@@ -2,6 +2,7 @@
   "name": "@beatnik/providers",
   "version": "0.1.0",
   "description": "",
+  "type": "module",
   "main": "src/index.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -20,5 +21,8 @@
   "devDependencies": {
     "@types/jsdom": "^21.1.7"
   },
-  "packageManager": "pnpm@10.33.0"
+  "packageManager": "pnpm@10.33.0",
+  "exports": {
+    ".": "./src/index.ts"
+  }
 }

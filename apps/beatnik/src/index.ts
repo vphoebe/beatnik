@@ -1,3 +1,4 @@
+import "dotenv/config";
 import fs from "node:fs";
 import path from "node:path";
 
@@ -10,8 +11,4 @@ console.log(`--------------------------------------------------
 welcome to beatnik
 version ${BEATNIK_VERSION}`);
 
-async function main() {
-  await startDiscord();
-}
-
-main();
+await startDiscord();
