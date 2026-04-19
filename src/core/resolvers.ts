@@ -68,6 +68,7 @@ export async function resolveTrackLoudness(
 
   const metadata = await provider.getTrack(track.id);
   if (metadata && metadata.loudness !== null) {
+    // save the loudness info to the db, only if track exists
     tracks.update(track.id, { loudness: metadata.loudness });
     return metadata.loudness;
   }
