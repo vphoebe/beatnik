@@ -2,7 +2,13 @@
   "semi": true,
   "printWidth": 100,
   "plugins": ["@trivago/prettier-plugin-sort-imports"],
-  "importOrder": ["^[./]", "^@db/(.*)$", "^@engine/(.*)$", "^@commands/(.*)$", "^@helpers/(.*)$"],
+  "importOrder": [
+    "^[./]",
+    "^@providers/(.*)$",
+    "^@shared/(.*)$",
+    "^@core/(.*)$",
+    "^@discord/(.*)$"
+  ],
   "importOrderSeparation": true,
   "importOrderSortSpecifiers": true
 }
