@@ -1,7 +1,6 @@
 services:
   beatnik:
     container_name: beatnik-next
-    platform: linux/amd64
     image: nickseman/beatnik:next
     volumes:
       - "./docker/library.db:/app/library.db"

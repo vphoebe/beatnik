@@ -8,18 +8,11 @@
   "private": true,
   "scripts": {
     "build": "npm run typecheck && tsdown",
-    "dev": "docker compose -f 'docker-compose.dev.yml' up --build --remove-orphans",
-    "dev:local": "tsx watch src/index.ts",
+    "dev": "tsx watch src/index.ts",
     "format": "prettier --write .",
     "knip": "knip",
-    "latest:build": "docker build --platform linux/amd64 --target prod -t nickseman/beatnik:latest .",
-    "latest:push": "docker push nickseman/beatnik:latest",
     "lint": "npx eslint ./src",
     "lint:fix": "npx eslint ./src --fix",
-    "next:build": "docker build --platform linux/amd64 --target prod -t nickseman/beatnik:next .",
-    "next:push": "docker push nickseman/beatnik:next",
-    "next:up": "docker compose -f 'docker-compose.next.yml' up --build --remove-orphans",
-    "start": "npm run next:up",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {

@@ -4,8 +4,16 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "pnpm --filter @beatnik/core dev:local",
-    "typecheck": "pnpm -r typecheck"
+    "build": "pnpm --filter @beatnik/core build",
+    "dev": "pnpm --filter @beatnik/core dev",
+    "typecheck": "pnpm -r typecheck",
+    "lint": "pnpm -r lint",
+    "lint:fix": "pnpm -r lint:fix",
+    "format": "pnpm --filter @beatnik/core format",
+    "dev:docker": "docker compose -f 'apps/beatnik/docker-compose.dev.yml' up --build --remove-orphans",
+    "next:up": "docker compose -f 'apps/beatnik/docker-compose.next.yml' up --build --remove-orphans",
+    "next:build": "docker build --target prod -t nickseman/beatnik:next .",
+    "latest:build": "docker build --target prod -t nickseman/beatnik:latest ."
   },
   "keywords": [],
   "author": "me@vphoebe.dev",
