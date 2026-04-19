@@ -58,6 +58,14 @@ function getTrackCount() {
   return result?.count ?? 0;
 }
 
+function updateTrack(id: string, patch: Partial<DatabaseTrack>) {
+  const fields = Object.keys(patch)
+    .map((k) => `${k} = ?`)
+    .join(", ");
+  const values = Object.values(patch);
+  db.prepare(`UPDATE track SET ${fields} WHERE id = ?`).run(...values, id);
+}
+
 export const tracks = {
   get: getTrackByYtId,
   getInternal: getTrackByIntId,
@@ -67,4 +75,5 @@ export const tracks = {
   all: getAllTracks,
   delete: deleteTrack,
   create: createTrack,
+  update: updateTrack,
 };

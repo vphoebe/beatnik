@@ -1,4 +1,5 @@
 import type { Provider, ProviderPlaylist, ProviderTrack } from "@/providers";
+import { log } from "@/shared";
 import type { Readable } from "node:stream";
 
 import { getDownloadedIdStream } from "./cache/disk";
@@ -56,6 +57,27 @@ export async function getPlaylist(
     return { ...dbPlaylist, tracks: tracksWithProviderId };
   }
   return provider.getPlaylist(id);
+}
+
+export async function resolveTrackLoudness(
+  track: ProviderTrack,
+  provider: Provider,
+): Promise<number | null> {
+  const cached = tracks.get(track.id);
+  if (cached && cached.loudness !== null) return cached.loudness;
+
+  const metadata = await provider.getTrack(track.id);
+  if (metadata && metadata.loudness !== null) {
+    tracks.update(track.id, { loudness: metadata.loudness });
+    return metadata.loudness;
+  }
+  log({
+    level: "WARN",
+    component: "CORE",
+    name: "PLAYER",
+    message: `Unable to resolve loudness data for ${provider.id}:${track.id}.`,
+  });
+  return null;
 }
 
 /**

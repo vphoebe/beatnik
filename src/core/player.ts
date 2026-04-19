@@ -4,7 +4,7 @@ import type { Readable } from "node:stream";
 
 import type { Queue, QueuedTrack } from "./queue";
 import { shuffleArray } from "./queue";
-import { agnosticResolve, getStream } from "./resolve";
+import { agnosticResolve, getStream, resolveTrackLoudness } from "./resolve";
 
 export class CorePlayer {
   constructor(
@@ -53,10 +53,14 @@ export class CorePlayer {
     try {
       const provider = this.providers.find((p) => p.id === track.providerId);
       if (!provider) throw new Error(`No provider found for ${track.providerId}`);
+
+      const loudness = await resolveTrackLoudness(track, provider);
+      const trackWithLoudness = { ...track, loudness };
+
       const { stream, fromCache } = await getStream(track.id, provider);
       this.isPlaying = true;
       this.fromCache = fromCache;
-      this.onStream?.(track, stream);
+      this.onStream?.(trackWithLoudness, stream);
       log({
         component: "CORE",
         name: "PLAYER",
