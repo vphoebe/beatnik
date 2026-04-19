@@ -3,8 +3,6 @@ import { Innertube, Platform, UniversalCache } from "youtubei.js";
 
 import { PROVIDER_ID } from ".";
 
-const KNOWN_WORKING_PID = "487b9fc1";
-
 export interface YoutubeClientConfig {
   player_id?: string;
 }
@@ -21,7 +19,7 @@ export const createInnertubeClient = async (config: YoutubeClientConfig) => {
 
   return Innertube.create({
     cache: new UniversalCache(false),
-    player_id: config.player_id || KNOWN_WORKING_PID,
+    player_id: config.player_id,
   }).then((val) => {
     log({
       component: "PROVIDER",
