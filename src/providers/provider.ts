@@ -3,7 +3,7 @@ import type { Readable } from "node:stream";
 export type QueryType = "track" | "playlist" | "search";
 
 export interface ProviderTrack {
-  providerId: string; // matches Provider.id for provider lookups
+  providerId: string;
   id: string;
   url: string;
   title: string;
@@ -15,6 +15,7 @@ export interface ProviderTrack {
 }
 
 export interface ProviderPlaylist {
+  providerId: string;
   id: string;
   url: string;
   title: string;

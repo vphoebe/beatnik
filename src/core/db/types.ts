@@ -1,6 +1,6 @@
 import type { ProviderPlaylist, ProviderTrack } from "@/providers";
 
-export interface DatabaseTrack extends Omit<ProviderTrack, "providerId"> {
+export interface DatabaseTrack extends ProviderTrack {
   int_id: number;
   playlistId: number | null;
 }

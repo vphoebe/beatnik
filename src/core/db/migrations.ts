@@ -45,6 +45,19 @@ const migrations: Migration[] = [
       `);
     },
   },
+  {
+    name: "002_provider_id",
+    up: (db) => {
+      db.exec(`
+        BEGIN TRANSACTION;
+
+        ALTER TABLE Track ADD COLUMN providerId TEXT NOT NULL DEFAULT 'youtube';
+        ALTER TABLE Playlist ADD COLUMN providerId TEXT NOT NULL DEFAULT 'youtube';
+
+        COMMIT;
+      `);
+    },
+  },
 ];
 
 export function runMigrations(db: Database): void {

@@ -48,6 +48,7 @@ function savePlaylist(playlistData: ProviderPlaylist) {
 
   const transaction = db.transaction((data: ProviderPlaylist) => {
     const { lastInsertRowid } = insertPlaylist.run({
+      providerId: data.providerId,
       id: data.id,
       url: data.url,
       title: data.title,

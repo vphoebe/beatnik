@@ -12,7 +12,8 @@ const tableInit = `
     url         TEXT NOT NULL,
     title       TEXT NOT NULL,
     authorName  TEXT NOT NULL,
-    lastUpdated TEXT NOT NULL
+    lastUpdated TEXT NOT NULL,
+    providerId  TEXT NOT NULL
   );
 
   CREATE TABLE IF NOT EXISTS Track (
@@ -25,7 +26,8 @@ const tableInit = `
     channelName  TEXT NOT NULL,
     loudness     REAL,
     playlistId   INTEGER REFERENCES Playlist(int_id) ON DELETE CASCADE ON UPDATE CASCADE,
-    playlistIdx  INTEGER
+    playlistIdx  INTEGER,
+    providerId  TEXT NOT NULL
   );
 `;
 

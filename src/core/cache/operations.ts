@@ -98,9 +98,8 @@ export async function updatePlaylistInLibrary(playlistIntId: number) {
   const existingPlaylistData = playlists.getInfo(playlistIntId);
   if (!existingPlaylistData) return;
 
-  // TEMP/TODO: store providerId on the playlistData and use that here
-  const provider = providers.find((p) => p.id === "youtube");
-  if (!provider) throw new Error(`No provider found for source (TEMP)`);
+  const provider = providers.find((p) => p.id === existingPlaylistData.providerId);
+  if (!provider) throw new Error(`No provider found for ${existingPlaylistData.providerId}`);
 
   const queryResult = await provider.getPlaylist(existingPlaylistData.url);
   if (!queryResult) return;

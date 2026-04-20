@@ -1,4 +1,3 @@
-import { log } from "@/shared";
 import { YTNodes } from "youtubei.js";
 import type { Innertube } from "youtubei.js";
 
@@ -78,6 +77,7 @@ export async function getPlaylistInfo(yt: Innertube, id: string): Promise<Provid
     });
 
     return {
+      providerId: PROVIDER_ID,
       tracks,
       title: playlistInfo.info.title ?? "Unknown",
       url: playlistIdToURL(id),
