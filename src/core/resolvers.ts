@@ -12,7 +12,7 @@ interface ResolveResultBase {
   resolvedQuery: string;
 }
 
-export type ResolveResult =
+type ResolveResult =
   | (ResolveResultBase & { type: "track"; metadata: ProviderTrack | null })
   | (ResolveResultBase & { type: "playlist"; metadata: ProviderPlaylist | null })
   | (ResolveResultBase & { type: "search"; metadata: ProviderTrack | null });

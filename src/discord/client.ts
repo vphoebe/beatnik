@@ -15,7 +15,7 @@ import { deployCommands } from "./commands/deploy-commands";
 import { errorReply } from "./messaging";
 import { startPresenceLifecycle } from "./presence";
 
-export async function handleInteraction(interaction: Interaction) {
+async function handleInteraction(interaction: Interaction) {
   if (interaction.isAutocomplete()) {
     const command = commandList[interaction.commandName];
     if (!command?.autocomplete) return;
@@ -50,7 +50,7 @@ export async function handleInteraction(interaction: Interaction) {
   }
 }
 
-export async function handleVoiceStateUpdate(oldState: VoiceState) {
+async function handleVoiceStateUpdate(oldState: VoiceState) {
   if (oldState.channel?.members.size === 1) {
     try {
       const session = getSession(oldState.guild.id);

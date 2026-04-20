@@ -1,2 +1,2 @@
-export type { Provider, ProviderTrack, ProviderPlaylist, QueryType } from "./provider";
+export type { Provider, ProviderTrack, ProviderPlaylist } from "./provider";
 export { YoutubeProvider } from "./youtube";

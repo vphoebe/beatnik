@@ -1,4 +1,4 @@
-function require(key: string): string {
+function requireEnv(key: string): string {
   const value = process.env[key];
   if (!value) throw new Error(`Missing environment variable: ${key}`);
   return value;
@@ -9,9 +9,9 @@ export const config = {
     player_id: process.env.PLAYER_ID,
   },
   discord: {
-    token: require("TOKEN"),
-    clientId: require("CLIENT_ID"),
+    token: requireEnv("TOKEN"),
+    clientId: requireEnv("CLIENT_ID"),
   },
-  libraryPath: require("LIBRARY_PATH"),
-  databaseUrl: require("DATABASE_URL"),
+  libraryPath: requireEnv("LIBRARY_PATH"),
+  databaseUrl: requireEnv("DATABASE_URL"),
 };
