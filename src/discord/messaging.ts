@@ -116,3 +116,26 @@ export const errorReply = (
   const message = `Something went wrong! Tell someone with authority about the following error message: \`\`\`${err}\`\`\``;
   return isEphemeral ? ephemeral(message) : { content: message };
 };
+
+export function drawProgressBar(total: number, current: number, width = 50) {
+  const clamped = current >= total ? total : current;
+  const EMPTY_CHAR = "░";
+  const FILL_CHAR = "█";
+  const SPINNER_CHARS = "⠋⠙⠹⠸⠼⠴⠦⠧⠇⠏";
+
+  const spinner = SPINNER_CHARS[current % SPINNER_CHARS.length];
+
+  const fillLength = Math.floor((clamped / total) * width);
+  const emptyLength = width - fillLength;
+  const fill = FILL_CHAR.repeat(fillLength);
+  const empty = EMPTY_CHAR.repeat(emptyLength);
+
+  const bar = [...fill, ...empty];
+  const counter = `[${current}/${total} ${spinner}]`.split("");
+  const center = Math.floor(width / 2);
+  const start = center - Math.floor(counter.length / 2) - 1;
+
+  bar.splice(start, counter.length, counter.join(""));
+
+  return `\`${bar.join("")}\``;
+}
