@@ -37,13 +37,13 @@ function getSavedPlaylistById(id: string) {
 
 function savePlaylist(playlistData: ProviderPlaylist) {
   const insertPlaylist = db.prepare<Omit<DatabasePlaylist, "int_id">>(`
-    INSERT INTO playlist (id, url, title, authorName, lastUpdated)
-    VALUES (@id, @url, @title, @authorName, @lastUpdated)
+    INSERT INTO playlist (id, url, title, authorName, lastUpdated, providerId)
+    VALUES (@id, @url, @title, @authorName, @lastUpdated, @providerId)
   `);
 
   const insertTrack = db.prepare<Omit<DatabaseTrack, "int_id">>(`
-    INSERT INTO track (id, url, title, thumbnailUrl, length, channelName, loudness, playlistId, playlistIdx)
-    VALUES (@id, @url, @title, @thumbnailUrl, @length, @channelName, @loudness, @playlistId, @playlistIdx)
+    INSERT INTO track (id, url, title, thumbnailUrl, length, channelName, loudness, playlistId, playlistIdx, providerId)
+    VALUES (@id, @url, @title, @thumbnailUrl, @length, @channelName, @loudness, @playlistId, @playlistIdx, @providerId)
   `);
 
   const transaction = db.transaction((data: ProviderPlaylist) => {
@@ -80,8 +80,8 @@ function updateSavedPlaylist(playlistData: ProviderPlaylist) {
   const deleteTracks = db.prepare<[number]>("DELETE FROM Track WHERE playlistId = ?");
 
   const insertTrack = db.prepare<Omit<DatabaseTrack, "int_id">>(`
-    INSERT INTO Track (id, url, title, thumbnailUrl, length, channelName, loudness, playlistId, playlistIdx)
-    VALUES (@id, @url, @title, @thumbnailUrl, @length, @channelName, @loudness, @playlistId, @playlistIdx)
+    INSERT INTO Track (id, url, title, thumbnailUrl, length, channelName, loudness, playlistId, playlistIdx, providerId)
+    VALUES (@id, @url, @title, @thumbnailUrl, @length, @channelName, @loudness, @playlistId, @playlistIdx, @providerId)
   `);
 
   const transaction = db.transaction(() => {

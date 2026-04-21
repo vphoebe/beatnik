@@ -4,6 +4,7 @@ import { log } from "@/shared";
 import { playlists } from "../db/playlist";
 import { tracks } from "../db/track";
 import { providers } from "../manager";
+import { resolveQuery } from "../resolvers";
 import {
   countCacheFiles,
   downloadPlaylist,
@@ -16,6 +17,7 @@ export interface LibraryOperationResult {
   added: boolean;
   updated?: boolean;
   error?: "EXISTS";
+  diff: number;
 }
 
 export async function testLibraryConnection() {
@@ -58,6 +60,7 @@ export async function addTrackToLibrary(
       added: false,
       updated: false,
       error: "EXISTS",
+      diff: 0,
     };
   }
   tracks.create({ ...track, playlistId: null, playlistIdx: null });
@@ -66,6 +69,7 @@ export async function addTrackToLibrary(
   return {
     added: true,
     updated: false,
+    diff: 1,
   };
 }
 
@@ -80,6 +84,7 @@ export async function deleteTrackFromLibrary(int_id: number) {
 export async function addPlaylistToLibrary(
   playlistData: ProviderPlaylist,
   provider: Provider,
+  onProgress?: (track: ProviderTrack, index: number, total: number) => Promise<void>,
 ): Promise<LibraryOperationResult> {
   const playlistExists = playlists.exists(playlistData.id);
   if (playlistExists) {
@@ -87,26 +92,39 @@ export async function addPlaylistToLibrary(
   } else {
     playlists.create(playlistData);
   }
-  await downloadPlaylist(playlistData, provider);
+  const downloaded = await downloadPlaylist(playlistData, provider, onProgress);
   return {
     added: !playlistExists,
     updated: playlistExists,
+    diff: downloaded,
   };
 }
 
-export async function updatePlaylistInLibrary(playlistIntId: number) {
+export async function updatePlaylistInLibrary(
+  playlistIntId: number,
+  onProgress?: (track: ProviderTrack, index: number, total: number) => Promise<void>,
+) {
   const existingPlaylistData = playlists.getInfo(playlistIntId);
-  if (!existingPlaylistData) return;
+  if (!existingPlaylistData) throw new Error(`${playlistIntId} Playlist does not exist`);
 
   const provider = providers.find((p) => p.id === existingPlaylistData.providerId);
   if (!provider) throw new Error(`No provider found for ${existingPlaylistData.providerId}`);
 
-  const queryResult = await provider.getPlaylist(existingPlaylistData.url);
-  if (!queryResult) return;
+  // don't resolve metadata through resolver (would use DB)
+  const query = await resolveQuery(existingPlaylistData.url, false);
+  if (!query) throw new Error(`${existingPlaylistData.url} metadata was not found from provider.`);
+
+  if (query.type !== "playlist")
+    throw new Error(`Query ${existingPlaylistData.url} is not a playlist!`);
+
+  const freshMetadata = await provider.getPlaylist(query.resolvedQuery);
+
+  if (!freshMetadata)
+    throw new Error(`${query.resolvedQuery} metadata was not found from provider.`);
 
   return {
-    operation: await addPlaylistToLibrary(queryResult, provider),
-    playlistData: queryResult,
+    operation: await addPlaylistToLibrary(freshMetadata, provider, onProgress),
+    playlistData: freshMetadata,
   };
 }
 

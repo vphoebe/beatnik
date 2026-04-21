@@ -84,9 +84,10 @@ export async function resolveTrackLoudness(
 /**
  * Resolves an arbitrary query against the first matching provider.
  * @param input - A URL or search query string.
+ * @param returnMetadata - Whether to return resolved metadata against database + provider.
  * @returns The resolved query (such as a parsed ID from a URL), along with the metadata and matched {@link Provider}.
  */
-export async function resolveQuery(input: string): Promise<ResolveResult> {
+export async function resolveQuery(input: string, returnMetadata = true): Promise<ResolveResult> {
   for (const provider of providers) {
     const resolution = await provider.resolve(input);
     if (!resolution) continue;
@@ -94,21 +95,21 @@ export async function resolveQuery(input: string): Promise<ResolveResult> {
     switch (type) {
       case "track":
         return {
-          metadata: await resolveTrackMetadata(resolvedQuery, provider),
+          metadata: returnMetadata ? await resolveTrackMetadata(resolvedQuery, provider) : null,
           type,
           resolvedQuery,
           provider,
         };
       case "playlist":
         return {
-          metadata: await resolvePlaylistMetadata(resolvedQuery, provider),
+          metadata: returnMetadata ? await resolvePlaylistMetadata(resolvedQuery, provider) : null,
           type,
           resolvedQuery,
           provider,
         };
       case "search":
         return {
-          metadata: (await provider.search?.(resolvedQuery)) ?? null,
+          metadata: returnMetadata ? ((await provider.search?.(resolvedQuery)) ?? null) : null,
           type,
           resolvedQuery,
           provider,

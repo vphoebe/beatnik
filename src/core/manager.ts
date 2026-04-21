@@ -1,5 +1,6 @@
 import type { Provider } from "@/providers";
-import { YoutubeProvider } from "@/providers";
+import { MockProvider, YoutubeProvider } from "@/providers";
+import { log } from "@/shared";
 
 import { config } from "./config";
 import { CorePlayer } from "./player";
@@ -12,7 +13,16 @@ interface GuildSession {
 
 const sessions = new Map<string, GuildSession>();
 
-export const providers: Provider[] = [await YoutubeProvider.create(config.youtube)];
+const mockProvider = new MockProvider();
+const youtubeProvider = await YoutubeProvider.create(config.youtube);
+
+export const providers: Provider[] = [youtubeProvider];
+if (config.useMockProvider) providers.unshift(mockProvider);
+log({
+  component: "CORE",
+  name: "PLAYER",
+  message: `Active provider(s): ${providers.map((p) => p.id).join(", ")}`,
+});
 
 export function getOrCreateSession(guildId: string): GuildSession {
   let session = sessions.get(guildId);

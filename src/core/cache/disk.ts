@@ -67,18 +67,35 @@ export async function removeDownload(id: string) {
 export async function downloadPlaylist(
   playlist: ProviderPlaylist,
   provider: Provider,
-  onProgress?: (track: ProviderTrack, index: number, total: number) => void,
+  onProgress?: (track: ProviderTrack, index: number, total: number) => Promise<void>,
 ) {
   const tracksToDownload = playlist.tracks.filter((t) => !getItemPath(t.id).exists);
-  for (const [index, track] of tracksToDownload.entries()) {
-    try {
-      const stream = await provider.getStream(track.id);
-      await downloadToCache(track.id, stream);
-      onProgress?.(track, index, tracksToDownload.length);
-    } catch (err) {
-      console.error(`Failed to download ${track.id}`, err);
+  const concurrency = 10;
+  const queue = [...tracksToDownload];
+  let completed = 0;
+
+  async function worker() {
+    while (queue.length > 0) {
+      const track = queue.shift();
+      if (!track) break;
+      try {
+        const stream = await provider.getStream(track.id);
+        await downloadToCache(track.id, stream);
+        await onProgress?.(track, ++completed, tracksToDownload.length);
+      } catch (err) {
+        log({
+          component: "CORE",
+          name: "CACHE",
+          message: `Failed to download ${track.id}`,
+          level: "ERROR",
+        });
+        console.error(err);
+      }
     }
   }
+
+  await Promise.all(Array.from({ length: Math.min(concurrency, tracksToDownload.length) }, worker));
+  return tracksToDownload.length;
 }
 
 export function getDownloadedIdStream(id: string) {

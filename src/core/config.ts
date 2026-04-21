@@ -14,4 +14,5 @@ export const config = {
   },
   libraryPath: requireEnv("LIBRARY_PATH"),
   databaseUrl: requireEnv("DATABASE_URL"),
+  useMockProvider: process.env.USE_MOCK_PROVIDER === "true",
 };

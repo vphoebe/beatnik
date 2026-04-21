@@ -15,8 +15,8 @@ function createTrack(trackData: Omit<DatabaseTrack, "int_id">) {
   const { lastInsertRowid } = db
     .prepare<Omit<DatabaseTrack, "int_id">>(
       `
-    INSERT INTO Track (id, url, title, thumbnailUrl, length, channelName, loudness, playlistId, playlistIdx)
-    VALUES (@id, @url, @title, @thumbnailUrl, @length, @channelName, @loudness, @playlistId, @playlistIdx)
+    INSERT INTO Track (id, url, title, thumbnailUrl, length, channelName, loudness, playlistId, playlistIdx, providerId)
+    VALUES (@id, @url, @title, @thumbnailUrl, @length, @channelName, @loudness, @playlistId, @playlistIdx, @providerId)
   `,
     )
     .run(trackData);
