@@ -1,6 +1,7 @@
 import { getOrCreateSession } from "@/core/manager";
 import { getOrCreateVoiceSession } from "@/discord/manager";
 import { getAddedToQueueMessage, requireVoiceChannel } from "@/discord/messaging";
+import type { ProviderTrack } from "@/providers";
 import type { ChatInputCommandInteraction } from "discord.js";
 
 export async function enqueueAndPlay(
@@ -28,4 +29,10 @@ export async function enqueueAndPlay(
   if (!player.isPlaying) {
     await player.play();
   }
+}
+
+export function createDownloadProgressHandler(interaction: ChatInputCommandInteraction) {
+  return async function (track: ProviderTrack, index: number, total: number) {
+    await interaction.editReply(`Downloading \`${track.title}\` (${index}/${total})...`);
+  };
 }

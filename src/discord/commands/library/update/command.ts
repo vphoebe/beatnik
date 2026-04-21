@@ -1,7 +1,7 @@
 import { updatePlaylistInLibrary } from "@/core/cache/operations";
 import { playlists } from "@/core/db/playlist";
 import type { AutocompleteHandler, CommandExecuter } from "@/discord/commands";
-import type { ProviderTrack } from "@/providers";
+import { createDownloadProgressHandler } from "@/discord/playback";
 
 export const autocomplete: AutocompleteHandler = async (interaction) => {
   const focusedValue = interaction.options.getFocused();
@@ -21,18 +21,13 @@ export const execute: CommandExecuter = async (interaction) => {
   const guildId = interaction.guildId;
   if (!guildId) return;
 
-  async function onDownloadProgress(
-    track: ProviderTrack,
-    index: number,
-    total: number,
-  ): Promise<void> {
-    await interaction.editReply(`Downloading \`${track.title}\` (${index}/${total})...`);
-  }
-
   await interaction.deferReply();
   await interaction.editReply("Getting fresh playlist data...");
   const playlistIntId = interaction.options.getInteger("playlist", true);
-  const update = await updatePlaylistInLibrary(playlistIntId, onDownloadProgress);
+  const update = await updatePlaylistInLibrary(
+    playlistIntId,
+    createDownloadProgressHandler(interaction),
+  );
   if (!update || !update.operation) {
     await interaction.editReply("Something went wrong.");
   } else {

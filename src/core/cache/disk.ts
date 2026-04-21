@@ -67,7 +67,7 @@ export async function removeDownload(id: string) {
 export async function downloadPlaylist(
   playlist: ProviderPlaylist,
   provider: Provider,
-  onProgress?: (track: ProviderTrack, index: number, total: number) => Promise<void>,
+  onProgress?: (track: ProviderTrack, index: number, total: number) => void,
 ) {
   const tracksToDownload = playlist.tracks.filter((t) => !getItemPath(t.id).exists);
   const concurrency = 10;
@@ -81,7 +81,7 @@ export async function downloadPlaylist(
       try {
         const stream = await provider.getStream(track.id);
         await downloadToCache(track.id, stream);
-        await onProgress?.(track, ++completed, tracksToDownload.length);
+        onProgress?.(track, ++completed, tracksToDownload.length);
       } catch (err) {
         log({
           component: "CORE",

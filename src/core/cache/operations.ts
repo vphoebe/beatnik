@@ -84,7 +84,7 @@ export async function deleteTrackFromLibrary(int_id: number) {
 export async function addPlaylistToLibrary(
   playlistData: ProviderPlaylist,
   provider: Provider,
-  onProgress?: (track: ProviderTrack, index: number, total: number) => Promise<void>,
+  onProgress?: (track: ProviderTrack, index: number, total: number) => void,
 ): Promise<LibraryOperationResult> {
   const playlistExists = playlists.exists(playlistData.id);
   if (playlistExists) {
@@ -102,7 +102,7 @@ export async function addPlaylistToLibrary(
 
 export async function updatePlaylistInLibrary(
   playlistIntId: number,
-  onProgress?: (track: ProviderTrack, index: number, total: number) => Promise<void>,
+  onProgress?: (track: ProviderTrack, index: number, total: number) => void,
 ) {
   const existingPlaylistData = playlists.getInfo(playlistIntId);
   if (!existingPlaylistData) throw new Error(`${playlistIntId} Playlist does not exist`);

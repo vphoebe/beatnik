@@ -2,7 +2,7 @@ import type { LibraryOperationResult } from "@/core/cache/operations";
 import { addPlaylistToLibrary, addTrackToLibrary } from "@/core/cache/operations";
 import { resolveQuery } from "@/core/resolvers";
 import type { CommandExecuter } from "@/discord/commands";
-import type { ProviderTrack } from "@/providers";
+import { createDownloadProgressHandler } from "@/discord/playback";
 
 export const execute: CommandExecuter = async (interaction) => {
   const guildId = interaction.guildId;
@@ -21,18 +21,14 @@ export const execute: CommandExecuter = async (interaction) => {
   const count = type === "playlist" ? metadata.tracks.length : 1;
   await interaction.editReply(`Adding and downloading ${count} track(s)...`);
 
-  async function onDownloadProgress(
-    track: ProviderTrack,
-    index: number,
-    total: number,
-  ): Promise<void> {
-    await interaction.editReply(`Downloading \`${track.title}\` (${index}/${total})...`);
-  }
-
   let operation: LibraryOperationResult | null;
 
   if (type === "playlist") {
-    operation = await addPlaylistToLibrary(metadata, provider, onDownloadProgress);
+    operation = await addPlaylistToLibrary(
+      metadata,
+      provider,
+      createDownloadProgressHandler(interaction),
+    );
   } else if (type === "track" || type === "search") {
     operation = await addTrackToLibrary(metadata, provider);
   } else {
