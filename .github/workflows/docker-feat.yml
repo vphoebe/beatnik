@@ -1,11 +1,12 @@
-name: Publish Docker image (core-rewrite)
+name: Publish Docker image (feature branch)
 on:
   push:
-    branches:
-      - core-rewrite
+    branches-ignore:
+      - main
+      - next
 jobs:
   push_to_registry:
-    name: (next) Push Docker image to Docker Hub
+    name: (Feature branch) Push Docker image to Docker Hub
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -20,11 +21,14 @@ jobs:
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
+      - name: Sanitize branch name for Docker tag
+        id: branch
+        run: echo "tag=$(echo "${{ github.ref_name }}" | sed 's/[^a-zA-Z0-9._-]/-/g')" >> $GITHUB_OUTPUT
       - name: Build and push Docker image
         uses: docker/build-push-action@v7
         with:
           push: true
-          tags: nickseman/beatnik:core-rewrite
+          tags: nickseman/beatnik:${{ steps.branch.outputs.tag }}
           target: prod
           cache-from: type=gha
           cache-to: type=gha,mode=max
