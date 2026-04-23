@@ -23,7 +23,9 @@ jobs:
         uses: docker/build-push-action@v7
         with:
           push: true
-          tags: nickseman/beatnik:latest
+          tags: |
+            nickseman/beatnik:latest
+            nickseman/beatnik:${{ github.event.release.tag_name }}
           target: prod
           cache-from: type=gha
           cache-to: type=gha,mode=max
