@@ -4,6 +4,7 @@
 FROM node:22-trixie AS deps-builder
 WORKDIR /app
 
+# fix GCC14 issue with compiling opus on arm64
 ENV CFLAGS="-Wno-error=implicit-function-declaration"
 
 RUN apt-get update && apt-get install -y \
@@ -40,7 +41,6 @@ RUN pnpm prune --prod \
  && find node_modules -type d \( -name "test" -o -name "tests" -o -name "__tests__" \) \
       -exec rm -rf {} + 2>/dev/null; true \
  && rm -rf node_modules/@napi-rs/canvas-linux-x64-musl \
- && rm -rf node_modules/@snazzah/davey-linux-x64-musl \
  && rm -rf node_modules/@discordjs/opus/build-tmp-napi-v3
 
 #
