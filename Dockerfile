@@ -4,6 +4,8 @@
 FROM node:22-trixie AS deps-builder
 WORKDIR /app
 
+ENV CFLAGS="-Wno-error=implicit-function-declaration"
+
 RUN apt-get update && apt-get install -y \
     python3 \
     make \
