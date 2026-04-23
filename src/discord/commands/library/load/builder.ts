@@ -38,4 +38,5 @@ export const builder = new SlashCommandBuilder()
           .setRequired(true)
           .setAutocomplete(true),
       ),
-  );
+  )
+  .addSubcommand((sc) => sc.setName("all").setDescription("Load and shuffle all playlists."));

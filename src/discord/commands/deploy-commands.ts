@@ -14,7 +14,7 @@ import { builder as shuffle } from "./shuffle/builder";
 import { builder as skip } from "./skip/builder";
 import { builder as stop } from "./stop/builder";
 
-const COMMANDS_VERSION = "1.0.0";
+const COMMANDS_VERSION = "1.1.0";
 const versionFile = path.join(config.libraryPath, ".commands-version");
 
 async function shouldDeploy() {

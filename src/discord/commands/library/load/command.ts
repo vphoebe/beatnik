@@ -35,9 +35,18 @@ export const execute: CommandExecuter = async (interaction) => {
 
   const subcommand = interaction.options.getSubcommand();
   const isEnd = interaction.options.getBoolean("end") ?? false;
-  const isShuffle = interaction.options.getBoolean("shuffle") ?? false;
+  let isShuffle = interaction.options.getBoolean("shuffle") ?? false;
 
-  let queryUrl = "";
+  const queryUrls: string[] = [];
+
+  if (subcommand === "all") {
+    const allPlaylistIds = playlists.all().map((pl) => pl.int_id);
+    allPlaylistIds.forEach((int_id) => {
+      const playlist = playlists.getInfo(int_id);
+      if (playlist?.url) queryUrls.push(playlist.url);
+    });
+    isShuffle = true;
+  }
 
   if (subcommand === "playlist") {
     const playlistIntId = interaction.options.getInteger("playlist", true);
@@ -46,7 +55,7 @@ export const execute: CommandExecuter = async (interaction) => {
       await interaction.editReply("No playlist found.");
       return;
     }
-    queryUrl = playlist.url;
+    queryUrls.push(playlist.url);
   }
 
   if (subcommand === "track") {
@@ -56,8 +65,8 @@ export const execute: CommandExecuter = async (interaction) => {
       await interaction.editReply("No track found.");
       return;
     }
-    queryUrl = track.url;
+    queryUrls.push(track.url);
   }
 
-  await enqueueAndPlay(interaction, queryUrl, { shuffle: isShuffle, end: isEnd });
+  await enqueueAndPlay(interaction, queryUrls, { shuffle: isShuffle, end: isEnd });
 };
