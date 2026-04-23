@@ -54,7 +54,7 @@ export class MockProvider implements Provider {
     }
 
     // treat anything else as a search query
-    return { type: "search", resolvedQuery: query };
+    return null;
   }
 
   async getTrack(resolvedQuery: string): Promise<ProviderTrack | null> {
@@ -65,16 +65,6 @@ export class MockProvider implements Provider {
   async getPlaylist(resolvedQuery: string): Promise<ProviderPlaylist | null> {
     await sleep(350);
     return MOCK_PLAYLIST.id === resolvedQuery ? MOCK_PLAYLIST : null;
-  }
-
-  async search(query: string): Promise<ProviderTrack | null> {
-    await sleep(200);
-    const lower = query.toLowerCase();
-    return (
-      MOCK_TRACKS.find(
-        (t) => t.title.toLowerCase().includes(lower) || t.channelName.toLowerCase().includes(lower),
-      ) ?? MOCK_TRACKS[0] // fall back to first track so searches always resolve
-    );
   }
 
   async getStream(_uniqueId: string): Promise<Readable> {
