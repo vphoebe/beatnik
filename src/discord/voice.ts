@@ -4,9 +4,11 @@ import { log } from "@/shared";
 import type { PlayerSubscription, VoiceConnection } from "@discordjs/voice";
 import {
   AudioPlayerStatus,
+  VoiceConnectionStatus,
   createAudioPlayer,
   createAudioResource,
   demuxProbe,
+  entersState,
 } from "@discordjs/voice";
 import type { TextBasedChannel, VoiceBasedChannel } from "discord.js";
 
@@ -32,6 +34,7 @@ export class VoiceSession {
     this.subscription = this.connection.subscribe(this.audioPlayer);
 
     corePlayer.onStream = async (track, inputStream) => {
+      await entersState(this.connection, VoiceConnectionStatus.Ready, 10_000);
       const { stream, type } = await demuxProbe(inputStream);
       const resource = createAudioResource(stream, {
         inputType: type,
@@ -40,15 +43,6 @@ export class VoiceSession {
       const decibels = -(track.loudness ?? 0);
       resource.volume?.setVolumeDecibels(decibels);
       this.audioPlayer.play(resource);
-
-      if (track.loudness === null) {
-        log({
-          level: "WARN",
-          component: "DISCORD",
-          name: "VoiceSession",
-          message: `Track ${track.id} has no loudness value!`,
-        });
-      }
 
       const operator = decibels >= 0 ? "+" : "";
       log({
