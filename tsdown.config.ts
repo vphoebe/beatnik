@@ -1,3 +1,4 @@
+import replace from "@rollup/plugin-replace";
 import { defineConfig } from "tsdown";
 
 const BUILD_DIR = "dist";
@@ -11,4 +12,10 @@ export default defineConfig({
   minify: true,
   exports: true,
   fixedExtension: true,
+  plugins: [
+    replace({
+      "config.useMockProvider": JSON.stringify(false),
+      preventAssignment: true,
+    }),
+  ],
 });

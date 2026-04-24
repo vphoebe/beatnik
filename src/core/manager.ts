@@ -13,11 +13,14 @@ interface GuildSession {
 
 const sessions = new Map<string, GuildSession>();
 
-const mockProvider = new MockProvider();
 const youtubeProvider = await YoutubeProvider.create(config.youtube);
 
 export const providers: Provider[] = [youtubeProvider];
-if (config.useMockProvider) providers.unshift(mockProvider);
+
+if (config.useMockProvider) {
+  providers.unshift(new MockProvider());
+}
+
 log({
   component: "CORE",
   name: "PLAYER",
