@@ -1,7 +1,6 @@
 services:
   beatnik-dev:
     container_name: beatnik-dev
-    platform: linux/amd64
     image: nickseman/beatnik:dev
     build:
       context: .
