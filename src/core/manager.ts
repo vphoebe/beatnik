@@ -13,19 +13,20 @@ interface GuildSession {
 
 const sessions = new Map<string, GuildSession>();
 
-const youtubeProvider = await YoutubeProvider.create(config.youtube);
+export const providers: Provider[] = [];
 
-export const providers: Provider[] = [youtubeProvider];
-
-if (config.useMockProvider) {
-  providers.unshift(new MockProvider());
+export async function initProviders() {
+  const youtubeProvider = await YoutubeProvider.create(config.youtube);
+  providers.push(youtubeProvider);
+  if (config.useMockProvider) {
+    providers.unshift(new MockProvider());
+  }
+  log({
+    component: "CORE",
+    name: "PLAYER",
+    message: `Initialized provider(s): ${providers.map((p) => p.id).join(", ")}`,
+  });
 }
-
-log({
-  component: "CORE",
-  name: "PLAYER",
-  message: `Active provider(s): ${providers.map((p) => p.id).join(", ")}`,
-});
 
 export function getOrCreateSession(guildId: string): GuildSession {
   let session = sessions.get(guildId);

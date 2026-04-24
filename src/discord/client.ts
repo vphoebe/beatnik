@@ -62,6 +62,11 @@ async function handleVoiceStateUpdate(oldState: VoiceState) {
 }
 
 export async function startDiscord() {
+  log({
+    component: "DISCORD",
+    name: "CLIENT",
+    message: "Initializing Discord client, printing dependencies:",
+  });
   console.log(generateDependencyReport());
   await deployCommands();
 
