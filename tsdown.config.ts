@@ -9,7 +9,7 @@ export default defineConfig({
   platform: "node",
   target: "node22",
   format: "esm",
-  minify: true,
+  minify: false,
   exports: true,
   fixedExtension: true,
   plugins: [
