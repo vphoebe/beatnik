@@ -102,10 +102,9 @@ export function getDownloadedIdStream(id: string) {
   const targetPath = getItemPath(id);
   if (!targetPath.exists) {
     log({
-      level: "ERROR",
       component: "CORE",
       name: "CACHE",
-      message: `Unable to locate ${id} in cache!`,
+      message: `Unable to locate ${id} in cache.`,
     });
     return undefined;
   }
