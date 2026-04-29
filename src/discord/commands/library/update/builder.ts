@@ -3,10 +3,16 @@ import { SlashCommandBuilder } from "discord.js";
 export const builder = new SlashCommandBuilder()
   .setName("update")
   .setDescription("Updated a saved library playlist.")
-  .addIntegerOption((option) =>
-    option
+  .addSubcommand((sc) =>
+    sc
       .setName("playlist")
-      .setDescription("Name of the playlist.")
-      .setRequired(true)
-      .setAutocomplete(true),
-  );
+      .setDescription("Update a saved playlist.")
+      .addIntegerOption((option) =>
+        option
+          .setName("playlist")
+          .setDescription("The saved playlist.")
+          .setRequired(true)
+          .setAutocomplete(true),
+      ),
+  )
+  .addSubcommand((sc) => sc.setName("all").setDescription("Update all saved playlists."));
