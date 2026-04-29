@@ -4,7 +4,7 @@ import type { AutocompleteHandler, CommandExecuter } from "@/discord/commands";
 import { createDownloadProgressHandler } from "@/discord/playback";
 import type { ChatInputCommandInteraction } from "discord.js";
 
-async function updatePlaylistWithInteraction(
+export async function updatePlaylistWithInteraction(
   playlistIntId: number,
   interaction: ChatInputCommandInteraction,
 ) {

@@ -4,7 +4,6 @@ import { REST, Routes } from "discord.js";
 import { readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 
-import { builder as coach } from "./aliases/coach/builder";
 import { builder as add } from "./library/add/builder";
 import { builder as load } from "./library/load/builder";
 import { builder as remove } from "./library/remove/builder";
@@ -13,6 +12,7 @@ import { builder as play } from "./play/builder";
 import { builder as queue } from "./queue/builder";
 import { builder as shuffle } from "./shuffle/builder";
 import { builder as skip } from "./skip/builder";
+import { builder as coach } from "./special/coach/builder";
 import { builder as stop } from "./stop/builder";
 
 const COMMANDS_VERSION = "1.3.0";

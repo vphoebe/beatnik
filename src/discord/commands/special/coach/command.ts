@@ -4,6 +4,7 @@ import { enqueueAndPlay } from "@/discord/playback";
 import { MessageFlags } from "discord.js";
 
 import type { CommandExecuter } from "../..";
+import { updatePlaylistWithInteraction } from "../../library/update/command";
 
 export const execute: CommandExecuter = async (interaction) => {
   if (interaction.user.id !== config.discord.coachUserId) {
@@ -16,9 +17,17 @@ export const execute: CommandExecuter = async (interaction) => {
 
   await interaction.deferReply({ flags: MessageFlags.Ephemeral });
 
+  // update all playlists
+  const allPlaylistIds = playlists.all().map((pl) => pl.int_id);
+  await interaction.editReply(`Updating all playlists (${allPlaylistIds.length} total)...`);
+
+  for (const playlistIntId of allPlaylistIds) {
+    await updatePlaylistWithInteraction(playlistIntId, interaction);
+  }
+
+  // queue all playlists
   const queryUrls: string[] = [];
 
-  const allPlaylistIds = playlists.all().map((pl) => pl.int_id);
   allPlaylistIds.forEach((int_id) => {
     const playlist = playlists.getInfo(int_id);
     if (playlist?.url) queryUrls.push(playlist.url);
