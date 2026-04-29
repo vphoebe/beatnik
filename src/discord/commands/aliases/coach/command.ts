@@ -9,7 +9,7 @@ export const execute: CommandExecuter = async (interaction) => {
   if (interaction.user.id !== config.discord.coachUserId) {
     await interaction.reply({
       flags: MessageFlags.Ephemeral,
-      content: "You are not The Coach :born2lee: - sorry bud!",
+      content: "You are not The Coach :sunglasses: - sorry bud!",
     });
     return;
   }
