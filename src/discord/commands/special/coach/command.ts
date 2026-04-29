@@ -1,5 +1,6 @@
 import { config } from "@/core/config";
 import { playlists } from "@/core/db/playlist";
+import { requireVoiceChannel } from "@/discord/messaging";
 import { enqueueAndPlay } from "@/discord/playback";
 import { MessageFlags } from "discord.js";
 
@@ -16,6 +17,9 @@ export const execute: CommandExecuter = async (interaction) => {
   }
 
   await interaction.deferReply({ flags: MessageFlags.Ephemeral });
+
+  const voiceChannel = await requireVoiceChannel(interaction);
+  if (!voiceChannel) return;
 
   // update all playlists
   const allPlaylistIds = playlists.all().map((pl) => pl.int_id);
@@ -36,6 +40,6 @@ export const execute: CommandExecuter = async (interaction) => {
   await enqueueAndPlay(interaction, queryUrls, { shuffle: true, end: false });
 
   await interaction.editReply({
-    content: `You got it, Coach. Enjoy the tunes!`,
+    content: `Updated, queued, and shuffled all playlists. Enjoy the tunes, Coach!`,
   });
 };
