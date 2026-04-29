@@ -1,5 +1,6 @@
 import type { AutocompleteInteraction, ChatInputCommandInteraction } from "discord.js";
 
+import * as coach from "./aliases/coach/command";
 import * as add from "./library/add/command";
 import * as load from "./library/load/command";
 import * as remove from "./library/remove/command";
@@ -31,4 +32,5 @@ export const commandList: CommandList = {
   shuffle,
   add,
   remove,
+  coach,
 };

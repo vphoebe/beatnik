@@ -11,6 +11,7 @@ export const config = {
   discord: {
     token: requireEnv("TOKEN"),
     clientId: requireEnv("CLIENT_ID"),
+    coachUserId: process.env.COACH_USER_ID,
   },
   libraryPath: requireEnv("LIBRARY_PATH"),
   databaseUrl: requireEnv("DATABASE_URL"),
