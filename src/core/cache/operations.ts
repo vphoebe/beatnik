@@ -118,9 +118,17 @@ export async function updatePlaylistInLibrary(
     throw new Error(`Query ${existingPlaylistData.url} is not a playlist!`);
 
   const freshMetadata = await provider.getPlaylist(query.resolvedQuery);
-
+  log({
+    message: `Fresh playlist metadata found for ${freshMetadata?.id}: ${freshMetadata?.tracks.length} tracks. `,
+    component: "CORE",
+    name: "CACHE",
+  });
   if (!freshMetadata)
     throw new Error(`${query.resolvedQuery} metadata was not found from provider.`);
+
+  if (freshMetadata.tracks.length < 1) {
+    throw new Error(`No tracks found for playlist ${freshMetadata?.title}`);
+  }
 
   return {
     operation: await addPlaylistToLibrary(freshMetadata, provider, onProgress),
