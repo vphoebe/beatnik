@@ -26,7 +26,11 @@ export async function resolve(yt: Innertube, query: string): Promise<ResolvedQue
   }
 }
 
-export async function getTrackInfo(yt: Innertube, id: string): Promise<ProviderTrack | null> {
+export async function getTrackInfo(
+  yt: Innertube,
+  id: string,
+  playlistIdx?: number,
+): Promise<ProviderTrack | null> {
   try {
     const info = await yt.getBasicInfo(id);
     const { basic_info } = info;
@@ -39,7 +43,7 @@ export async function getTrackInfo(yt: Innertube, id: string): Promise<ProviderT
       channelName: basic_info.author ?? basic_info.channel?.name ?? "Unknown",
       thumbnailUrl: basic_info.thumbnail?.[0].url ?? "Unknown",
       loudness: getLoudnessFromInfo(info),
-      playlistIdx: null,
+      playlistIdx: playlistIdx !== undefined ? playlistIdx : null,
     };
   } catch (err) {
     console.error(`Error for ${id}`);
@@ -48,37 +52,53 @@ export async function getTrackInfo(yt: Innertube, id: string): Promise<ProviderT
   }
 }
 
+function isPlaylistVideo(
+  item: YTNodes.PlaylistVideo | YTNodes.LockupView,
+): item is YTNodes.PlaylistVideo {
+  return item.type === "PlaylistVideo";
+}
+
 export async function getPlaylistInfo(yt: Innertube, id: string): Promise<ProviderPlaylist | null> {
-  const totalItems: YTNodes.PlaylistVideo[] = [];
+  const totalItems: (YTNodes.PlaylistVideo | YTNodes.LockupView)[] = [];
 
   try {
     let playlistInfo = await yt.getPlaylist(id);
-    totalItems.push(...playlistInfo.items.filterType(YTNodes.PlaylistVideo));
+    totalItems.push(...playlistInfo.items.filterType(YTNodes.LockupView, YTNodes.PlaylistVideo));
     while (playlistInfo.has_continuation) {
       playlistInfo = await playlistInfo.getContinuation();
-      totalItems.push(...playlistInfo.items.filterType(YTNodes.PlaylistVideo));
+      totalItems.push(...playlistInfo.items.filterType(YTNodes.LockupView, YTNodes.PlaylistVideo));
     }
 
-    const tracks: ProviderTrack[] = totalItems.map((item, index) => {
-      return {
-        providerId: PROVIDER_ID,
-        id: item.id,
-        title: item.title.text ?? "Unknown",
-        length: item.duration.seconds,
-        channelName: item.author.name,
-        thumbnailUrl: item.thumbnails?.[0].url,
-        playlistIdx: index,
-        url: trackIdToURL(item.id),
-        // loudness not available from getPlaylist, would require individual calls
-        // return null, will be resolved at playback-time by corePlayer and resolver
-        // via calling getTrack on this provider (which returns loudness)
-        loudness: null,
-      };
-    });
+    const getTracks: () => Promise<ProviderTrack[]> = () =>
+      Promise.all(
+        totalItems.map(async (item, index) => {
+          if (isPlaylistVideo(item)) {
+            return {
+              providerId: PROVIDER_ID,
+              id: item.id,
+              title: item.title.text ?? "Unknown",
+              length: item.duration.seconds,
+              channelName: item.author.name,
+              thumbnailUrl: item.thumbnails?.[0].url,
+              playlistIdx: index,
+              url: trackIdToURL(item.id),
+              // loudness not available from getPlaylist, would require individual calls
+              // return null, will be resolved at playback-time by corePlayer and resolver
+              // via calling getTrack on this provider (which returns loudness)
+              loudness: null,
+            };
+          } else {
+            // item.type = LockupView
+            // which doesn't contain enough metadata directly.
+            // have to call getTrackInfo, will include loudness too.
+            return getTrackInfo(yt, item.content_id, index);
+          }
+        }),
+      ).then((tracks) => tracks.filter((t): t is ProviderTrack => t !== null));
 
     return {
       providerId: PROVIDER_ID,
-      tracks,
+      tracks: await getTracks(),
       title: playlistInfo.info.title ?? "Unknown",
       url: playlistIdToURL(id),
       id,
