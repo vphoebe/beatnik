@@ -5,8 +5,10 @@
  */
 import type { Canvas, CanvasRenderingContext2D } from "@napi-rs/canvas";
 import { ImageData as CanvasImageData, createCanvas } from "@napi-rs/canvas";
-import type { WebPoSignalOutput } from "bgutils-js";
-import { BG, GOOG_API_KEY, USER_AGENT, buildURL } from "bgutils-js";
+import { BotGuardClient } from "bgutils-js/botguard";
+import type { WebPoSignalOutput } from "bgutils-js/shared-types";
+import { USER_AGENT, buildURL, GOOG_API_KEY } from "bgutils-js/utils";
+import { createColdStartToken, WebPoMinter } from "bgutils-js/webpo";
 import type { DOMWindow } from "jsdom";
 import { JSDOM } from "jsdom";
 import type Innertube from "youtubei.js";
@@ -20,9 +22,9 @@ declare global {
 const REQUEST_KEY = "O43z0dpjhgX20SCx4KAo";
 
 let domWindow: DOMWindow;
-let initializationPromise: Promise<BG.WebPoMinter> | null = null;
-let botguardClient: BG.BotGuardClient | undefined;
-let webPoMinter: BG.WebPoMinter | undefined;
+let initializationPromise: Promise<WebPoMinter> | null = null;
+let botguardClient: BotGuardClient | undefined;
+let webPoMinter: WebPoMinter | undefined;
 let activeScriptId: string | null = null;
 let canvasPatched = false;
 
@@ -200,10 +202,10 @@ async function initializeBotguard(
       executeInterpreter.call(domWindow);
     }
 
-    botguardClient = await BG.BotGuardClient.create({
+    botguardClient = await BotGuardClient.create({
       program: challenge.program,
       globalName: challenge.global_name,
-      globalObj: globalThis,
+      globalObject: globalThis,
     });
 
     const webPoSignalOutput: WebPoSignalOutput = [];
@@ -226,7 +228,7 @@ async function initializeBotguard(
     if (typeof integrityToken !== "string")
       throw new Error("Botguard integrity token generation failed.");
 
-    webPoMinter = await BG.WebPoMinter.create({ integrityToken }, webPoSignalOutput);
+    webPoMinter = await WebPoMinter.create({ integrityToken }, webPoSignalOutput);
 
     return webPoMinter;
   })()
@@ -251,7 +253,7 @@ export async function getWebPoMinter(innertube: Innertube, options = {}) {
 
   return {
     generatePlaceholder(binding: string) {
-      return BG.PoToken.generateColdStartToken(requireBinding(binding));
+      return createColdStartToken(requireBinding(binding));
     },
     async mint(binding: string) {
       return await minter.mintAsWebsafeString(requireBinding(binding));
