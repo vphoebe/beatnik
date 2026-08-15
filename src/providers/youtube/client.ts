@@ -1,5 +1,5 @@
 import { log } from "@/shared";
-import { Innertube, Platform, UniversalCache } from "youtubei.js";
+import { Innertube, Platform, type Types, UniversalCache } from "youtubei.js";
 
 import { PROVIDER_ID } from ".";
 
@@ -7,19 +7,11 @@ export interface YoutubeClientConfig {
   player_id?: string;
 }
 
-export const createInnertubeClient = async (config: YoutubeClientConfig) => {
-  Platform.shim.eval = async (data, env) => {
-    const properties = [];
-    if (env.n) properties.push(`n: exportedVars.nFunction("${env.n}")`);
-    if (env.sig) properties.push(`sig: exportedVars.sigFunction("${env.sig}")`);
-    const code = `${data.output}\nreturn { ${properties.join(", ")} }`;
-
-    return new Function(code)();
-  };
+export const createInnertubeClient = async (_config: YoutubeClientConfig) => {
+  Platform.shim.eval = async (data: Types.BuildScriptResult) => new Function(data.output)();
 
   return Innertube.create({
-    cache: new UniversalCache(false),
-    player_id: config.player_id,
+    cache: new UniversalCache(true),
   }).then((val) => {
     log({
       component: "PROVIDER",

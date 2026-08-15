@@ -1,12 +1,21 @@
+import type { SabrPlaybackOptions } from "googlevideo/sabr-stream";
+import { EnabledTrackTypes } from "googlevideo/utils";
+import Stream from "node:stream";
+import type { ReadableStream as NodeReadableStream } from "node:stream/web";
 import type { Innertube } from "youtubei.js";
 
 import type { Provider } from "../provider";
 import type { YoutubeClientConfig } from "./client";
 import { createInnertubeClient } from "./client";
 import { getPlaylistInfo, getTrackInfo, resolve, search } from "./metadata";
-import { createSabrStream } from "./sabr";
+import { createSabrStream } from "./stream";
 
 export const PROVIDER_ID = "youtube";
+
+const DEFAULT_OPTIONS: SabrPlaybackOptions = {
+  enabledTrackTypes: EnabledTrackTypes.AUDIO_ONLY,
+  preferOpus: true,
+};
 
 export class YoutubeProvider implements Provider {
   readonly id = PROVIDER_ID;
@@ -24,7 +33,8 @@ export class YoutubeProvider implements Provider {
   search = (query: string) => search(this.client, query);
   getStream = async (id: string) => {
     try {
-      return createSabrStream(this.client, id);
+      const { audioStream } = await createSabrStream(this.client, id, DEFAULT_OPTIONS);
+      return Stream.Readable.fromWeb(audioStream as NodeReadableStream);
     } catch (err) {
       throw new Error(`No compatible streams found for ${id}. ${err}`);
     }

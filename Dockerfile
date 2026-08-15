@@ -40,7 +40,6 @@ RUN pnpm prune --prod \
     \) -delete \
  && find node_modules -type d \( -name "test" -o -name "tests" -o -name "__tests__" \) \
       -exec rm -rf {} + 2>/dev/null; true \
- && rm -rf node_modules/@napi-rs/canvas-linux-x64-musl \
  && rm -rf node_modules/@discordjs/opus/build-tmp-napi-v3
 
 #
