@@ -22,7 +22,6 @@
   "dependencies": {
     "@discordjs/opus": "^0.10.0",
     "@discordjs/voice": "^0.19.2",
-    "@napi-rs/canvas": "^0.1.81",
     "better-sqlite3": "^12.8.0",
     "bgutils-js": "^4.0.3",
     "bufferutil": "^4.1.0",
