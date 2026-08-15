@@ -4,7 +4,7 @@ import type { Provider } from "../provider";
 import type { YoutubeClientConfig } from "./client";
 import { createInnertubeClient } from "./client";
 import { getPlaylistInfo, getTrackInfo, resolve, search } from "./metadata";
-import { createSabrStream } from "./sabr-stream-factory";
+import { createSabrStream } from "./stream";
 import type { SabrPlaybackOptions } from "googlevideo/sabr-stream";
 import { EnabledTrackTypes } from "googlevideo/utils";
 import Stream from "node:stream";
