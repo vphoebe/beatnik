@@ -1,5 +1,5 @@
 import { log } from "@/shared";
-import { Innertube, Platform, UniversalCache, type Types } from "youtubei.js";
+import { Innertube, Platform, type Types, UniversalCache } from "youtubei.js";
 
 import { PROVIDER_ID } from ".";
 

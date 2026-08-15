@@ -15,8 +15,8 @@
       "@/core/*": ["./src/core/*"],
       "@/discord/*": ["./src/discord/*"],
       "@/providers": ["./src/providers/index.ts"],
-      "@/shared": ["./src/shared/index.ts"],
-    },
+      "@/shared": ["./src/shared/index.ts"]
+    }
   },
-  "include": ["src"],
+  "include": ["src"]
 }
