@@ -73,6 +73,7 @@ export async function downloadPlaylist(
   const concurrency = 10;
   const queue = [...tracksToDownload];
   let completed = 0;
+  let errors = 0;
 
   async function worker() {
     while (queue.length > 0) {
@@ -90,12 +91,13 @@ export async function downloadPlaylist(
           level: "ERROR",
         });
         console.error(err);
+        errors++;
       }
     }
   }
 
   await Promise.all(Array.from({ length: Math.min(concurrency, tracksToDownload.length) }, worker));
-  return tracksToDownload.length;
+  return { completed, errors };
 }
 
 export function getDownloadedIdStream(id: string) {

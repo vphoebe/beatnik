@@ -14,7 +14,7 @@ export const PROVIDER_ID = "youtube";
 
 const DEFAULT_OPTIONS: SabrPlaybackOptions = {
   enabledTrackTypes: EnabledTrackTypes.AUDIO_ONLY,
-  preferOpus: true,
+  stallDetectionMs: 5000,
 };
 
 export class YoutubeProvider implements Provider {
