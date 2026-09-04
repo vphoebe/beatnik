@@ -56,7 +56,13 @@ export async function resolveStream(id: string, provider: Provider): Promise<Str
   if (cached) {
     return { stream: cached, fromCache: true };
   }
-  return { stream: await provider.getStream(id), fromCache: false };
+  try {
+    const stream = await provider.getStream(id)
+    return { stream, fromCache: false };
+  } catch (err) {
+    log({ level: "ERROR", message: `${err}`, component: "CORE", name: "PLAYER" })
+    throw new Error("Unable to get provider stream")
+  }
 }
 
 export async function resolveTrackLoudness(

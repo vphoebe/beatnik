@@ -17,7 +17,8 @@ export interface LibraryOperationResult {
   added: boolean;
   updated?: boolean;
   error?: "EXISTS";
-  diff: number;
+  completed: number;
+  errors: number;
 }
 
 export async function testLibraryConnection() {
@@ -60,17 +61,30 @@ export async function addTrackToLibrary(
       added: false,
       updated: false,
       error: "EXISTS",
-      diff: 0,
+      completed: 0,
+      errors: 0,
     };
   }
-  tracks.create({ ...track, playlistId: null, playlistIdx: null });
-  const stream = await provider.getStream(track.id);
-  await downloadToCache(track.id, stream);
-  return {
-    added: true,
-    updated: false,
-    diff: 1,
-  };
+  try {
+    const stream = await provider.getStream(track.id);
+    await downloadToCache(track.id, stream);
+    // only create track in db if download succeeds
+    tracks.create({ ...track, playlistId: null, playlistIdx: null });
+    return {
+      added: true,
+      updated: false,
+      completed: 1,
+      errors: 0,
+    };
+  } catch (_err) {
+    return {
+      added: false,
+      updated: false,
+      completed: 0,
+      errors: 1,
+    }
+  }
+
 }
 
 export async function deleteTrackFromLibrary(int_id: number) {
@@ -92,11 +106,12 @@ export async function addPlaylistToLibrary(
   } else {
     playlists.create(playlistData);
   }
-  const downloaded = await downloadPlaylist(playlistData, provider, onProgress);
+  const { completed, errors } = await downloadPlaylist(playlistData, provider, onProgress);
   return {
     added: !playlistExists,
     updated: playlistExists,
-    diff: downloaded,
+    completed,
+    errors,
   };
 }
 

@@ -69,6 +69,7 @@ export class CorePlayer {
     } catch (err) {
       this.isPlaying = false;
       this.onError?.(track, err instanceof Error ? err : new Error(String(err)));
+      await this.next();
     }
   }
 

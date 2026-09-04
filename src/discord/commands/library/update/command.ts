@@ -16,7 +16,7 @@ export async function updatePlaylistWithInteraction(
     await interaction.editReply("Something went wrong.");
   } else {
     await interaction.editReply(
-      `Updated ${update.operation.diff} tracks in \`${update.playlistData.title}\``,
+      `Updated ${update.operation.completed} tracks (${update.operation.errors} errors) in \`${update.playlistData.title}\``,
     );
   }
 }

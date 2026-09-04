@@ -43,7 +43,7 @@ export const execute: CommandExecuter = async (interaction) => {
     await interaction.editReply(`${title} was already added.`);
   } else {
     await interaction.editReply(
-      `${operation.updated ? "Updated" : "Added"} ${operation.diff} tracks for \`${title ?? "unknown"}\``,
+      `${operation.updated ? "Updated" : "Added"} ${operation.completed} tracks (${operation.errors} errors) for \`${title ?? "unknown"}\``,
     );
   }
 };
