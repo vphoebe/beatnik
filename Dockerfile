@@ -1,7 +1,7 @@
 #
 # install / build npm deps
 #
-FROM node:22-trixie AS deps-builder
+FROM node:24-trixie AS deps-builder
 WORKDIR /app
 
 # fix GCC14 issue with compiling opus on arm64
@@ -45,7 +45,7 @@ RUN pnpm prune --prod \
 #
 # production
 #
-FROM gcr.io/distroless/nodejs22-debian13 AS prod
+FROM gcr.io/distroless/nodejs24-debian13 AS prod
 WORKDIR /app
 ENV DATABASE_URL="/app/library.db" \
     LIBRARY_PATH="/app/library" \

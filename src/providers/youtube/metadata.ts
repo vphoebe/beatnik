@@ -87,7 +87,7 @@ export async function getPlaylistInfo(yt: Innertube, id: string): Promise<Provid
               // via calling getTrack on this provider (which returns loudness)
               loudness: null,
             };
-          } else {
+          } else if (item.content_id) {
             // item.type = LockupView
             // which doesn't contain enough metadata directly.
             // have to call getTrackInfo, will include loudness too.
@@ -111,7 +111,7 @@ export async function getPlaylistInfo(yt: Innertube, id: string): Promise<Provid
 }
 
 export async function search(yt: Innertube, query: string): Promise<ProviderTrack | null> {
-  const search = await yt.search(query);
+  const search = await yt.search(query, { type: "video" });
   const videoId = search.videos[0].as(YTNodes.Video).video_id;
   if (!videoId) {
     throw new Error("No search results found.");
