@@ -57,11 +57,11 @@ export async function resolveStream(id: string, provider: Provider): Promise<Str
     return { stream: cached, fromCache: true };
   }
   try {
-    const stream = await provider.getStream(id)
+    const stream = await provider.getStream(id);
     return { stream, fromCache: false };
   } catch (err) {
-    log({ level: "ERROR", message: `${err}`, component: "CORE", name: "PLAYER" })
-    throw new Error("Unable to get provider stream")
+    log({ level: "ERROR", message: `${err}`, component: "CORE", name: "PLAYER" });
+    throw new Error(`${err}`);
   }
 }
 
