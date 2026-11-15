@@ -7,7 +7,6 @@ export default defineConfig({
   entry: "src/index.ts",
   outDir: BUILD_DIR,
   platform: "node",
-  target: "node22",
   format: "esm",
   minify: false,
   exports: true,

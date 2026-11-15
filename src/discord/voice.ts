@@ -76,6 +76,14 @@ export class VoiceSession {
       deleteSession(this.guildId);
     };
 
+    corePlayer.onError = (track, err) => {
+      // errors already throw/log elsewhere, just message the textChannel
+      if (this.textChannel && this.textChannel.isSendable()) {
+        const message = `Unable to play **${track.title}**\n\`\`\`${err.message}\`\`\``;
+        this.textChannel.send(message);
+      }
+    };
+
     this.audioPlayer.on(AudioPlayerStatus.Idle, () => corePlayer.next());
     this.audioPlayer.on("error", (err) => {
       const track = corePlayer.queue.nowPlaying;

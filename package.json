@@ -1,13 +1,13 @@
 {
   "name": "beatnik",
-  "version": "5.0.3",
+  "version": "5.0.4",
   "description": "modern and simple Discord music bot with easy-to-use commands",
   "author": "vphoebe",
   "license": "MIT",
   "type": "module",
   "private": true,
   "scripts": {
-    "build": "npm run typecheck && tsdown",
+    "build": "pnpm typecheck && tsdown",
     "dev": "tsx watch src/index.ts",
     "format": "prettier --write .",
     "knip": "knip",
@@ -20,36 +20,36 @@
     "latest:build": "docker build --target prod -t nickseman/beatnik:latest ."
   },
   "dependencies": {
-    "@discordjs/opus": "^0.10.0",
+    "@discordjs/opus": "^0.11.0",
     "@discordjs/voice": "^0.19.2",
-    "better-sqlite3": "^12.8.0",
+    "better-sqlite3": "^12.11.1",
     "bgutils-js": "^4.0.3",
-    "bufferutil": "^4.1.0",
-    "discord.js": "^14.27.0",
-    "dotenv": "^16.4.5",
+    "bufferutil": "^4.2.0",
+    "discord.js": "^14.28.1",
+    "dotenv": "^16.6.1",
     "ffmpeg-static": "^5.3.0",
     "googlevideo": "^4.1.1",
     "jsdom": "^26.1.0",
-    "youtubei.js": "^18.0.0",
+    "youtubei.js": "^18.3.0",
     "zlib-sync": "^0.1.10"
   },
   "devDependencies": {
-    "@eslint/js": "^9.33.0",
+    "@eslint/js": "^9.39.5",
     "@rollup/plugin-replace": "^6.0.3",
     "@trivago/prettier-plugin-sort-imports": "^4.3.0",
     "@types/better-sqlite3": "^7.6.13",
     "@types/jsdom": "^21.1.7",
-    "@types/node": "^25.5.0",
-    "eslint": "^9.33.0",
-    "knip": "^5.62.0",
-    "prettier": "^3.3.2",
-    "tsdown": "^0.21.5",
-    "tsx": "^4.21.0",
-    "typescript": "^5.8.3",
-    "typescript-eslint": "^8.40.0"
+    "@types/node": "^25.9.9",
+    "eslint": "^9.39.5",
+    "knip": "^5.88.1",
+    "prettier": "^3.10.1",
+    "tsdown": "^0.21.10",
+    "tsx": "^4.23.15",
+    "typescript": "^5.9.3",
+    "typescript-eslint": "^8.72.2"
   },
   "engines": {
-    "node": ">=22.0.0 <23.0.0"
+    "node": ">=24.17.0"
   },
   "exports": {
     ".": "./dist/index.mjs",
